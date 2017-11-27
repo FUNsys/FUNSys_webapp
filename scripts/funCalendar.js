@@ -9,7 +9,7 @@ $(function () {
     var table = document.getElementById('mainTable');
     tableManager = new TableManager(table);
     pushButton(0);
-    loadJson(createTable);
+    loadJson(dispTest);
 });
 
 //選択中のボタンを引数の番号のボタンに変更
@@ -36,14 +36,60 @@ function dispVerticalHeadder() {
     }
 }
 
-function dispLecture(dataNum) {
-    var week = currentButton + 1;
-    var count = 0;
-    datas.lectures.forEach(x => {
-        if (x.week == week) {
-            tableManager.insertHTML(++count, x.jigen, x.disp_lecture);
-        }
-    });
+
+//講義表示テスト用関数
+function dispTest() {
+    var count = 7;
+    var testData = new Array(count);
+    for (var i = 0; i < count; i++) {
+        testData[i] = new TableData(2, 2);
+    }
+    tableManager.createTable(10, colCount);
+    setupTable();
+    dispLecture(testData);
+}
+
+//テーブルにデータを渡すときに使用する
+TableData = function (type, id) {
+    this.type = type;
+    this.id = id;
+};
+
+/*
+講義データを表示する。
+曜日判定はこの関数より上層で行っておく。
+dataNum 0 = 講師, dataNum 1 = クラス, dataNum 2 = 部屋
+*/
+function dispLecture(data) {
+    for (var i = 0; i < data.length; i++) {
+        datas.lectures.forEach(x => {
+            var hasRows = [];
+
+            var check = function (t) { //対応する講義データを持っているか確認する関数
+                if (t == data[i].id) {
+                    hasRows.push(i)
+                };
+            }
+
+            switch (data[i].type) {
+                case 0: x.teachers.forEach(y => check(y));
+                    break;
+                case 1: x.classes.forEach(y => check(y));
+                    break;
+                case 2: x.rooms.forEach(y => check(y));
+                    break;
+            }
+
+            hasRows.forEach(y => {
+                tableManager.addHTML(y + 1, x.jigen, makeLectureHTML(x));
+            });
+        });
+    }
+}
+
+//表内に挿入する講義データを作成する
+function makeLectureHTML(lecture) {
+    return lecture.disp_lecture;
 }
 
 function dispTeacher() {

@@ -44,6 +44,12 @@ TableManager.prototype.insertHTML = function (row, col, value) {
   cell.innerHTML = value;
 }
 
+// テーブルの指定したセルにHTMLを挿入する
+TableManager.prototype.addHTML = function (row, col, value) {
+  var cell = this.table.rows[row].cells[col];
+  cell.innerHTML = value;
+}
+
 //テーブルの指定したセルのHTMLを削除する
 TableManager.prototype.deleteHTML = function (row, col) {
   var cell = this.table.rows[row].cells[col];
