@@ -1,99 +1,136 @@
-*  {
-    font-family: "游ゴシック体", "Yu Gothic"; 
+* {
+    font-family: "游ゴシック体", "Yu Gothic";
 }
 
 .white {
-    background: white; 
+    background: white;
 }
 
 #mainTable {
-    width: 620px; /*表全体の横幅*/
-    empty-cells: show; /*空白セルを表示する*/
-    table-layout: fixed; 
-    border-collapse: collapse; /*隣接する枠線の結合*/
+    width: 620px;/*表全体の横幅*/
+    empty-cells: show;/*空白セルを表示する*/
+    table-layout: fixed;
+    border-collapse: collapse;/*隣接する枠線の結合*/
 }
+
 
 /*見出し*/
 #mainTable th {
-    text-align: center; 
-    padding: 5px; 
-    height: 40px; 
-    border: 1px solid #000000; 
+    text-align: center;
+    padding: 5px;
+    height: 40px;
+    border: 1px solid #000000;
 }
+
 
 /*表要素*/
 #mainTable td {
-    text-align: left; /*左寄せ*/
-    vertical-align: top; /*上寄せ*/
-    font-size: 80%; /*セル内のフォントサイズ*/
-    padding : 5px; 
-    height : 40px; /*セルごとの縦幅*/
-    border: 1px solid #000000; 
+    text-align: left;/*左寄せ*/
+    vertical-align: top;/*上寄せ*/
+    font-size: 80%;
+    padding: 5px; 
+    height: 40px;/*セルごとの縦幅*/
+    border: 1px solid #000000;
 }
 
+
 /*表内に表示される講義データ*/
-.lecture{
-    /*未実装*/
+.lecture {
+  color : #000;
+
+   /*文字列がオーバーした際は[...]と表示する*/
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
 }
+
+/*講義名の上にマウスが乗ったときのスタイル*/
+.lecture:hover{
+    cursor: pointer;
+    color : #ff0000;
+}
+
+/*画面中央にウィンドウを出す*/
+#lectureMordal{ 
+    display: none;
+    position: absolute; 
+    background-color: #ffffff;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    margin: auto; 
+    width: 300px;
+    height: 300px;
+    z-index: 3;
+    border: 1px solid #000000;
+}
+
 
 /*曜日選択ボタンの親*/
 .btnroot {
-    position: relative; 
-    left: 320px; 
-    margin: 15px; 
-    height: 60px; 
+    position: relative;
+    left: 320px;
+    margin: 15px;
+    height: 60px;
 }
+
 
 /*曜日選択ボタン*/
 .btn {
-    display: inline-block; 
-    text-decoration: none; 
-    color:#FFF; 
-    width :50px; 
-    height:50px; 
-    line-height: 50px; 
-    border-radius: 50%; 
-    text-align: center; 
-    font-weight: bold; 
-    vertical-align: middle; 
-    overflow:hidden; 
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.29); 
-    border-bottom: solid 3px #bd6565; 
-    transition: .4s; 
+    display: inline-block;
+    text-decoration: none;
+    color: #FFF;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 50%;
+    text-align: center;
+    font-weight: bold;
+    vertical-align: middle;
+    overflow: hidden;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.29);
+    border-bottom: solid 3px #bd6565;
+    transition: .4s;
 }
+
 
 /*ボタンの色を指定する
  0 = 月曜日 ... 4 = 金曜日 */
 #btn0 {
-    background-color: rgb(255, 255, 0); 
+    background-color: rgb(255, 255, 0);
 }
 
 #btn1 {
-    background-color: rgb(0, 255, 0); 
+    background-color: rgb(0, 255, 0);
 }
 
 #btn2 {
-    background-color: rgb(0, 0, 255); 
+    background-color: rgb(0, 0, 255);
 }
 
 #btn3 {
-    background-color: rgb(79, 79, 122); 
+    background-color: rgb(79, 79, 122);
 }
 
 #btn4 {
-    background-color: rgb(136, 255, 0); 
+    background-color: rgb(136, 255, 0);
 }
+
 
 /*選択されたボタンを大きく表示する*/
 .btn_selected {
-    width: 60px; 
-    height: 60px; 
-    line-height: 60px; 
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
 }
 
+
 /*ボタンを押したときにアニメーションする*/
-.btn:active {-ms-transform: translateY(2px); -webkit-transform: translateY(2px); 
-    transform: translateY(2px); 
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.15); 
-    border-bottom: none; 
+.btn:active {
+    -ms-transform: translateY(2px);
+    -webkit-transform: translateY(2px);
+    transform: translateY(2px);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
+    border-bottom: none;
 }

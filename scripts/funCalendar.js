@@ -2,7 +2,8 @@ var tableManager = null;
 var currentButton = -1;
 var tableColors = ['#ffff00', '#00ff00', '#0000ff', '#4f4f7a', '#88ff00'];
 var buttonIds = ['#btn0', '#btn1', '#btn2', '#btn3', '#btn4'];
-var colCount = 6;
+var colCount = 6; //列の数
+var lecButtonClass = "lecButton"; //表内に表示される講義のボタンクラス
 var loaded = false;
 
 $(function () {
@@ -36,42 +37,60 @@ function dispVerticalHeadder() {
     }
 }
 
-
 //講義表示テスト用関数
 function dispTest() {
     var count = 7;
+    var td = [ //テストデータ
+        {
+            jigen: 1,
+            teachers: [1, 2],
+            disp_lecture: "講義１",
+        },
+        {
+            jigen: 1,
+            teachers: [1, 2],
+            disp_lecture: "講義２",
+        },
+        {
+            jigen: 1,
+            teachers: [1, 2],
+            disp_lecture: "講義３",
+        },
+    ]
     var testData = new Array(count);
     for (var i = 0; i < count; i++) {
-        testData[i] = new TableData(2, 2);
+        testData[i] = new TableData(0, 1);
     }
     tableManager.createTable(10, colCount);
     setupTable();
-    dispLecture(testData);
+    dispLecture(testData, datas.lectures);
 }
 
 //テーブルにデータを渡すときに使用する
+//type 0 = 講師, type 1 = クラス, type 2 = 部屋
 TableData = function (type, id) {
     this.type = type;
     this.id = id;
 };
 
-/*
-講義データを表示する。
-曜日判定はこの関数より上層で行っておく。
-dataNum 0 = 講師, dataNum 1 = クラス, dataNum 2 = 部屋
-*/
-function dispLecture(data) {
-    for (var i = 0; i < data.length; i++) {
-        datas.lectures.forEach(x => {
+var displayLectures = []; //現在表示中の講義オブジェクトを格納しておくクラス
+
+//講義データを表示する。
+//曜日判定はこの関数では行っていない。
+function dispLecture(verData, lectures) {
+    displayLectures = [];
+    var id = 0; //データの表示順にidを割り振るためのカウンタ
+    for (var i = 0; i < verData.length; i++) {
+        lectures.forEach(x => {
             var hasRows = [];
 
             var check = function (t) { //対応する講義データを持っているか確認する関数
-                if (t == data[i].id) {
-                    hasRows.push(i)
-                };
+                if (t == verData[i].id) {
+                    hasRows.push(i);
+                }
             }
 
-            switch (data[i].type) {
+            switch (verData[i].type) {
                 case 0: x.teachers.forEach(y => check(y));
                     break;
                 case 1: x.classes.forEach(y => check(y));
@@ -79,17 +98,47 @@ function dispLecture(data) {
                 case 2: x.rooms.forEach(y => check(y));
                     break;
             }
-
             hasRows.forEach(y => {
-                tableManager.addHTML(y + 1, x.jigen, makeLectureHTML(x));
+                tableManager.appendChild(y + 1, x.jigen, makeLectureObject(id++, x));
+                displayLectures.push[x];
             });
         });
     }
 }
 
 //表内に挿入する講義データを作成する
-function makeLectureHTML(lecture) {
-    return lecture.disp_lecture;
+function makeLectureObject(id, lecture) {
+    var idtxt = "lecture-" + id; //講義の表示順に個別のidを振る
+    var div = document.createElement('div');
+    div.classList.add("lecture");
+    div.id = idtxt;
+    //講義名をクリックしたときに実行される関数
+    div.onclick = function () {
+        var mordal = document.getElementById("lectureMordal");
+        mordal.style.display = "block";
+        mordal.innerHTML = makeLectureContentHTML(lecture);
+    }
+
+    //講義名でボタンを作成する
+    div.innerHTML += lecture.disp_lecture;
+    return div;
+}
+function closeLectureMordal(){
+    var mordal = document.getElementById("lectureMordal");
+    mordal.style.display = "none";   
+}
+//講義の詳細データを作成する
+function makeLectureContentHTML(lecture) {
+    var html = "";
+    html += "<ul>\n";
+    for (var n in lecture) {
+        html += "<li>";
+        html += n + " : " + lecture[n];
+        html += "<br>";
+        html += "</li>";
+    }
+    html += "</ul>\n";
+    return html;
 }
 
 function dispTeacher() {
