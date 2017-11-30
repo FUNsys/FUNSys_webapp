@@ -34,7 +34,7 @@
 }
 
 
-/*表内に表示される講義データ*/
+/*===表内に表示される講義データ===*/
 .lecture {
   color : #000;
 
@@ -49,23 +49,53 @@
     cursor: pointer;
     color : #ff0000;
 }
+/*===============================*/
 
-/*画面中央にウィンドウを出す*/
-#lectureMordal{ 
-    display: none;
-    position: absolute; 
+/*===講義詳細ウィンドウ===*/
+#lectureModal{
     background-color: #ffffff;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
-    margin: auto; 
-    width: 300px;
-    height: 300px;
-    z-index: 3;
-    border: 1px solid #000000;
+    z-index: 2;  
+    display: none;   
+    overflow:auto;
+    border: 1px solid #000000;    
+    /*画面中央に表示して、スクロールに追従する*/
+    position: fixed;
+    margin-left: -225px; /* 中央配置する要素の縦幅の半分だけ左にずらす */    
+    margin-top: -250px; /* 中央配置する要素の横幅の半分だけ上にずらす */
+    top: 50%;  /* 要素の上端を中央に */
+    left: 50%;  /* 要素の左端を中央に */
+    width: 450px;
+    height :500px;
 }
 
+.lectureModal-button-parent{
+    position: absolute;
+    right: 0px;
+    top:0px;
+}
+
+.lectureModal-button{
+    display: inline-block;
+    text-decoration: none;
+    background: #668ad8;/*ボタン色*/
+    color: #FFF;
+    border-bottom: solid 4px #627295;
+    border-radius: 3px;
+}
+/*=======================*/
+
+/*===モーダルウィンドウ===*/
+#modal-overlay{
+	z-index:1;
+	display:none;
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:150%;
+	background-color:rgba(0,0,0,0.75);
+}
+/*========================*/
 
 /*曜日選択ボタンの親*/
 .btnroot {

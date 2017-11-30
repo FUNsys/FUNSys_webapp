@@ -6,12 +6,14 @@ var colCount = 6; //列の数
 var lecButtonClass = "lecButton"; //表内に表示される講義のボタンクラス
 var loaded = false;
 
+
 $(function () {
     var table = document.getElementById('mainTable');
     tableManager = new TableManager(table);
     pushButton(0);
     loadJson(dispTest);
 });
+
 
 //選択中のボタンを引数の番号のボタンに変更
 function pushButton(num) {
@@ -89,7 +91,6 @@ function dispLecture(verData, lectures) {
                     hasRows.push(i);
                 }
             }
-
             switch (verData[i].type) {
                 case 0: x.teachers.forEach(y => check(y));
                     break;
@@ -112,21 +113,31 @@ function makeLectureObject(id, lecture) {
     var div = document.createElement('div');
     div.classList.add("lecture");
     div.id = idtxt;
+
     //講義名をクリックしたときに実行される関数
     div.onclick = function () {
-        var mordal = document.getElementById("lectureMordal");
-        mordal.style.display = "block";
-        mordal.innerHTML = makeLectureContentHTML(lecture);
+        var mordal = document.getElementById("lectureModal");
+        var mordalContent = document.getElementById("lectureModal-content");
+        mordalContent.innerHTML = makeLectureContentHTML(lecture);
+        var overlay = document.getElementById("modal-overlay");
+        overlay.style.display = "block";
+        mordal.style.display = 'block';
     }
-
     //講義名でボタンを作成する
     div.innerHTML += lecture.disp_lecture;
     return div;
 }
-function closeLectureMordal(){
-    var mordal = document.getElementById("lectureMordal");
-    mordal.style.display = "none";   
+
+function closeLectureModal() {
+    var mordal = document.getElementById("lectureModal");
+    
+    var mordalContent = document.getElementById("lectureModal-content");
+    var overlay = document.getElementById("modal-overlay");
+    mordal.style.display = 'none';
+    mordalContent.innerHTML = "";
+    overlay.style.display = 'none';
 }
+
 //講義の詳細データを作成する
 function makeLectureContentHTML(lecture) {
     var html = "";

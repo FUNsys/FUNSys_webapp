@@ -1,19 +1,18 @@
 <!DOCTYPE html>
+
 <head>
     <meta charset="utf-8">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script type="text/javascript" src="./scripts/tableManager.js"></script>
-    <script type="text/javascript" src="./scripts/jsonread.js"></script>    
+    <script type="text/javascript" src="./scripts/jsonread.js"></script>
     <script type="text/javascript" src="./scripts/funCalendar.js"></script>
 
-    <link rel ="stylesheet" type = "text/css" href = "./css/main.css">
+    <link rel="stylesheet" type="text/css" href="./css/main.css">
     <title>FUNカレンダー </title>
 </head>
 
 <body>
-    <div id = "lectureMordal" onclick = "closeLectureMordal()">
-        etstgesg
-    </div>
+
     <h1>FUNカレンダー</h1>
     <button>設定</button>
     <br>
@@ -39,7 +38,7 @@
     <table id="mainTable">
         <!--見出し行-->
         <tr bgcolor="#dcfa64">
-            <th class ="white"> </th>
+            <th class="white"> </th>
             <th>1</th>
             <th>2</th>
             <th>3</th>
@@ -151,4 +150,12 @@
             <td></td>
         </tr>
     </table>
+    <!--モーダルウィンドウの要素-->
+    <div id="lectureModal">
+        <div id="lectureModal-content"></div>
+        <div class="lectureModal-button-parent">
+            <button onclick="closeLectureModal()" class="lectureModal-button">閉じる</button>
+        </div>
+    </div>
+    <div id="modal-overlay"></div>
 </body>
