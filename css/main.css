@@ -53,9 +53,9 @@
 
 /*===講義詳細ウィンドウ===*/
 #lectureModal{
+    display: none;   
     background-color: #ffffff;
     z-index: 2;  
-    display: none;   
     overflow:auto;
     border: 1px solid #000000;    
     /*画面中央に表示して、スクロールに追従する*/
@@ -163,4 +163,18 @@
     transform: translateY(2px);
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
     border-bottom: none;
+}
+
+.fadeIn{
+    animation : fade 0.5s;
+    animation-fill-mode: both;
+}
+
+@keyframes fade{
+    from{
+        opacity: 0;
+    }
+    to{
+        opacity: 1;
+    }
 }

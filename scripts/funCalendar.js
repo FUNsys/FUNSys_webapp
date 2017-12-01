@@ -3,7 +3,6 @@ var currentButton = -1;
 var tableColors = ['#ffff00', '#00ff00', '#0000ff', '#4f4f7a', '#88ff00'];
 var buttonIds = ['#btn0', '#btn1', '#btn2', '#btn3', '#btn4'];
 var colCount = 6; //列の数
-var lecButtonClass = "lecButton"; //表内に表示される講義のボタンクラス
 var loaded = false;
 
 
@@ -115,14 +114,19 @@ function makeLectureObject(id, lecture) {
     div.id = idtxt;
 
     //講義名をクリックしたときに実行される関数
-    div.onclick = function () {
+    div.onclick = ()=> {
         var mordal = document.getElementById("lectureModal");
         var mordalContent = document.getElementById("lectureModal-content");
         mordalContent.innerHTML = makeLectureContentHTML(lecture);
         var overlay = document.getElementById("modal-overlay");
         overlay.style.display = "block";
         mordal.style.display = 'block';
+        mordal.classList.add("fadeIn");
+        setTimeout(() => {
+           mordal.classList.remove("fadeIn"); 
+        }, 500);
     }
+
     //講義名でボタンを作成する
     div.innerHTML += lecture.disp_lecture;
     return div;
