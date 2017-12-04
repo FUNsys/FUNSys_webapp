@@ -21,11 +21,15 @@ TableManager.prototype.createTable = function (rowCount, colCount) {
 }
 
 
+TableManager.prototype.appendChild = function (row, col, value) {
+  var cell = this.table.rows[row].cells[col];
+  cell.appendChild(value);
+}
+
 TableManager.prototype.addClass = function (row, col, value) {
   var cell = this.table.rows[row].cells[col];
   cell.classList.add(value);
 }
-
 
 TableManager.prototype.hasClass = function (row, col, value) {
   var cell = this.table.rows[row].cells[col];
@@ -42,6 +46,12 @@ TableManager.prototype.removeClass = function (row, col, value) {
 TableManager.prototype.insertHTML = function (row, col, value) {
   var cell = this.table.rows[row].cells[col];
   cell.innerHTML = value;
+}
+
+// テーブルの指定したセルにHTMLを追加する
+TableManager.prototype.addHTML = function (row, col, value) {
+  var cell = this.table.rows[row].cells[col];
+  cell.innerHTML += value;
 }
 
 //テーブルの指定したセルのHTMLを削除する

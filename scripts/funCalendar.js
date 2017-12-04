@@ -2,15 +2,17 @@ var tableManager = null;
 var currentButton = -1;
 var tableColors = ['#ffff00', '#00ff00', '#0000ff', '#4f4f7a', '#88ff00'];
 var buttonIds = ['#btn0', '#btn1', '#btn2', '#btn3', '#btn4'];
-var colCount = 6;
+var colCount = 6; //列の数
 var loaded = false;
+
 
 $(function () {
     var table = document.getElementById('mainTable');
     tableManager = new TableManager(table);
     pushButton(0);
-    loadJson(createTable);
+    //  loadJson(dispTest);
 });
+
 
 //選択中のボタンを引数の番号のボタンに変更
 function pushButton(num) {
@@ -36,14 +38,179 @@ function dispVerticalHeadder() {
     }
 }
 
-function dispLecture(dataNum) {
-    var week = currentButton + 1;
-    var count = 0;
-    datas.lectures.forEach(x => {
-        if (x.week == week) {
-            tableManager.insertHTML(++count, x.jigen, x.disp_lecture);
+/*
+//講義表示テスト用関数
+function dispTest() {
+    var td = [ //テストデータ
+        {
+            jigen: 1,
+            teachers: [1],
+            disp_lecture: "講義１",
+            rooms: [128],
+
+        },
+        {
+            jigen: 2,
+            teachers: [2],
+            disp_lecture: "講義２",
+            rooms: [128],
+
+        },
+        {
+            jigen: 3,
+            teachers: [1, 2],
+            disp_lecture: "講義３",
+            rooms: [128],
+        },
+    ]
+    var count = 7;
+    var testData = new Array(count);
+    for (var i = 0; i < count; i++) {
+        var t = null;
+        if (i % 2 == 0) {
+            t = datas.teachers[0];
+        } else {
+            t = datas.teachers[1];
+        }
+        testData[i] = new TableData(t.disp_teacher, 0, t.teacher_id);
+    }
+    tableManager.createTable(count + 1, colCount);
+    setupTable();
+    displayTableDatas(testData, datas.lectures);
+}
+*/
+
+/*テーブルにデータを渡すときに使用する
+type 0 = 講師, type 1 = クラス, type 2 = 部屋
+idはそれぞれの名前で与えられているものの数値 ex)teacher_id*/
+TableData = function (name, type, id) {
+    this.name = name;
+    this.type = type;
+    this.id = id;
+};
+
+//講義データを表示する。
+//曜日判定はこの関数では行っていない。
+function displayTableDatas(verData, lectures) {
+    tableManager.createTable(verData.length, colCount);
+    var count = 0; //データの表示順にidを割り振るためのカウンタ
+    for (var i = 0; i < verData.length; i++) {
+        tableManager.insertHTML(i + 1, 0, verData[i].name);
+
+        lectures.forEach(x => {
+            var findID = false;
+
+            switch (verData[i].type) {
+                case 0:
+                    findID = x.teachers.indexOf(verData[i].id) >= 0;
+                    break;
+                case 1:
+                    findID = x.classes.indexOf(verData[i].id) >= 0;
+                    break;
+                case 2:
+                    findID = x.rooms.indexOf(verData[i].id) >= 0;
+                    break;
+            }
+
+            if (findID) {
+                tableManager.appendChild(i + 1, x.jigen, makeLectureObject(count++, x));
+            }
+        });
+    }
+}
+
+//表内に挿入する講義データを作成する
+function makeLectureObject(id, lecture) {
+    var idtxt = "lecture-" + id; //講義の表示順に個別のidを振る
+    var div = document.createElement('div');
+    div.classList.add("lecture");
+    div.id = idtxt;
+
+    //講義名をクリックしたときに実行される関数
+    div.onclick = () => {
+        var mordal = document.getElementById("lectureModal");
+        var mordalContent = document.getElementById("lectureModal-content");
+        mordalContent.innerHTML = makeLectureContentHTML(lecture);
+        var overlay = document.getElementById("modal-overlay");
+        overlay.style.display = "block";
+        mordal.style.display = 'block';
+        mordal.classList.add("fadeIn");
+    }
+
+    //講義名でボタンを作成する
+    div.innerHTML += lecture.disp_lecture;
+    return div;
+}
+
+function closeLectureModal() {
+    var mordal = document.getElementById("lectureModal");
+
+    var mordalContent = document.getElementById("lectureModal-content");
+    var overlay = document.getElementById("modal-overlay");
+    mordal.style.display = 'none';
+    mordalContent.innerHTML = "";
+    overlay.style.display = 'none';
+}
+
+//講義の詳細データを作成する
+function makeLectureContentHTML(lecture) {
+    var html = "";
+    //講義名
+    html += "<h3>" + lecture.disp_lecture + "</h3><br>";
+    //担当
+    html += "担当 ";
+    var teachers = getTeachersFromLecture(lecture);
+    for (var i = 0, len = teachers.length; i < len; i++) {
+        html += teachers[i].disp_teacher;
+        if (i < len - 1) {
+            html += ", ";
+        }
+    }
+    html += "<br>";
+    //クラス
+    html += "対象 ";
+    var classes = getClassesFromLecture(lecture);
+    for (var i = 0, len = classes.length; i < len; i++) {
+        html += classes[i].disp_class;
+        if (i < len - 1) {
+            html += ", ";
+        }
+    }
+
+    return html;
+}
+
+//講義オブジェクトから教師オブジェクトを取得
+function getTeachersFromLecture(lecture) {
+    var teachers = [];
+    datas.teachers.forEach(x => {
+        if (lecture.teachers.indexOf(x.teacher_id) >= 0) {
+            teachers.push(x);
         }
     });
+    return teachers;
+}
+
+//講義オブジェクトからオブジェクトを取得
+function getTeachersFromLecture(lecture) {
+    var teachers = [];
+    datas.teachers.forEach(x => {
+        if (lecture.teachers.indexOf(x.teacher_id) >= 0) {
+            teachers.push(x);
+        }
+    });
+    return teachers;
+}
+
+//講義オブジェクトからクラスオブジェクトを取得
+function getClassesFromLecture(lecture) {
+    var classes = [];
+    datas.classes.forEach(x => {
+        if (lecture.classes.indexOf(x.class_id) >= 0) {
+            classes.push(x);
+        }
+    });
+    return classes;
 }
 
 function dispTeacher() {
