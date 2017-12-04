@@ -60,6 +60,7 @@
     border: 1px solid #000000;    
     /*画面中央に表示して、スクロールに追従する*/
     position: fixed;
+    padding: 5px;
     margin-left: -225px; /* 中央配置する要素の縦幅の半分だけ左にずらす */    
     margin-top: -250px; /* 中央配置する要素の横幅の半分だけ上にずらす */
     top: 50%;  /* 要素の上端を中央に */

@@ -10,7 +10,7 @@ $(function () {
     var table = document.getElementById('mainTable');
     tableManager = new TableManager(table);
     pushButton(0);
-    loadJson(dispTest);
+    //  loadJson(dispTest);
 });
 
 
@@ -38,6 +38,7 @@ function dispVerticalHeadder() {
     }
 }
 
+/*
 //講義表示テスト用関数
 function dispTest() {
     var td = [ //テストデータ
@@ -45,16 +46,21 @@ function dispTest() {
             jigen: 1,
             teachers: [1],
             disp_lecture: "講義１",
+            rooms: [128],
+
         },
         {
             jigen: 2,
             teachers: [2],
             disp_lecture: "講義２",
+            rooms: [128],
+
         },
         {
             jigen: 3,
             teachers: [1, 2],
             disp_lecture: "講義３",
+            rooms: [128],
         },
     ]
     var count = 7;
@@ -70,8 +76,9 @@ function dispTest() {
     }
     tableManager.createTable(count + 1, colCount);
     setupTable();
-    displayTableDatas(testData, td);
+    displayTableDatas(testData, datas.lectures);
 }
+*/
 
 /*テーブルにデータを渡すときに使用する
 type 0 = 講師, type 1 = クラス, type 2 = 部屋
@@ -85,27 +92,26 @@ TableData = function (name, type, id) {
 //講義データを表示する。
 //曜日判定はこの関数では行っていない。
 function displayTableDatas(verData, lectures) {
+    tableManager.createTable(verData.length, colCount);
     var count = 0; //データの表示順にidを割り振るためのカウンタ
     for (var i = 0; i < verData.length; i++) {
         tableManager.insertHTML(i + 1, 0, verData[i].name);
-        
+
         lectures.forEach(x => {
             var findID = false;
-            
-            var check = function (t) { //対応する講義データを持っているか確認する関数
-                if (t == verData[i].id) {
-                    findID = true;
-                }
-            }
+
             switch (verData[i].type) {
-                case 0: x.teachers.forEach(y => check(y));
+                case 0:
+                    findID = x.teachers.indexOf(verData[i].id) >= 0;
                     break;
-                case 1: x.classes.forEach(y => check(y));
+                case 1:
+                    findID = x.classes.indexOf(verData[i].id) >= 0;
                     break;
-                case 2: x.rooms.forEach(y => check(y));
+                case 2:
+                    findID = x.rooms.indexOf(verData[i].id) >= 0;
                     break;
             }
-            
+
             if (findID) {
                 tableManager.appendChild(i + 1, x.jigen, makeLectureObject(count++, x));
             }
@@ -149,15 +155,62 @@ function closeLectureModal() {
 //講義の詳細データを作成する
 function makeLectureContentHTML(lecture) {
     var html = "";
-    html += "<ul>\n";
-    for (var n in lecture) {
-        html += "<li>";
-        html += n + " : " + lecture[n];
-        html += "<br>";
-        html += "</li>";
+    //講義名
+    html += "<h3>" + lecture.disp_lecture + "</h3><br>";
+    //担当
+    html += "担当 ";
+    var teachers = getTeachersFromLecture(lecture);
+    for (var i = 0, len = teachers.length; i < len; i++) {
+        html += teachers[i].disp_teacher;
+        if (i < len - 1) {
+            html += ", ";
+        }
     }
-    html += "</ul>\n";
+    html += "<br>";
+    //クラス
+    html += "対象 ";
+    var classes = getClassesFromLecture(lecture);
+    for (var i = 0, len = classes.length; i < len; i++) {
+        html += classes[i].disp_class;
+        if (i < len - 1) {
+            html += ", ";
+        }
+    }
+
     return html;
+}
+
+//講義オブジェクトから教師オブジェクトを取得
+function getTeachersFromLecture(lecture) {
+    var teachers = [];
+    datas.teachers.forEach(x => {
+        if (lecture.teachers.indexOf(x.teacher_id) >= 0) {
+            teachers.push(x);
+        }
+    });
+    return teachers;
+}
+
+//講義オブジェクトからオブジェクトを取得
+function getTeachersFromLecture(lecture) {
+    var teachers = [];
+    datas.teachers.forEach(x => {
+        if (lecture.teachers.indexOf(x.teacher_id) >= 0) {
+            teachers.push(x);
+        }
+    });
+    return teachers;
+}
+
+//講義オブジェクトからクラスオブジェクトを取得
+function getClassesFromLecture(lecture) {
+    var classes = [];
+    datas.classes.forEach(x => {
+        if (lecture.classes.indexOf(x.class_id) >= 0) {
+            classes.push(x);
+        }
+    });
+    return classes;
 }
 
 function dispTeacher() {
