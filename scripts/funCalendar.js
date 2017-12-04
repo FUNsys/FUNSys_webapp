@@ -67,8 +67,9 @@ function dispTest() {
     dispLecture(testData, datas.lectures);
 }
 
-//テーブルにデータを渡すときに使用する
-//type 0 = 講師, type 1 = クラス, type 2 = 部屋
+/*テーブルにデータを渡すときに使用する
+type 0 = 講師, type 1 = クラス, type 2 = 部屋
+idはそれぞれの名前で与えられているものの数値 ex)teacher_id*/
 TableData = function (type, id) {
     this.type = type;
     this.id = id;
@@ -80,11 +81,11 @@ var displayLectures = []; //現在表示中の講義オブジェクトを格納�
 //曜日判定はこの関数では行っていない。
 function dispLecture(verData, lectures) {
     displayLectures = [];
-    var id = 0; //データの表示順にidを割り振るためのカウンタ
+    var count = 0; //データの表示順にidを割り振るためのカウンタ
+
     for (var i = 0; i < verData.length; i++) {
         lectures.forEach(x => {
             var hasRows = [];
-
             var check = function (t) { //対応する講義データを持っているか確認する関数
                 if (t == verData[i].id) {
                     hasRows.push(i);
@@ -99,7 +100,7 @@ function dispLecture(verData, lectures) {
                     break;
             }
             hasRows.forEach(y => {
-                tableManager.appendChild(y + 1, x.jigen, makeLectureObject(id++, x));
+                tableManager.appendChild(y + 1, x.jigen, makeLectureObject(count++, x));
                 displayLectures.push[x];
             });
         });
@@ -114,7 +115,7 @@ function makeLectureObject(id, lecture) {
     div.id = idtxt;
 
     //講義名をクリックしたときに実行される関数
-    div.onclick = ()=> {
+    div.onclick = () => {
         var mordal = document.getElementById("lectureModal");
         var mordalContent = document.getElementById("lectureModal-content");
         mordalContent.innerHTML = makeLectureContentHTML(lecture);
@@ -123,7 +124,7 @@ function makeLectureObject(id, lecture) {
         mordal.style.display = 'block';
         mordal.classList.add("fadeIn");
         setTimeout(() => {
-           mordal.classList.remove("fadeIn"); 
+            mordal.classList.remove("fadeIn");
         }, 500);
     }
 
@@ -134,7 +135,7 @@ function makeLectureObject(id, lecture) {
 
 function closeLectureModal() {
     var mordal = document.getElementById("lectureModal");
-    
+
     var mordalContent = document.getElementById("lectureModal-content");
     var overlay = document.getElementById("modal-overlay");
     mordal.style.display = 'none';
