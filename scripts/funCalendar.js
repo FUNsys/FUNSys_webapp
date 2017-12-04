@@ -3,8 +3,6 @@ var currentButton = -1;
 var tableColors = ['#ffff00', '#00ff00', '#0000ff', '#4f4f7a', '#88ff00'];
 var buttonIds = ['#btn0', '#btn1', '#btn2', '#btn3', '#btn4'];
 var colCount = 6; //列の数
-var loaded = false;
-
 
 $(function () {
     var table = document.getElementById('mainTable');
@@ -14,20 +12,14 @@ $(function () {
     loadJson(dispTest);
 });
 
-
 //選択中のボタンを引数の番号のボタンに変更
 function pushButton(num) {
     if (currentButton != num) {
         $(buttonIds[currentButton]).removeClass('btn_selected');
         $(buttonIds[num]).addClass('btn_selected');
         currentButton = num;
-        if (loaded) createTable();
+        if (jsonLoaded) dispTest();
     }
-}
-
-//テーブルを作成する
-function createTable(data) {
-    loaded = true;
 }
 
 //縦行の見出しを表示する
@@ -46,36 +38,36 @@ function dispTest() {
         {
             jigen: 1,
             teachers: [1],
+            week: 2,
             disp_lecture: "講義１",
-            rooms: [128],
+            classes: [120],
+            rooms: [1],
 
         },
         {
             jigen: 2,
             teachers: [2],
+            week: 1,
             disp_lecture: "講義２",
-            rooms: [128],
-
+            classes: [120],
+            rooms: [1],
         },
         {
             jigen: 3,
             teachers: [1, 2],
+            week: 2,
             disp_lecture: "講義３",
-            rooms: [128],
+            classes: [120],
+            rooms: [1],
         },
     ]
-    var count = 7;
+    var count = 2;
     var testData = new Array(count);
     for (var i = 0; i < count; i++) {
-        var t = null;
-        if (i % 2 == 0) {
-            t = datas.teachers[0];
-        } else {
-            t = datas.teachers[1];
-        }
-        testData[i] = new TableData(t.disp_teacher, 0, t.teacher_id);
+        testData[i] = new TableData(datas.teachers[i].disp_teacher, 0, datas.teachers[i].teacher_id);
     }
-    displayTableDatas(testData, datas.lectures);
+    displayTableDatas(testData, getCurrentDayLectureData(datas.lectures));
+    // displayTableDatas(testData, getCurrentDayLectureData(td));
 }
 
 /*テーブルにデータを渡すときに使用する
@@ -87,8 +79,18 @@ TableData = function (name, type, id) {
     this.id = id;
 };
 
-//講義データを表示する。
-//曜日判定はこの関数では行っていない。
+//現在の曜日の講義データを取得する
+function getCurrentDayLectureData(lectures) {
+    var newLectures = [];
+    lectures.forEach(x => {
+        if (x.week == currentButton + 1) {
+            newLectures.push(x);
+        }
+    });
+    return newLectures;
+}
+
+//テーブルデータを表示する
 function displayTableDatas(verData, lectures) {
     tableManager.createTable(verData.length + 1, colCount);
     setupTable();
@@ -186,7 +188,7 @@ function makeLectureContentHTML(lecture) {
     html += "<br>";
 
     //日時の表示
-    html += "日時 " + getDateAndTimeFromLecture(lecture);
+    html += "日時 " + getDayAndTimeFromLecture(lecture);
     return html;
 }
 
@@ -221,7 +223,7 @@ function getClassesFromLecture(lecture) {
 }
 
 //講義オブジェクトから日時情報を取得
-function getDateAndTimeFromLecture(lecture) {
+function getDayAndTimeFromLecture(lecture) {
     var weeks = ["月曜", "火曜", "水曜", "木曜", "金曜"];
     var week = weeks[lecture.week - 1];
     return week + lecture.jigen + "限";
