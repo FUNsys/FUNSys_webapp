@@ -11,7 +11,7 @@ $(function () {
     tableManager = new TableManager(table);
     pushButton(0);
 
-   //テスト呼び出し loadJson(dispTest);
+    loadJson(dispTest);
 });
 
 
@@ -41,7 +41,6 @@ function dispVerticalHeadder() {
 
 
 //講義表示テスト用関数
-/*
 function dispTest() {
     var td = [ //テストデータ
         {
@@ -78,7 +77,6 @@ function dispTest() {
     }
     displayTableDatas(testData, datas.lectures);
 }
-*/
 
 /*テーブルにデータを渡すときに使用する
 type 0 = 講師, type 1 = クラス, type 2 = 部屋
@@ -157,28 +155,38 @@ function closeLectureModal() {
 //講義の詳細データを作成する
 function makeLectureContentHTML(lecture) {
     var html = "";
-    //講義名
+    //講義名の表示
     html += "<h3>" + lecture.disp_lecture + "</h3><br>";
-    //担当
+
+    //担当の表示
     html += "担当 ";
     var teachers = getTeachersFromLecture(lecture);
     for (var i = 0, len = teachers.length; i < len; i++) {
         html += teachers[i].disp_teacher;
-        if (i < len - 1) {
-            html += ", ";
-        }
+        if (i < len - 1) html += ", ";
     }
     html += "<br>";
-    //クラス
+
+    //クラスの表示
     html += "対象 ";
     var classes = getClassesFromLecture(lecture);
     for (var i = 0, len = classes.length; i < len; i++) {
         html += classes[i].disp_class;
-        if (i < len - 1) {
-            html += ", ";
-        }
+        if (i < len - 1) html += ", ";
     }
+    html += "<br>";
 
+    //教室の表示
+    html += "教室 ";
+    var rooms = getRoomsFromLecture(lecture);
+    for (var i = 0, len = rooms.length; i < len; i++) {
+        html += rooms[i].disp_room;
+        if (i < len - 1) html += ", ";
+    }
+    html += "<br>";
+
+    //日時の表示
+    html += "日時 " + getDateAndTimeFromLecture(lecture);
     return html;
 }
 
@@ -186,33 +194,37 @@ function makeLectureContentHTML(lecture) {
 function getTeachersFromLecture(lecture) {
     var teachers = [];
     datas.teachers.forEach(x => {
-        if (lecture.teachers.indexOf(x.teacher_id) >= 0) {
+        if (lecture.teachers.indexOf(x.teacher_id) >= 0)
             teachers.push(x);
-        }
     });
     return teachers;
 }
 
-//講義オブジェクトからオブジェクトを取得
-function getTeachersFromLecture(lecture) {
-    var teachers = [];
-    datas.teachers.forEach(x => {
-        if (lecture.teachers.indexOf(x.teacher_id) >= 0) {
-            teachers.push(x);
-        }
+//講義オブジェクトから教室オブジェクトを取得
+function getRoomsFromLecture(lecture) {
+    var rooms = [];
+    datas.rooms.forEach(x => {
+        if (lecture.rooms.indexOf(x.room_id) >= 0)
+            rooms.push(x);
     });
-    return teachers;
+    return rooms;
 }
 
 //講義オブジェクトからクラスオブジェクトを取得
 function getClassesFromLecture(lecture) {
     var classes = [];
     datas.classes.forEach(x => {
-        if (lecture.classes.indexOf(x.class_id) >= 0) {
+        if (lecture.classes.indexOf(x.class_id) >= 0)
             classes.push(x);
-        }
     });
     return classes;
+}
+
+//講義オブジェクトから日時情報を取得
+function getDateAndTimeFromLecture(lecture) {
+    var weeks = ["月曜", "火曜", "水曜", "木曜", "金曜"];
+    var week = weeks[lecture.week - 1];
+    return week + lecture.jigen + "限";
 }
 
 function dispTeacher() {
