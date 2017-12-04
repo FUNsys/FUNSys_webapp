@@ -22,16 +22,6 @@ function pushButton(num) {
     }
 }
 
-//縦行の見出しを表示する
-function dispVerticalHeadder() {
-    tableManager.createTable(datas.rooms.length + 1, colCount);
-    setupTable();
-    for (var i = 0; i < datas.rooms.length; i++) {
-        tableManager.insertHTML(i + 1, 0, datas.rooms[i].disp_room);
-    }
-}
-
-
 //講義表示テスト用関数
 function dispTest() {
     var td = [ //テストデータ
@@ -97,7 +87,9 @@ function displayTableDatas(verData, lectures) {
 
     var count = 0; //データの表示順にidを割り振るためのカウンタ
     for (var i = 0; i < verData.length; i++) {
-        tableManager.insertHTML(i + 1, 0, verData[i].name);
+        //縦列見出しの表示
+        var vCell = tableManager.getCell(i + 1, 0);
+        vCell.innerHTML = verData[i].name;
 
         lectures.forEach(x => {
             var findID = false;
@@ -113,9 +105,9 @@ function displayTableDatas(verData, lectures) {
                     findID = x.rooms.indexOf(verData[i].id) >= 0;
                     break;
             }
-
             if (findID) {
-                tableManager.appendChild(i + 1, x.jigen, makeLectureObject(count++, x));
+                var cell = tableManager.getCell(i + 1, x.jigen);
+                cell.appendChild(makeLectureObject(count++, x));
             }
         });
     }
@@ -238,20 +230,11 @@ function getDayAndTimeFromLecture(lecture) {
     return week + lecture.jigen + "限";
 }
 
-function dispTeacher() {
-    tableManager.createTable(datas.teachers.length + 1, colCount);
-    setupTable();
-    for (var i = 0; i < datas.teachers.length; i++) {
-        tableManager.insertHTML(i + 1, 0, datas.teachers[i].disp_teacher);
-        tableManager.addClass(i + 1, 0, "lecture");
-        tableManager.insertHTML(i + 1, 1, datas.teachers[i].research_area);
-    }
-}
-
 //テーブルにデフォルトのレイアウトを適用する
 function setupTable() {
     for (var i = 0; i < tableManager.getColCount() - 1; i++) {
-        tableManager.insertHTML(0, i + 1, i + 1);
-        tableManager.changeCellColor(0, i + 1, tableColors[currentButton]);   //見出し位置の色
+        var cell = tableManager.getCell(0, i + 1);
+        cell.innerHTML = i + 1;
+        cell.style.background = tableColors[currentButton];   //見出し位置の色
     }
 }

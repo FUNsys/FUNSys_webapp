@@ -19,50 +19,9 @@ TableManager.prototype.createTable = function (rowCount, colCount) {
   }
 }
 
-
-TableManager.prototype.appendChild = function (row, col, value) {
-  var cell = this.table.rows[row].cells[col];
-  cell.appendChild(value);
-}
-
-TableManager.prototype.addClass = function (row, col, value) {
-  var cell = this.table.rows[row].cells[col];
-  cell.classList.add(value);
-}
-
-TableManager.prototype.hasClass = function (row, col, value) {
-  var cell = this.table.rows[row].cells[col];
-  return cell.classList.contains(value);
-}
-
-TableManager.prototype.removeClass = function (row, col, value) {
-  var cell = this.table.rows[row].cells[col];
-  cell.classList.remove(value);
-}
-
-
-// テーブルの指定したセルにHTMLを挿入する
-TableManager.prototype.insertHTML = function (row, col, value) {
-  var cell = this.table.rows[row].cells[col];
-  cell.innerHTML = value;
-}
-
-// テーブルの指定したセルにHTMLを追加する
-TableManager.prototype.addHTML = function (row, col, value) {
-  var cell = this.table.rows[row].cells[col];
-  cell.innerHTML += value;
-}
-
-//テーブルの指定したセルのHTMLを削除する
-TableManager.prototype.deleteHTML = function (row, col) {
-  var cell = this.table.rows[row].cells[col];
-  cell.innerHTML = "";
-}
-
-//テーブルの指定したセルの色を変更する
-TableManager.prototype.changeCellColor = function (row, col, value) {
-  var cell = this.table.rows[row].cells[col];
-  cell.style.backgroundColor = value;
+//テーブルのセルを取得する
+TableManager.prototype.getCell= function (row,col) {
+  return this.table.rows[row].cells[col];
 }
 
 //テーブルの行数を返す
