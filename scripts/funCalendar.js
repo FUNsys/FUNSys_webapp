@@ -40,55 +40,61 @@ function dispVerticalHeadder() {
 
 //講義表示テスト用関数
 function dispTest() {
-    var count = 7;
     var td = [ //テストデータ
         {
             jigen: 1,
-            teachers: [1, 2],
+            teachers: [1],
             disp_lecture: "講義１",
         },
         {
-            jigen: 1,
-            teachers: [1, 2],
+            jigen: 2,
+            teachers: [2],
             disp_lecture: "講義２",
         },
         {
-            jigen: 1,
+            jigen: 3,
             teachers: [1, 2],
             disp_lecture: "講義３",
         },
     ]
+    var count = 7;
     var testData = new Array(count);
     for (var i = 0; i < count; i++) {
-        testData[i] = new TableData(0, 1);
+        var t = null;
+        if (i % 2 == 0) {
+            t = datas.teachers[0];
+        } else {
+            t = datas.teachers[1];
+        }
+        testData[i] = new TableData(t.disp_teacher, 0, t.teacher_id);
     }
-    tableManager.createTable(10, colCount);
+    tableManager.createTable(count + 1, colCount);
     setupTable();
-    dispLecture(testData, datas.lectures);
+    displayTableDatas(testData, td);
 }
 
 /*テーブルにデータを渡すときに使用する
 type 0 = 講師, type 1 = クラス, type 2 = 部屋
 idはそれぞれの名前で与えられているものの数値 ex)teacher_id*/
-TableData = function (type, id) {
+TableData = function (name, type, id) {
+    this.name = name;
     this.type = type;
     this.id = id;
 };
 
-var displayLectures = []; //現在表示中の講義オブジェクトを格納しておくクラス
-
 //講義データを表示する。
 //曜日判定はこの関数では行っていない。
-function dispLecture(verData, lectures) {
-    displayLectures = [];
+function displayTableDatas(verData, lectures) {
     var count = 0; //データの表示順にidを割り振るためのカウンタ
-
     for (var i = 0; i < verData.length; i++) {
+        tableManager.insertHTML(i + 1, 0, verData[i].name);
+        
         lectures.forEach(x => {
-            var hasRows = [];
+            var findID = false;
+            
             var check = function (t) { //対応する講義データを持っているか確認する関数
                 if (t == verData[i].id) {
-                    hasRows.push(i);
+                    findID = true;
                 }
             }
             switch (verData[i].type) {
@@ -99,10 +105,10 @@ function dispLecture(verData, lectures) {
                 case 2: x.rooms.forEach(y => check(y));
                     break;
             }
-            hasRows.forEach(y => {
-                tableManager.appendChild(y + 1, x.jigen, makeLectureObject(count++, x));
-                displayLectures.push[x];
-            });
+            
+            if (findID) {
+                tableManager.appendChild(i + 1, x.jigen, makeLectureObject(count++, x));
+            }
         });
     }
 }
@@ -123,9 +129,6 @@ function makeLectureObject(id, lecture) {
         overlay.style.display = "block";
         mordal.style.display = 'block';
         mordal.classList.add("fadeIn");
-        setTimeout(() => {
-            mordal.classList.remove("fadeIn");
-        }, 500);
     }
 
     //講義名でボタンを作成する
