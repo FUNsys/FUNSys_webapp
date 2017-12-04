@@ -126,17 +126,20 @@ function makeLectureObject(id, lecture) {
     var idtxt = "lecture-" + id; //講義の表示順に個別のidを振る
     var div = document.createElement('div');
     div.classList.add("lecture");
+    div.classList.add('link');
     div.id = idtxt;
 
     //講義名をクリックしたときに実行される関数
     div.onclick = () => {
-        var mordal = document.getElementById("lectureModal");
-        var mordalContent = document.getElementById("lectureModal-content");
-        mordalContent.innerHTML = makeLectureContentHTML(lecture);
+        var modal = document.getElementById("lectureModal");
+        var modalContent = document.getElementById("lectureModal-content");
+
+        //mordalContent.innerHTML = makeLectureContentHTML(lecture);
+        appendLectureContentHTML(lecture, modalContent);
         var overlay = document.getElementById("modal-overlay");
         overlay.style.display = "block";
-        mordal.style.display = 'block';
-        mordal.classList.add("fadeIn");
+        modal.style.display = 'block';
+        modal.classList.add("fadeIn");
     }
 
     //講義名でボタンを作成する
@@ -144,6 +147,7 @@ function makeLectureObject(id, lecture) {
     return div;
 }
 
+//講義のモーダルウィンドウを閉じる
 function closeLectureModal() {
     var mordal = document.getElementById("lectureModal");
 
@@ -154,42 +158,47 @@ function closeLectureModal() {
     overlay.style.display = 'none';
 }
 
-//講義の詳細データを作成する
-function makeLectureContentHTML(lecture) {
-    var html = "";
-    //講義名の表示
-    html += "<h3>" + lecture.disp_lecture + "</h3><br>";
+//講義の詳細データを付け足す
+function appendLectureContentHTML(lecture, parent) {
+    //講義名を表示
+    parent.innerHTML += "<h3>" + lecture.disp_lecture + "</h3>";
+    parent.innerHTML += '<br>';
 
-    //担当の表示
-    html += "担当 ";
+    //担当を表示
+    parent.innerHTML += "担当 ";
     var teachers = getTeachersFromLecture(lecture);
     for (var i = 0, len = teachers.length; i < len; i++) {
-        html += teachers[i].disp_teacher;
-        if (i < len - 1) html += ", ";
+        var teacherLink = document.createElement('span');
+        teacherLink.classList.add('link');
+        teacherLink.innerHTML += teachers[i].disp_teacher;
+        parent.appendChild(teacherLink);
+        parent.onclick += () => {
+            /**/
+        }
+        if (i < len - 1) parent.innerHTML += ", ";
     }
-    html += "<br>";
+    parent.innerHTML += '<br>';
 
-    //クラスの表示
-    html += "対象 ";
+    //クラスを表示
+    parent.innerHTML += "対象 ";
     var classes = getClassesFromLecture(lecture);
     for (var i = 0, len = classes.length; i < len; i++) {
-        html += classes[i].disp_class;
-        if (i < len - 1) html += ", ";
+        parent.innerHTML += classes[i].disp_class;
+        if (i < len - 1) parent.innerHTML += ", ";
     }
-    html += "<br>";
+    parent.innerHTML += '<br>';
 
-    //教室の表示
-    html += "教室 ";
+    //教室を表示
+    parent.innerHTML += "教室 ";
     var rooms = getRoomsFromLecture(lecture);
     for (var i = 0, len = rooms.length; i < len; i++) {
-        html += rooms[i].disp_room;
-        if (i < len - 1) html += ", ";
+        parent.innerHTML += rooms[i].disp_room;
+        if (i < len - 1) parent.innerHTML += ", ";
     }
-    html += "<br>";
+    parent.innerHTML += '<br>';
 
-    //日時の表示
-    html += "日時 " + getDayAndTimeFromLecture(lecture);
-    return html;
+    //日時を表示
+    parent.innerHTML += "日時 " + getDayAndTimeFromLecture(lecture);
 }
 
 //講義オブジェクトから教師オブジェクトを取得

@@ -34,7 +34,13 @@
 }
 
 
-/*===表内に表示される講義データ===*/
+/*リンク文字列の上にマウスが乗ったときのスタイル*/
+.link:hover{
+    cursor: pointer;
+    color : #ff0000 !important;
+}
+
+/*表内に表示される講義データ*/
 .lecture {
   color : #000;
 
@@ -43,13 +49,6 @@
   text-overflow:ellipsis;
   white-space: nowrap;
 }
-
-/*講義名の上にマウスが乗ったときのスタイル*/
-.lecture:hover{
-    cursor: pointer;
-    color : #ff0000;
-}
-/*===============================*/
 
 /*===講義詳細ウィンドウ===*/
 #lectureModal{
@@ -106,7 +105,6 @@
     height: 60px;
 }
 
-
 /*曜日選択ボタン*/
 .btn {
     display: inline-block;
@@ -124,7 +122,6 @@
     border-bottom: solid 3px #bd6565;
     transition: .4s;
 }
-
 
 /*ボタンの色を指定する
  0 = 月曜日 ... 4 = 金曜日 */
@@ -148,14 +145,12 @@
     background-color: rgb(136, 255, 0);
 }
 
-
 /*選択されたボタンを大きく表示する*/
 .btn_selected {
     width: 60px;
     height: 60px;
     line-height: 60px;
 }
-
 
 /*ボタンを押したときにアニメーションする*/
 .btn:active {
