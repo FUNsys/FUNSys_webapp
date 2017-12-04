@@ -10,7 +10,8 @@ $(function () {
     var table = document.getElementById('mainTable');
     tableManager = new TableManager(table);
     pushButton(0);
-    //  loadJson(dispTest);
+
+   //テスト呼び出し loadJson(dispTest);
 });
 
 
@@ -38,8 +39,9 @@ function dispVerticalHeadder() {
     }
 }
 
-/*
+
 //講義表示テスト用関数
+/*
 function dispTest() {
     var td = [ //テストデータ
         {
@@ -74,8 +76,6 @@ function dispTest() {
         }
         testData[i] = new TableData(t.disp_teacher, 0, t.teacher_id);
     }
-    tableManager.createTable(count + 1, colCount);
-    setupTable();
     displayTableDatas(testData, datas.lectures);
 }
 */
@@ -92,7 +92,9 @@ TableData = function (name, type, id) {
 //講義データを表示する。
 //曜日判定はこの関数では行っていない。
 function displayTableDatas(verData, lectures) {
-    tableManager.createTable(verData.length, colCount);
+    tableManager.createTable(verData.length + 1, colCount);
+    setupTable();
+
     var count = 0; //データの表示順にidを割り振るためのカウンタ
     for (var i = 0; i < verData.length; i++) {
         tableManager.insertHTML(i + 1, 0, verData[i].name);

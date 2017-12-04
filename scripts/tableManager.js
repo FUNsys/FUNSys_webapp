@@ -1,5 +1,4 @@
-//テーブルを管理するクラス（あまり意味がなかったかも）
-
+//テーブルを管理するクラス
 TableManager = function (tableObj) {
   this.table = tableObj;
 };
