@@ -1,18 +1,31 @@
 <!DOCTYPE html>
+
 <head>
     <meta charset="utf-8">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script type="text/javascript" src="./scripts/tableManager.js"></script>
-    <script type="text/javascript" src="./scripts/jsonread.js"></script>    
+    <script type="text/javascript" src="./scripts/jsonread.js"></script>
     <script type="text/javascript" src="./scripts/funCalendar.js"></script>
 
-    <link rel ="stylesheet" type = "text/css" href = "./css/main.css">
+    <link rel="stylesheet" type="text/css" href="./css/main.css">
     <title>FUNカレンダー </title>
 </head>
 
 <body>
     <h1>FUNカレンダー</h1>
-    <button>設定</button>
+    <p>
+        <button id="modal-open" class="button-link">設定</button>
+    </p>
+    <div id="modal-content">
+        <p>
+            <a id="modal-close" class="button-link">閉じる</a>
+        </p>
+        <select id='settings'>
+            <option value=0>講師</option>
+            <option value=1>クラス</option>
+            <option value=2>部屋</option>
+        </select>
+    </div>
     <br>
     <br>
     <div class="btnroot">
@@ -34,9 +47,9 @@
     </div>
 
     <table id="mainTable">
-        <!--見出し行-->
+        <!--見???し??-->
         <tr bgcolor="#dcfa64">
-            <th class ="white"> </th>
+            <th class="white"> </th>
             <th>1</th>
             <th>2</th>
             <th>3</th>

@@ -1,5 +1,5 @@
 *  {
-    font-family: "游ゴシック体", "Yu Gothic"; 
+    font-family: "游ゴシ�?ク�?", "Yu Gothic"; 
 }
 
 .white {
@@ -7,13 +7,13 @@
 }
 
 #mainTable {
-    width: 620px; /*表全体の横幅*/
+    width: 620px; /*表全体�?�横�?*/
     empty-cells: show; /*空白セルを表示する*/
     table-layout: fixed; 
-    border-collapse: collapse; /*隣接する枠線の結合*/
+    border-collapse: collapse; /*隣接する�?線�?�結合*/
 }
 
-/*見出し*/
+/*見�?��?*/
 #mainTable th {
     text-align: center; 
     padding: 5px; 
@@ -21,22 +21,22 @@
     border: 1px solid #000000; 
 }
 
-/*表要素*/
+/*表要�?*/
 #mainTable td {
-    text-align: left; /*左寄せ*/
-    vertical-align: top; /*上寄せ*/
-    font-size: 80%; /*セル内のフォントサイズ*/
+    text-align: left; /*左�?�?*/
+    vertical-align: top; /*上�?�?*/
+    font-size: 80%; /*セル�?のフォントサイズ*/
     padding : 5px; 
-    height : 40px; /*セルごとの縦幅*/
+    height : 40px; /*セルごとの縦�?*/
     border: 1px solid #000000; 
 }
 
-/*表内に表示される講義データ*/
+/*表�?に表示される講義�?ータ*/
 .lecture{
-    /*未実装*/
+    /*未実�?*/
 }
 
-/*曜日選択ボタンの親*/
+/*曜日選択�?�タンの親*/
 .btnroot {
     position: relative; 
     left: 320px; 
@@ -44,7 +44,7 @@
     height: 60px; 
 }
 
-/*曜日選択ボタン*/
+/*曜日選択�?�タン*/
 .btn {
     display: inline-block; 
     text-decoration: none; 
@@ -62,7 +62,7 @@
     transition: .4s; 
 }
 
-/*ボタンの色を指定する
+/*ボタンの色を指定す�?
  0 = 月曜日 ... 4 = 金曜日 */
 #btn0 {
     background-color: rgb(255, 255, 0); 
@@ -97,3 +97,39 @@
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.15); 
     border-bottom: none; 
 }
+
+#modal-content{
+	width:50%;
+	margin:1.5em auto 0;
+	padding:10px 20px;
+	border:2px solid #aaa;
+	background:#fff;
+    z-index:2;
+    position: fixed;
+    display: none;
+}
+
+.modal-p{
+	margin-top:1em;
+}
+
+.modal-p:first-child{
+	margin-top:0;
+}
+
+.button-link:hover{
+	cursor:pointer;
+	color:#f00;
+}
+
+#modal-overlay{
+	z-index:1;
+	display:none;
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:120%;
+	background-color:rgba(0,0,0,0.75);
+}
+

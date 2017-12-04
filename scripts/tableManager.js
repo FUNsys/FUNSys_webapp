@@ -1,17 +1,17 @@
-//テーブルを管理するクラス（あまり意味がなかったかも）
+//�?ーブルを管�?するクラス?��あまり意味がなかったかも�?
 
 TableManager = function (tableObj) {
   this.table = tableObj;
 };
 
-// 現在の表を破棄して空の表を作成する
+// 現在の表を�?��?して空の表を作�?�す�?
 TableManager.prototype.createTable = function (rowCount, colCount) {
   this.table.innerHTML = '';
   for (var i = 0; i < rowCount; i++) {
     var row = this.table.insertRow(-1);
     for (var j = 0; j < colCount; j++) {
       if (i == 0 || j == 0) {
-        //０行目&０列目は見出し行とする
+        //?��行目&?���?�目は見�?�し行とする
         row.innerHTML += "<th></th>";
       } else {
         var cell = row.insertCell(-1);
@@ -38,30 +38,30 @@ TableManager.prototype.removeClass = function (row, col, value) {
 }
 
 
-// テーブルの指定したセルにHTMLを挿入する
+// �?ーブルの�?定したセルにHTMLを挿入する
 TableManager.prototype.insertHTML = function (row, col, value) {
   var cell = this.table.rows[row].cells[col];
   cell.innerHTML = value;
 }
 
-//テーブルの指定したセルのHTMLを削除する
+//�?ーブルの�?定したセルのHTMLを削除する
 TableManager.prototype.deleteHTML = function (row, col) {
   var cell = this.table.rows[row].cells[col];
   cell.innerHTML = "";
 }
 
-//テーブルの指定したセルの色を変更する
+//�?ーブルの�?定したセルの色を変更する
 TableManager.prototype.changeCellColor = function (row, col, value) {
   var cell = this.table.rows[row].cells[col];
   cell.style.backgroundColor = value;
 }
 
-//テーブルの行数を返す
+//�?ーブルの行数を返す
 TableManager.prototype.getRowCount = function () {
   return this.table.rows.length;
 }
 
-//テーブルの列数を返す(テーブルの形状によっては正確でない場合あり）
+//�?ーブルの列数を返す(�?ーブルの形状によっては正確でな�?場合あり�?
 TableManager.prototype.getColCount = function () {
   return this.table.rows[0].cells.length;
 }
