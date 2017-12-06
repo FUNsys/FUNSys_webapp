@@ -4,11 +4,13 @@ var tableColors = ['#ffff00', '#00ff00', '#0000ff', '#4f4f7a', '#88ff00'];
 var buttonIds = ['#btn0', '#btn1', '#btn2', '#btn3', '#btn4'];
 var colCount = 6; //列の数
 
+
 $(function () {
     var table = document.getElementById('mainTable');
     tableManager = new TableManager(table);
     pushButton(0);
 
+    createPopup();
     loadJson(dispTest);
 });
 
@@ -22,42 +24,20 @@ function pushButton(num) {
     }
 }
 
+//ポップアップを作成する
+function createPopup() {
+    var p = document.createElement('div');
+    p.id = "popup";
+    document.body.appendChild(p);
+}
+
 //講義表示テスト用関数
 function dispTest() {
-    var td = [ //テストデータ
-        {
-            jigen: 1,
-            teachers: [1],
-            week: 2,
-            disp_lecture: "講義１",
-            classes: [120],
-            rooms: [1],
-
-        },
-        {
-            jigen: 2,
-            teachers: [2],
-            week: 1,
-            disp_lecture: "講義２",
-            classes: [120],
-            rooms: [1],
-        },
-        {
-            jigen: 3,
-            teachers: [1, 2],
-            week: 2,
-            disp_lecture: "講義３",
-            classes: [120],
-            rooms: [1],
-        },
-    ]
-    var count = 2;
-    var testData = new Array(count);
-    for (var i = 0; i < count; i++) {
+    var testData = new Array(datas.teachers.length);
+    for (var i = 0; i < datas.teachers.length; i++) {
         testData[i] = new TableData(datas.teachers[i].disp_teacher, 0, datas.teachers[i].teacher_id);
     }
     displayTableDatas(testData, getCurrentDayLectureData(datas.lectures));
-    // displayTableDatas(testData, getCurrentDayLectureData(td));
 }
 
 /*テーブルにデータを渡すときに使用する
@@ -90,6 +70,12 @@ function displayTableDatas(verData, lectures) {
         //縦列見出しの表示
         var vCell = tableManager.getCell(i + 1, 0);
         vCell.innerHTML = verData[i].name;
+        if (verData[i].type == 0) {
+            vCell.classList.add('link');
+            (function (num) {
+                vCell.onclick = function (e) { displayTeacher(verData[num].id, e); }
+            })(i);
+        }
 
         lectures.forEach(x => {
             var findID = false;
@@ -113,6 +99,15 @@ function displayTableDatas(verData, lectures) {
     }
 }
 
+//テーブルにデフォルトのレイアウトを適用する
+function setupTable() {
+    for (var i = 0; i < tableManager.getColCount() - 1; i++) {
+        var cell = tableManager.getCell(0, i + 1);
+        cell.innerHTML = i + 1;
+        cell.style.background = tableColors[currentButton];   //見出し位置の色
+    }
+}
+
 //表内に挿入する講義データを作成する
 function makeLectureObject(id, lecture) {
     var idtxt = "lecture-" + id; //講義の表示順に個別のidを振る
@@ -125,8 +120,6 @@ function makeLectureObject(id, lecture) {
     div.onclick = () => {
         var modal = document.getElementById("lectureModal");
         var modalContent = document.getElementById("lectureModal-content");
-
-        //mordalContent.innerHTML = makeLectureContentHTML(lecture);
         appendLectureContentHTML(lecture, modalContent);
         var overlay = document.getElementById("modal-overlay");
         overlay.style.display = "block";
@@ -141,13 +134,54 @@ function makeLectureObject(id, lecture) {
 
 //講義のモーダルウィンドウを閉じる
 function closeLectureModal() {
-    var mordal = document.getElementById("lectureModal");
-
-    var mordalContent = document.getElementById("lectureModal-content");
+    var modal = document.getElementById("lectureModal");
+    var modalContent = document.getElementById("lectureModal-content");
     var overlay = document.getElementById("modal-overlay");
-    mordal.style.display = 'none';
-    mordalContent.innerHTML = "";
+    modal.style.display = 'none';
+    modalContent.innerHTML = "";
     overlay.style.display = 'none';
+}
+
+//ポップアップウィンドウを表示する
+function displayPopup(html, event) {
+    var p = document.getElementById("popup");
+    p.innerHTML = html;
+    p.style.display = "block";
+    p.style.left = event.pageX - 10 + "px";
+    p.style.top = event.pageY - 10 + "px";
+    window.addEventListener('click', closePopup);
+}
+
+//ポップアップウィンドウ外をクリックされたときウィンドウを閉じる
+function closePopup(event) {
+    var p = document.getElementById('popup');
+    var point = document.elementFromPoint(event.pageX, event.pageY);
+    if (p != point) {
+        p.innerHTML = "";
+        p.style.display = "none";
+        window.removeEventListener('click', closePopup);
+    }
+}
+
+//教師の詳細情報を表示する
+function displayTeacher(id, event) {
+    var teacher = null;
+    datas.teachers.forEach(x => {
+        if (x.teacher_id == id) {
+            teacher = x;
+        }
+    });
+    var html = "";
+    if (teacher != null) {
+        for (var t in teacher) {
+            if (html != null) {
+                html += "<br>";
+            }
+            html += t + " : " + teacher[t];
+
+        }
+    }
+    displayPopup(html, event);
 }
 
 //講義の詳細データを付け足す
@@ -160,13 +194,25 @@ function appendLectureContentHTML(lecture, parent) {
     parent.innerHTML += "担当 ";
     var teachers = getTeachersFromLecture(lecture);
     for (var i = 0, len = teachers.length; i < len; i++) {
+        //担当教師の情報を埋め込む
         var teacherLink = document.createElement('span');
+        teacherLink.id = "teacherLink" + i;
         teacherLink.classList.add('link');
         teacherLink.innerHTML += teachers[i].disp_teacher;
+
+        /*onclickイベントに直接関数を与えても動作しないようなので、
+        親の要素のクリックイベントからidで探索している*/
+        (function (num) {
+            parent.addEventListener('click', function (event) {
+                var point = document.elementFromPoint(event.pageX, event.pageY);
+                if (point.id == "teacherLink" + num) {
+                    displayTeacher(teachers[num].teacher_id, event);
+                }
+            });
+        })(i);
+
         parent.appendChild(teacherLink);
-        parent.onclick += () => {
-            /**/
-        }
+
         if (i < len - 1) parent.innerHTML += ", ";
     }
     parent.innerHTML += '<br>';
@@ -179,6 +225,24 @@ function appendLectureContentHTML(lecture, parent) {
         if (i < len - 1) parent.innerHTML += ", ";
     }
     parent.innerHTML += '<br>';
+
+    //必修,選択情報を表示
+    var must = "";
+    var select = "";
+    for (var t in lecture.must) {
+        switch (lecture.must[t]) {
+            case "必修":
+                must += (must == "") ? t : ", " + t;
+                break;
+            case "選択":
+                select += (select == "") ? t : ", " + t;
+                break;
+        }
+    }
+    parent.innerHTML += "必修 " + must;
+    parent.innerHTML += "<br>";
+    parent.innerHTML += "選択 " + select;
+    parent.innerHTML += "<br>";
 
     //教室を表示
     parent.innerHTML += "教室 ";
@@ -228,13 +292,4 @@ function getDayAndTimeFromLecture(lecture) {
     var weeks = ["月曜", "火曜", "水曜", "木曜", "金曜"];
     var week = weeks[lecture.week - 1];
     return week + lecture.jigen + "限";
-}
-
-//テーブルにデフォルトのレイアウトを適用する
-function setupTable() {
-    for (var i = 0; i < tableManager.getColCount() - 1; i++) {
-        var cell = tableManager.getCell(0, i + 1);
-        cell.innerHTML = i + 1;
-        cell.style.background = tableColors[currentButton];   //見出し位置の色
-    }
 }
