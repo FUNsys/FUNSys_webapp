@@ -9,7 +9,6 @@ $(function () {
     var table = document.getElementById('mainTable');
     tableManager = new TableManager(table);
     pushButton(0);
-
     createPopup();
     loadJson(dispTest);
 });
@@ -33,10 +32,10 @@ function createPopup() {
 
 //講義表示テスト用関数
 function dispTest() {
-    var testData = new Array(datas.teachers.length);
-    for (var i = 0; i < datas.teachers.length; i++) {
-        testData[i] = new TableData(datas.teachers[i].disp_teacher, 0, datas.teachers[i].teacher_id);
-    }
+    var testData = [];
+    datas.classes.forEach(x => {
+        testData.push(new TableData(x.disp_class, 1, x.class_id));
+    });
     displayTableDatas(testData, getCurrentDayLectureData(datas.lectures));
 }
 
@@ -51,13 +50,7 @@ TableData = function (name, type, id) {
 
 //現在の曜日の講義データを取得する
 function getCurrentDayLectureData(lectures) {
-    var newLectures = [];
-    lectures.forEach(x => {
-        if (x.week == currentButton + 1) {
-            newLectures.push(x);
-        }
-    });
-    return newLectures;
+    return lectures.filter(x => x.week == currentButton + 1);
 }
 
 //テーブルデータを表示する
@@ -70,6 +63,7 @@ function displayTableDatas(verData, lectures) {
         //縦列見出しの表示
         var vCell = tableManager.getCell(i + 1, 0);
         vCell.innerHTML = verData[i].name;
+        //縦列が教員の場合、教員情報を挿入する
         if (verData[i].type == 0) {
             vCell.classList.add('link');
             (function (num) {
@@ -79,7 +73,6 @@ function displayTableDatas(verData, lectures) {
 
         lectures.forEach(x => {
             var findID = false;
-
             switch (verData[i].type) {
                 case 0:
                     findID = x.teachers.indexOf(verData[i].id) >= 0;
@@ -165,12 +158,8 @@ function closePopup(event) {
 
 //教師の詳細情報を表示する
 function displayTeacher(id, event) {
-    var teacher = null;
-    datas.teachers.forEach(x => {
-        if (x.teacher_id == id) {
-            teacher = x;
-        }
-    });
+    var teacher = datas.teachers.find(x => x.teacher_id == id);
+
     var html = "";
     //氏名の表示
     html += "氏名 : " + teacher.disp_teacher + "(" + teacher.roma_name + ")";
@@ -186,6 +175,7 @@ function displayTeacher(id, event) {
 
     //所属の表示
     html += "所属学科 : " + teacher.role;
+
     displayPopup(html, event);
 }
 
@@ -217,7 +207,6 @@ function appendLectureContentHTML(lecture, parent) {
         })(i);
 
         parent.appendChild(teacherLink);
-
         if (i < len - 1) parent.innerHTML += ", ";
     }
     parent.innerHTML += '<br>';
@@ -264,32 +253,17 @@ function appendLectureContentHTML(lecture, parent) {
 
 //講義オブジェクトから教師オブジェクトを取得
 function getTeachersFromLecture(lecture) {
-    var teachers = [];
-    datas.teachers.forEach(x => {
-        if (lecture.teachers.indexOf(x.teacher_id) >= 0)
-            teachers.push(x);
-    });
-    return teachers;
+    return datas.teachers.filter(x => lecture.teachers.indexOf(x.teacher_id) >= 0);
 }
 
 //講義オブジェクトから教室オブジェクトを取得
 function getRoomsFromLecture(lecture) {
-    var rooms = [];
-    datas.rooms.forEach(x => {
-        if (lecture.rooms.indexOf(x.room_id) >= 0)
-            rooms.push(x);
-    });
-    return rooms;
+    return datas.rooms.filter(x => lecture.rooms.indexOf(x.room_id) >= 0);
 }
 
 //講義オブジェクトからクラスオブジェクトを取得
 function getClassesFromLecture(lecture) {
-    var classes = [];
-    datas.classes.forEach(x => {
-        if (lecture.classes.indexOf(x.class_id) >= 0)
-            classes.push(x);
-    });
-    return classes;
+    return datas.classes.filter(x => lecture.classes.indexOf(x.class_id) >= 0);
 }
 
 //講義オブジェクトから日時情報を取得
