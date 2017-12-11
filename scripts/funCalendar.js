@@ -172,15 +172,20 @@ function displayTeacher(id, event) {
         }
     });
     var html = "";
-    if (teacher != null) {
-        for (var t in teacher) {
-            if (html != null) {
-                html += "<br>";
-            }
-            html += t + " : " + teacher[t];
+    //氏名の表示
+    html += "氏名 " + teacher.disp_teacher + "(" + teacher.roma_name + ")";
+    html += "<br>";
 
-        }
-    }
+    //役職の表示
+    html += "役職 " + teacher.position;
+    html += "<br>";
+
+    //専門分野の表示
+    html += "専門分野 " + teacher.research_area;
+    html += "<br>";
+
+    //所属の表示
+    html += "所属学科 " + teacher.role;
     displayPopup(html, event);
 }
 
