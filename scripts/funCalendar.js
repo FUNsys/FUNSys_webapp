@@ -173,19 +173,19 @@ function displayTeacher(id, event) {
     });
     var html = "";
     //氏名の表示
-    html += "氏名 " + teacher.disp_teacher + "(" + teacher.roma_name + ")";
+    html += "氏名 : " + teacher.disp_teacher + "(" + teacher.roma_name + ")";
     html += "<br>";
 
     //役職の表示
-    html += "役職 " + teacher.position;
+    html += "役職 : " + teacher.position;
     html += "<br>";
 
     //専門分野の表示
-    html += "専門分野 " + teacher.research_area;
+    html += "専門分野 : " + teacher.research_area;
     html += "<br>";
 
     //所属の表示
-    html += "所属学科 " + teacher.role;
+    html += "所属学科 : " + teacher.role;
     displayPopup(html, event);
 }
 
@@ -196,7 +196,7 @@ function appendLectureContentHTML(lecture, parent) {
     parent.innerHTML += '<br>';
 
     //担当を表示
-    parent.innerHTML += "担当 ";
+    parent.innerHTML += "担当 : ";
     var teachers = getTeachersFromLecture(lecture);
     for (var i = 0, len = teachers.length; i < len; i++) {
         //担当教師の情報を埋め込む
@@ -223,7 +223,7 @@ function appendLectureContentHTML(lecture, parent) {
     parent.innerHTML += '<br>';
 
     //クラスを表示
-    parent.innerHTML += "対象 ";
+    parent.innerHTML += "対象 : ";
     var classes = getClassesFromLecture(lecture);
     for (var i = 0, len = classes.length; i < len; i++) {
         parent.innerHTML += classes[i].disp_class;
@@ -244,13 +244,13 @@ function appendLectureContentHTML(lecture, parent) {
                 break;
         }
     }
-    parent.innerHTML += "必修 " + must;
+    parent.innerHTML += "必修 : " + must;
     parent.innerHTML += "<br>";
-    parent.innerHTML += "選択 " + select;
+    parent.innerHTML += "選択 : " + select;
     parent.innerHTML += "<br>";
 
     //教室を表示
-    parent.innerHTML += "教室 ";
+    parent.innerHTML += "教室 : ";
     var rooms = getRoomsFromLecture(lecture);
     for (var i = 0, len = rooms.length; i < len; i++) {
         parent.innerHTML += rooms[i].disp_room;
@@ -259,7 +259,7 @@ function appendLectureContentHTML(lecture, parent) {
     parent.innerHTML += '<br>';
 
     //日時を表示
-    parent.innerHTML += "日時 " + getDayAndTimeFromLecture(lecture);
+    parent.innerHTML += "日時 : " + getDayAndTimeFromLecture(lecture);
 }
 
 //講義オブジェクトから教師オブジェクトを取得
