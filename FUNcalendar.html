@@ -14,7 +14,19 @@
 <body>
 
     <h1>FUNカレンダー</h1>
-    <button>設定</button>
+    <p>
+        <button id="modal-open" class="button-link">設定</button>
+    </p>
+    <div id="modal-content">
+        <p>
+            <a id="modal-close" class="button-link">閉じる</a>
+        </p>
+        <select id='settings'>
+            <option value=0>講師</option>
+            <option value=1>クラス</option>
+            <option value=2>部屋</option>
+        </select>
+    </div>
     <br>
     <br>
     <div class="btnroot">
@@ -36,7 +48,7 @@
     </div>
 
     <table id="mainTable">
-        <!--見出し行-->
+        <!--見出し-->
         <tr bgcolor="#dcfa64">
             <th class="white"> </th>
             <th>1</th>
@@ -157,5 +169,4 @@
         </div>
         <div id="lectureModal-content"></div>
     </div>
-    <div id="modal-overlay"></div>
 </body>
