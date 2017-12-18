@@ -23,7 +23,6 @@ function setupSettingButton() {
     var settingButton = document.getElementById("settingModal-open");
 
     settingButton.onclick = function () {
-        openModalOverlay();
         var settingModalContent = document.getElementById("settingModal-content");
         settingModalContent.style.display = "block";
         settingModalContent.classList.remove("fadeOut");
@@ -31,19 +30,23 @@ function setupSettingButton() {
         setTimeout(() => {
             settingModalContent.classList.remove("fadeIn");
         }, fadeTime);
+
+        openModalOverlay(close);
     }
 
     var settingClose = document.getElementById("settingModal-close");
     settingClose.onclick = function () {
-        var settingModalContent = document.getElementById("settingModal-content");
+        close();
+    }
 
+    function close() {
+        var settingModalContent = document.getElementById("settingModal-content");
         settingModalContent.classList.remove("fadeIn");
         settingModalContent.classList.add("fadeOut");
         setTimeout(() => {
             settingModalContent.classList.remove("fadeOut");
             settingModalContent.style.display = "none";
         }, fadeTime);
-
         closeModalOverlay();
     }
 }
@@ -191,7 +194,7 @@ function openLectureModal(lecture) {
     var modal = document.getElementById("lectureModal");
     var modalContent = document.getElementById("lectureModal-content");
     appendLectureContentHTML(lecture, modalContent);
-    openModalOverlay();
+    openModalOverlay(closeLectureModal);
     modal.style.display = 'block';
     modal.classList.remove("fadeOut");
     modal.classList.add("fadeIn");

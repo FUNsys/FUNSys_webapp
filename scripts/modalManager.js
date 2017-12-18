@@ -1,12 +1,15 @@
 var isOpening = false;
 
-function openModalOverlay() {
+function openModalOverlay(onClickOverlay) {
     if (isOpening) {
         return false;
     }
     var overlay = document.createElement("div");
     overlay.id = 'modal-overlay';
     overlay.style.display = "block";
+    if (onClickOverlay != null) {
+        overlay.onclick = onClickOverlay;
+    }
     document.body.appendChild(overlay);
     isOpening = true;
     return true;
