@@ -30,6 +30,7 @@ function loadJson(callback) {
         datas.classes = arguments[2][0];
         datas.rooms = arguments[3][0];
         jsonLoaded = true;
+
         callback();
     }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
         console.log("ajax通信に失敗しました");
@@ -61,8 +62,64 @@ function getDayAndTimeFromLecture(lecture) {
     return week + lecture.jigen + "限";
 }
 
-//現在の曜日の講義データを取得する
-function getCurrentDayLectureData() {
-    return datas.lectures.filter(x => x.week == currentDay + 1);
+//現在の曜日の講義データを取得
+function getCurrentDayLectureData(day) {
+    return datas.lectures.filter(x => x.week == day + 1);
+}
+
+//すべてのクラスオブジェクトを取得
+function getAllClasses() {
+    return datas.classes;
+}
+
+//学年でクラスオブジェクトを取得
+function getClassesFromYear(year) {
+    return datas.classes.filter(x => getYearFromClass(x) == year);
+}
+
+//複数学年のクラスオブジェクトを取得
+function getClassesFromYears(years) {
+    return datas.classes.filter(x => {
+        for (var i = 0, len = years.length; i < len; i++) {
+            if (getYearFromClass(x) == years[i]) {
+                return true;
+            }
+        }
+        return false;
+    });
+}
+
+//コースからクラスオブジェクトを取得
+function getClassesFromCourse(course) {
+    return datas.classes.filter(x => x.course == course);
+}
+
+//クラスオブジェクトから学年を取得
+function getYearFromClass(target) {
+    var str = target.class_id.toString();
+    var year = str.substring(str.length - 3, str.length - 2);
+    return Number(year);
+}
+
+//すべての講師オブジェクトを取得
+function getAllTeachers() {
+    return datas.teachers;
+}
+
+//所属から講師オブジェクトを取得
+function getTeachersFromRole(role) {
+    return datas.teachers.filter(x => x.role == role);
+}
+
+//複数の所属から講師オブジェクトを取得
+function getTeachersFromRoles(roles) {
+    return datas.teachers.filter(x => {
+        for (var i = 0, len = roles.length; i < len; i++) {
+            if (x.role == roles[i]) {
+                return true;
+            }
+        }
+        return false;
+    });
 }
 

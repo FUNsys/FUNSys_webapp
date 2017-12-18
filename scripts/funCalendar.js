@@ -121,7 +121,7 @@ function pushDayButton(num) {
 
 //テーブル更新関数
 function updateTable() {
-    displayTableDatas(verticalData, getCurrentDayLectureData());
+    displayTableDatas(verticalData, getCurrentDayLectureData(currentDay));
 }
 
 /*テーブルにデータを渡すときに使用する
