@@ -4,13 +4,14 @@ var request = [
     { url: "https://private-anon-7a79af6424-funsys.apiary-mock.com/classes" },
     { url: "https://private-anon-7a79af6424-funsys.apiary-mock.com/rooms" },
 ]
-
 var datas = {
     lectures: null, //講義
     teachers: null, //講師
     classes: null,  //クラス
     rooms: null,    //部屋
 };
+
+var jsonLoaded = false;
 
 function loadJson(callback) {
     var jqXHRList = [];
@@ -28,7 +29,7 @@ function loadJson(callback) {
         datas.teachers = arguments[1][0];
         datas.classes = arguments[2][0];
         datas.rooms = arguments[3][0];
-
+        jsonLoaded = true;
         callback();
     }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
         console.log("ajax通信に失敗しました");
