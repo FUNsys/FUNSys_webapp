@@ -5,14 +5,85 @@ var buttonIds = ['#btn0', '#btn1', '#btn2', '#btn3', '#btn4'];
 var colCount = 6; //列の数
 var loaded = false;
 var verticalData = {};
+var fadeTime = 200;
 
 $(function () {
+    setupSetting();
+    setupSettingButton();
+
     var table = document.getElementById('mainTable');
     tableManager = new TableManager(table);
     pushButton(0);
     createPopup();
     loadJson(updateTable);
 });
+
+//設定ボタンの初期設定
+function setupSettingButton() {
+    var settingButton = document.getElementById("settingModal-open");
+
+    settingButton.onclick = function () {
+        openModalOverlay();
+        var settingModalContent = document.getElementById("settingModal-content");
+        settingModalContent.style.display = "block";
+        settingModalContent.classList.remove("fadeOut");
+        settingModalContent.classList.add("fadeIn");
+        setTimeout(() => {
+            settingModalContent.classList.remove("fadeIn");
+        }, fadeTime);
+    }
+
+    var settingClose = document.getElementById("settingModal-close");
+    settingClose.onclick = function () {
+        var settingModalContent = document.getElementById("settingModal-content");
+
+        settingModalContent.classList.remove("fadeIn");
+        settingModalContent.classList.add("fadeOut");
+        setTimeout(() => {
+            settingModalContent.classList.remove("fadeOut");
+            settingModalContent.style.display = "none";
+        }, fadeTime);
+
+        closeModalOverlay();
+    }
+}
+
+//設定ウィンドウの初期設定
+function setupSetting() {
+    var select = document.getElementById('settings');
+    //IDを参照してselectに格納する
+    select.onchange = function () {//verticalDataのが配列にTableData型のオブジェクトとしてそれぞれデータを格納していく
+        var tables;
+        verticalData = [];
+        if (select.value == 0) {
+            tables = datas.teachers;
+            var len = tables.length;
+            for (var i = 0; i < len; i++) {
+                verticalData[i] = new TableData(tables[i].disp_teacher, select.value, tables[i].teacher_id);
+            }
+        } else if (select.value == 1) {
+            tables = datas.classes;
+            var len = tables.length;
+            for (var i = 0; i < len; i++) {
+                verticalData[i] = new TableData(tables[i].disp_class, select.value, tables[i].class_id);
+            }
+        } else if (select.value == 2) {
+            tables = datas.rooms;
+            var len = tables.length;
+            for (var i = 0; i < len; i++) {
+                verticalData[i] = new TableData(tables[i].disp_room, select.value, tables[i].room_id);
+            }
+        }
+        updateTable();
+    }
+}
+
+//ポップアップを作成する
+function createPopup() {
+    var p = document.createElement('div');
+    p.id = "popup";
+    document.body.appendChild(p);
+}
 
 //選択中のボタンを引数の番号のボタンに変更
 function pushButton(num) {
@@ -24,29 +95,10 @@ function pushButton(num) {
     }
 }
 
-//ポップアップを作成する
-function createPopup() {
-    var p = document.createElement('div');
-    p.id = "popup";
-    document.body.appendChild(p);
-}
-
 //テーブル更新関数
 function updateTable() {
     displayTableDatas(verticalData, getCurrentDayLectureData(datas.lectures));
 }
-
-/*
-//講義表示テスト用関数
-function dispTest() {
-    var testData = [];
-    datas.classes.forEach(x => {
-        testData.push(new TableData(x.disp_class, 1, x.class_id));
-    });
-    
-    displayTableDatas(testData, getCurrentDayLectureData(datas.lectures));
-}
-*/
 
 /*テーブルにデータを渡すときに使用する
 type 0 = 講師, type 1 = クラス, type 2 = 部屋
@@ -56,43 +108,6 @@ TableData = function (name, type, id) {
     this.type = type;
     this.id = id;
 };
-
-$(function () {
-    var select = document.getElementById('settings');
-    //IDを参照してselectに格納する
-    select.onchange = function () {//verticalDataのが配列にTableData型のオブジェクトとしてそれぞれデータを格納していく
-        var tables;
-        verticalData = [];
-        if (select.value == 0) {
-            tables = datas.teachers;
-            var len = tables.length;
-            for (var i = 0; i < len; i++) {
-                verticalData[i] = new TableData(tables[i].disp_teacher, select.value, tables[i].teacher_id);
-                //console.log(verticalData[i]);
-            }
-        } else if (select.value == 1) {
-            tables = datas.classes;
-            var len = tables.length;
-            for (var i = 0; i < len; i++) {
-                verticalData[i] = new TableData(tables[i].disp_class, select.value, tables[i].class_id);
-                //console.log(verticalData[i]);
-            }
-        } else if (select.value == 2) {
-            tables = datas.rooms;
-            var len = tables.length;
-            for (var i = 0; i < len; i++) {
-                verticalData[i] = new TableData(tables[i].disp_room, select.value, tables[i].room_id);
-                //console.log(verticalData[i]);
-            }
-        }
-        updateTable();
-    }
-})
-
-function setTableData() {
-    var selectedItem = this.options[this.selectedIndex];
-    alert(selectedItem.value);
-}
 
 //現在の曜日の講義データを取得する
 function getCurrentDayLectureData(lectures) {
@@ -176,26 +191,27 @@ function openLectureModal(lecture) {
     var modal = document.getElementById("lectureModal");
     var modalContent = document.getElementById("lectureModal-content");
     appendLectureContentHTML(lecture, modalContent);
-    var overlay = document.getElementById("modal-overlay");
-    if (overlay == null) {
-        overlay = document.createElement('div');
-        overlay.id = 'modal-overlay';
-        document.body.appendChild(overlay);
-    }
-    overlay.style.display = "block";
+    openModalOverlay();
     modal.style.display = 'block';
+    modal.classList.remove("fadeOut");
     modal.classList.add("fadeIn");
+    setTimeout(() => {
+        modal.classList.remove("fadeIn");
+    }, fadeTime);
 }
 
 //講義のモーダルウィンドウを閉じる
 function closeLectureModal() {
     var modal = document.getElementById("lectureModal");
     var modalContent = document.getElementById("lectureModal-content");
-    var overlay = document.getElementById("modal-overlay");
-    modal.style.display = 'none';
-    modalContent.innerHTML = "";
-    overlay.style.display = 'none';
-    document.body.removeChild(overlay);
+    closeModalOverlay();
+    modal.classList.remove("fadeIn");
+    modal.classList.add("fadeOut");
+    setTimeout(() => {
+        modal.classList.remove("fadeOut");
+        modalContent.innerHTML = "";
+        modal.style.display = 'none';
+    }, fadeTime);
 }
 
 //ポップアップウィンドウを表示する
@@ -335,69 +351,3 @@ function getDayAndTimeFromLecture(lecture) {
     var week = weeks[lecture.week - 1];
     return week + lecture.jigen + "限";
 }
-
-$(function () {
-    $("#modal-open").click(
-        function () {
-            //[id:modal-open]をクリックしたら起こる処理
-            //キーボード操作などにより、オーバーレイが多重起動するのを防止する
-            $(this).blur();	//ボタンからフォーカスを外す
-            if ($("#modal-overlay")[0]) return false;		//新しくモーダルウィンドウを起動しない [下とどちらか選択]
-            //if($("#modal-overlay")[0]) $("#modal-overlay").remove() ;		//現在のモーダルウィンドウを削除して新しく起動する [上とどちらか選択]
-
-            //オーバーレイ用のHTMLコードを、[body]内の最後に生成する
-            $("body").append('<div id="modal-overlay"></div>');
-
-            //[$modal-overlay]をフェードインさせる
-            $("#modal-overlay").fadeIn("dast");
-            //[$modal-content]をフェードインさせる
-            centeringModalSyncer();
-            $("#modal-content").fadeIn("fast");
-        }
-    );
-    $("#modal-overlay,#modal-close").unbind().click(function () {
-        //[#modal-overlay]、または[#modal-close]をクリックしたら起こる処理
-        //[#modal-overlay]と[#modal-close]をフェードアウトする
-        $("#modal-content,#modal-overlay").fadeOut("fast", function () {
-            //フェードアウト後、[#modal-overlay]をHTML(DOM)上から削除
-            $("#modal-overlay").remove();
-        });
-    });
-
-    // $("#settings").unbind().onchange(function () {
-    //     //[#modal-overlay]と[#modal-close]をフェードアウトする
-    //     $("#modal-content,#modal-overlay").fadeOut("fast", function () {
-    //         //フェードアウト後、[#modal-overlay]をHTML(DOM)上から削除
-    //         $("#modal-overlay").remove();
-    //     });
-    // });
-
-    //センタリングをする関数
-    function centeringModalSyncer() {
-
-        //画面(ウィンドウ)の幅を取得し、変数[w]に格納
-        var w = $(window).width();
-
-        //画面(ウィンドウ)の高さを取得し、変数[h]に格納
-        var h = $(window).height();
-
-        //コンテンツ(#modal-content)の幅を取得し、変数[cw]に格納
-        var cw = $("#modal-content").outerWidth({ margin: true });
-
-        //コンテンツ(#modal-content)の高さを取得し、変数[ch]に格納
-        var ch = $("#modal-content").outerHeight({ margin: true });
-
-        //コンテンツ(#modal-content)を真ん中に配置するのに、左端から何ピクセル離せばいいか？を計算して、変数[pxleft]に格納
-        var pxleft = ((w - cw) / 2);
-
-        //コンテンツ(#modal-content)を真ん中に配置するのに、上部から何ピクセル離せばいいか？を計算して、変数[pxtop]に格納
-        var pxtop = ((h - ch) / 2);
-
-        //[#modal-content]のCSSに[left]の値(pxleft)を設定
-        $("#modal-content").css({ "left": pxleft + "px" });
-
-        //[#modal-content]のCSSに[top]の値(pxtop)を設定
-        $("#modal-content").css({ "top": pxtop + "px" });
-
-    }
-})
