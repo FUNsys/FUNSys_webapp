@@ -8,15 +8,20 @@ var verticalData = {};
 var fadeTime = 200;
 
 $(function () {
-    setupSetting();
-    setupSettingButton();
-
     var table = document.getElementById('mainTable');
     tableManager = new TableManager(table);
+    setupSetting();
+    setupSettingButton();
     pushButton(0);
     createPopup();
-    loadJson(updateTable);
+    loadJson(firstJsonLoaded);
 });
+
+//初めにJsonが呼ばれたとき
+function firstJsonLoaded(){
+    updateSetting();
+    updateTable();
+}
 
 //設定ボタンの初期設定
 function setupSettingButton() {
@@ -55,30 +60,34 @@ function setupSettingButton() {
 function setupSetting() {
     var select = document.getElementById('settings');
     //IDを参照してselectに格納する
-    select.onchange = function () {//verticalDataのが配列にTableData型のオブジェクトとしてそれぞれデータを格納していく
-        var tables;
-        verticalData = [];
-        if (select.value == 0) {
-            tables = datas.teachers;
-            var len = tables.length;
-            for (var i = 0; i < len; i++) {
-                verticalData[i] = new TableData(tables[i].disp_teacher, select.value, tables[i].teacher_id);
-            }
-        } else if (select.value == 1) {
-            tables = datas.classes;
-            var len = tables.length;
-            for (var i = 0; i < len; i++) {
-                verticalData[i] = new TableData(tables[i].disp_class, select.value, tables[i].class_id);
-            }
-        } else if (select.value == 2) {
-            tables = datas.rooms;
-            var len = tables.length;
-            for (var i = 0; i < len; i++) {
-                verticalData[i] = new TableData(tables[i].disp_room, select.value, tables[i].room_id);
-            }
+    select.onchange = updateSetting;
+}
+
+//verticalDataのが配列にTableData型のオブジェクトとしてそれぞれデータを格納していく
+function updateSetting() {
+    var select = document.getElementById('settings');
+    var tables;
+    verticalData = [];
+    if (select.value == 0) {
+        tables = datas.teachers;
+        var len = tables.length;
+        for (var i = 0; i < len; i++) {
+            verticalData[i] = new TableData(tables[i].disp_teacher, select.value, tables[i].teacher_id);
         }
-        updateTable();
+    } else if (select.value == 1) {
+        tables = datas.classes;
+        var len = tables.length;
+        for (var i = 0; i < len; i++) {
+            verticalData[i] = new TableData(tables[i].disp_class, select.value, tables[i].class_id);
+        }
+    } else if (select.value == 2) {
+        tables = datas.rooms;
+        var len = tables.length;
+        for (var i = 0; i < len; i++) {
+            verticalData[i] = new TableData(tables[i].disp_room, select.value, tables[i].room_id);
+        }
     }
+    updateTable();
 }
 
 //ポップアップを作成する
