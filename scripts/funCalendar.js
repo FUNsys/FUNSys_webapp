@@ -1,5 +1,5 @@
 var tableManager = null;
-var currentButton = -1;
+var currentDay = -1;
 var tableColors = ['#ffff00', '#00ff00', '#0000ff', '#4f4f7a', '#88ff00'];
 var buttonIds = ['#btn0', '#btn1', '#btn2', '#btn3', '#btn4'];
 var colCount = 6; //列の数
@@ -10,17 +10,29 @@ var fadeTime = 200;
 $(function () {
     var table = document.getElementById('mainTable');
     tableManager = new TableManager(table);
+    setupDayButton();
     setupSetting();
     setupSettingButton();
-    pushButton(0);
     createPopup();
     loadJson(firstJsonLoaded);
 });
 
 //初めにJsonが呼ばれたとき
-function firstJsonLoaded(){
+function firstJsonLoaded() {
     updateSetting();
     updateTable();
+}
+
+//曜日設定ボタンの初期化
+//ページを開いたとき現在の曜日が選択されるようにする
+function setupDayButton() {
+    var date = new Date();
+    var day = date.getDay();
+    day -= 1; //内部的に月曜日を0として扱っているため、それに揃える 
+    if (day == -1 || day == 5) {
+        day = 0; //土、日曜日の場合は月曜日を選択された状態にする
+    }
+    pushDayButton(day);
 }
 
 //設定ボタンの初期設定
@@ -97,12 +109,12 @@ function createPopup() {
     document.body.appendChild(p);
 }
 
-//選択中のボタンを引数の番号のボタンに変更
-function pushButton(num) {
-    if (currentButton != num) {
-        $(buttonIds[currentButton]).removeClass('btn_selected');
+//選択中の曜日ボタンを引数の番号のボタンに変更
+function pushDayButton(num) {
+    if (currentDay != num) {
+        $(buttonIds[currentDay]).removeClass('btn_selected');
         $(buttonIds[num]).addClass('btn_selected');
-        currentButton = num;
+        currentDay = num;
         if (jsonLoaded) updateTable();
     }
 }
@@ -123,7 +135,7 @@ TableData = function (name, type, id) {
 
 //現在の曜日の講義データを取得する
 function getCurrentDayLectureData(lectures) {
-    return lectures.filter(x => x.week == currentButton + 1);
+    return lectures.filter(x => x.week == currentDay + 1);
 }
 
 //テーブルデータを表示する
@@ -133,7 +145,7 @@ function displayTableDatas(verData, lectures) {
     } else {
         tableManager.createTable(1, colCount);
     }
-    setupTable();
+    setDefaultLayoutToTable();
     var count = 0; //データの表示順にidを割り振るためのカウンタ
     for (var i = 0; i < verData.length; i++) {
         //縦列見出しの表示
@@ -174,11 +186,11 @@ function displayTableDatas(verData, lectures) {
 }
 
 //テーブルにデフォルトのレイアウトを適用する
-function setupTable() {
+function setDefaultLayoutToTable() {
     for (var i = 0; i < tableManager.getColCount() - 1; i++) {
         var cell = tableManager.getCell(0, i + 1);
         cell.innerHTML = i + 1;
-        cell.style.background = tableColors[currentButton];   //見出し位置の色
+        cell.style.background = tableColors[currentDay];   //見出し位置の色
     }
 }
 
