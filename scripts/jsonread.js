@@ -38,3 +38,31 @@ function loadJson(callback) {
         console.log("errorThrown    : " + errorThrown.message);
     });
 }
+
+//講義オブジェクトから教師オブジェクトを取得
+function getTeachersFromLecture(lecture) {
+    return datas.teachers.filter(x => lecture.teachers.indexOf(x.teacher_id) >= 0);
+}
+
+//講義オブジェクトから教室オブジェクトを取得
+function getRoomsFromLecture(lecture) {
+    return datas.rooms.filter(x => lecture.rooms.indexOf(x.room_id) >= 0);
+}
+
+//講義オブジェクトからクラスオブジェクトを取得
+function getClassesFromLecture(lecture) {
+    return datas.classes.filter(x => lecture.classes.indexOf(x.class_id) >= 0);
+}
+
+//講義オブジェクトから日時情報を取得
+function getDayAndTimeFromLecture(lecture) {
+    var weeks = ["月曜", "火曜", "水曜", "木曜", "金曜"];
+    var week = weeks[lecture.week - 1];
+    return week + lecture.jigen + "限";
+}
+
+//現在の曜日の講義データを取得する
+function getCurrentDayLectureData() {
+    return datas.lectures.filter(x => x.week == currentDay + 1);
+}
+
