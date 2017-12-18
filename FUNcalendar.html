@@ -6,150 +6,48 @@
     <script type="text/javascript" src="./scripts/tableManager.js"></script>
     <script type="text/javascript" src="./scripts/jsonread.js"></script>
     <script type="text/javascript" src="./scripts/funCalendar.js"></script>
-
+    <script type="text/javascript" src="./scripts/modalManager.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/fade.css">
     <link rel="stylesheet" type="text/css" href="./css/main.css">
+    <link rel="stylesheet" type="text/css" href="./css/modal.css">
     <title>FUNカレンダー </title>
 </head>
 
 <body>
 
     <h1>FUNカレンダー</h1>
-    <button>設定</button>
-    <br>
-    <br>
+    <p>
+        <button id="settingModal-open" class="button-link">設定</button>
+    </p>
+    <div id="settingModal-content">
+        <p>
+            <a id="settingModal-close" class="button-link">閉じる</a>
+        </p>
+        <select id='settings'>
+            <option value=0>講師</option>
+            <option value=1>クラス</option>
+            <option value=2>部屋</option>
+        </select>
+    </div>
     <div class="btnroot">
-        <div class="btn" id="btn0" onclick="pushButton(0)">
+        <div class="btn" id="btn0" onclick="pushDayButton(0)">
             Mon
         </div>
-        <div class="btn" id="btn1" onclick="pushButton(1)">
+        <div class="btn" id="btn1" onclick="pushDayButton(1)">
             Tue
         </div>
-        <div class="btn" id="btn2" onclick="pushButton(2)">
+        <div class="btn" id="btn2" onclick="pushDayButton(2)">
             Wed
         </div>
-        <div class="btn" id="btn3" onclick="pushButton(3)">
+        <div class="btn" id="btn3" onclick="pushDayButton(3)">
             Thu
         </div>
-        <div class="btn" id="btn4" onclick="pushButton(4)">
+        <div class="btn" id="btn4" onclick="pushDayButton(4)">
             Fri
         </div>
     </div>
 
-    <table id="mainTable">
-        <!--見出し行-->
-        <tr bgcolor="#dcfa64">
-            <th class="white"> </th>
-            <th>1</th>
-            <th>2</th>
-            <th>3</th>
-            <th>4</th>
-            <th>5</th>
-        </tr>
-        <tr>
-            <th>363</th>
-            <td>コミュニケーション</td>
-            <td>コミュニケーション</td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th>364</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th>365</th>
-            <td></td>
-            <td>情報処理演習</td>
-            <td>情報処理演習</td>
-            <td>情報処理演習</td>
-            <td></td>
-        </tr>
-        <tr>
-            <th>484</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th>493</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th>494</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th>495</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th>583</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th>584</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th>585</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th>593</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th>594</th>
-            <td></td>
-            <td>解析学</td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th>595</th>
-            <td></td>
-            <td>解析学</td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-    </table>
+    <table id="mainTable"></table>
     <!--モーダルウィンドウの要素-->
     <div id="lectureModal">
         <div class="lectureModal-button-parent">
@@ -157,5 +55,4 @@
         </div>
         <div id="lectureModal-content"></div>
     </div>
-    <div id="modal-overlay"></div>
 </body>
