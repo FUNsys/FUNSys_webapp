@@ -101,6 +101,12 @@ function getYearFromClass(target) {
     return Number(year);
 }
 
+//クラスオブジェクトから組番号を取得
+function getSetNumFromClass(target) {
+    var str = target.class_id.toString();
+    var setNum = str.substring(str.length - 2, str.length);
+}
+
 //すべての講師オブジェクトを取得
 function getAllTeachers() {
     return datas.teachers;
@@ -123,3 +129,7 @@ function getTeachersFromRoles(roles) {
     });
 }
 
+//すべての教室を取得
+function getAllRooms() {
+    return datas.rooms;
+}

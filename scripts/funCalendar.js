@@ -2,8 +2,29 @@ var tableManager = null;
 var currentDay = -1;
 var tableColors = ['#ffff00', '#00ff00', '#0000ff', '#4f4f7a', '#88ff00'];
 var buttonIds = ['#btn0', '#btn1', '#btn2', '#btn3', '#btn4'];
+
+var roleOptions = {
+    '情報アーキテクチャ学科': '情報アーキテクチャ学科',
+    '複雑系知能学科': '複雑系知能学科',
+    '社会連携センター': '社会連携センター',
+    'メタ学習センター': 'メタ学習センター'
+}
+var classSetOptions = {
+    'A': 1,
+    'B': 2,
+    'C': 3,
+    'D': 4,
+    'E': 5,
+    'F': 6,
+    'G': 7,
+    'H': 8,
+    'I': 9,
+    'J': 10,
+    'K': 11,
+    'L': 12
+}
+
 var colCount = 6; //列の数
-var loaded = false;
 var verticalData = {};
 var fadeTime = 200;
 
@@ -70,36 +91,100 @@ function setupSettingButton() {
 
 //設定ウィンドウの初期設定
 function setupSetting() {
-    var select = document.getElementById('settings');
-    //IDを参照してselectに格納する
+    var select = document.getElementById('filterSetting1');
     select.onchange = updateSetting;
 }
 
-//verticalDataのが配列にTableData型のオブジェクトとしてそれぞれデータを格納していく
+//連想配列からセレクトボックスを作成する
+function createSelectBox(options) {
+    var select = document.createElement('select');
+    for (var o in options) {
+        var option = document.createElement('option');
+        option.innerHTML = o;
+        option.value = options[o];
+        select.appendChild(option);
+    }
+    return select;
+}
+
+//フィルタ設定の更新
 function updateSetting() {
-    var select = document.getElementById('settings');
-    var tables;
+    var settingsTable = document.getElementById('filterSettingsTable');
+    var select = document.getElementById('filterSetting1');
+    var objects = [];
     verticalData = [];
-    if (select.value == 0) {
-        tables = datas.teachers;
-        var len = tables.length;
-        for (var i = 0; i < len; i++) {
-            verticalData[i] = new TableData(tables[i].disp_teacher, select.value, tables[i].teacher_id);
-        }
-    } else if (select.value == 1) {
-        tables = datas.classes;
-        var len = tables.length;
-        for (var i = 0; i < len; i++) {
-            verticalData[i] = new TableData(tables[i].disp_class, select.value, tables[i].class_id);
-        }
-    } else if (select.value == 2) {
-        tables = datas.rooms;
-        var len = tables.length;
-        for (var i = 0; i < len; i++) {
-            verticalData[i] = new TableData(tables[i].disp_room, select.value, tables[i].room_id);
-        }
+    switch (select.value) {
+        case '0':
+            settingsTable.insertRow(-1);
+            var roleSelectBox = document.getElementById("roleSelectBox");
+            if (!roleSelectBox) {
+                roleSelectBox = createSelectBox(roleOptions);
+            }
+            roleSelectBox.id = "roleSelectBox";
+            settingsTable.rows[settingsTable.rows.length - 1].appendChild(roleSelectBox);
+
+            objects = getAllTeachers();
+            for (var i = 0, len = objects.length; i < len; i++) {
+                verticalData[i] = new TableData(objects[i].disp_teacher, select.value, objects[i].teacher_id);
+            }
+            break;
+        case '1':
+            objects = getAllClasses();
+            for (var i = 0, len = objects.length; i < len; i++) {
+                verticalData[i] = new TableData(objects[i].disp_class, select.value, objects[i].class_id);
+            }
+            break;
+        case '2':
+            objects = getAllRooms();
+            for (var i = 0, len = objects.length; i < len; i++) {
+                verticalData[i] = new TableData(objects[i].disp_room, select.value, objects[i].room_id);
+            }
+            break;
+        case '3':
+            objects.push.apply(objects, getAllTeachers());
+            objects.push.apply(objects, getAllClasses());
+            objects.push.apply(objects, getAllRooms());
+
+            objects.push.apply(objects, getAllTeachers());
+            objects.push.apply(objects, getAllClasses());
+            objects.push.apply(objects, getAllRooms());
+
+            for (var i = 0, len = objects.length; i < len; i++) {
+                verticalData[i] = makeTableData(objects[i]);
+            }
+            break;
     }
     updateTable();
+}
+
+//オブジェクトからテーブルデータを作成する
+function makeTableData(object) {
+    var data = null;
+    switch (distinctObjectType(object)) {
+        case 0:
+            data = new TableData(object.disp_teacher, 0, object.teacher_id);
+            break;
+        case 1:
+            data = new TableData(object.disp_class, 1, object.class_id);
+            break;
+        case 2:
+            data = new TableData(object.disp_room, 2, object.room_id);
+            break;
+    }
+    return data;
+}
+
+//引数が、クラス、講師、教室のうちどれであるか判別する
+function distinctObjectType(object) {
+    if (object.teacher_id != null) {
+        return 0;
+    } else if (object.class_id != null) {
+        return 1;
+    } else if (object.room_id != null) {
+        return 2;
+    } else {
+        return -1;
+    }
 }
 
 //ポップアップを作成する
@@ -146,6 +231,7 @@ function displayTableDatas(verData, lectures) {
         //縦列見出しの表示
         var vCell = tableManager.getCell(i + 1, 0);
         vCell.innerHTML = verData[i].name;
+
         //縦列が教員の場合、教員情報を挿入する
         if (verData[i].type == 0) {
             vCell.classList.add('link');
@@ -235,6 +321,8 @@ function closeLectureModal() {
 
 //ポップアップウィンドウを表示する
 function displayPopup(html, event) {
+    //TODO
+    //ポップアップの表示位置がずれるバグを確認
     var p = document.getElementById("popup");
     p.innerHTML = html;
     p.style.display = "block";

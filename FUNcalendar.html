@@ -17,17 +17,27 @@
 
     <h1>FUNカレンダー</h1>
     <p>
-        <button id="settingModal-open" class="button-link">設定</button>
+        <button id="settingModal-open" class="link">設定</button>
     </p>
     <div id="settingModal-content">
-        <p>
-            <a id="settingModal-close" class="button-link">閉じる</a>
-        </p>
-        <select id='settings'>
-            <option value=0>講師</option>
-            <option value=1>クラス</option>
-            <option value=2>部屋</option>
-        </select>
+        <div class="modal-button-parent">
+            <button id="settingModal-close" class="modal-button">閉じる</button>
+        </div>
+
+        <div id="filterSettingsRoot">
+            <table id = "filterSettingsTable">
+                <tr>
+                    <th>
+                        <select id='filterSetting1'>
+                            <option value=0>講師</option>
+                            <option value=1>クラス</option>
+                            <option value=2>部屋</option>
+                            <option value=3>すべて</option>
+                        </select>
+                    </th>
+                </tr>
+            </table>
+        </div>
     </div>
     <div class="btnroot">
         <div class="btn" id="btn0" onclick="pushDayButton(0)">
@@ -50,8 +60,8 @@
     <table id="mainTable"></table>
     <!--モーダルウィンドウの要素-->
     <div id="lectureModal">
-        <div class="lectureModal-button-parent">
-            <button onclick="closeLectureModal()" class="lectureModal-button">閉じる</button>
+        <div class="modal-button-parent">
+            <button onclick="closeLectureModal()" class="modal-button">閉じる</button>
         </div>
         <div id="lectureModal-content"></div>
     </div>

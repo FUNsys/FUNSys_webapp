@@ -2,10 +2,6 @@
   font-family: "游ゴシック体", "Yu Gothic";
 }
 
-.white {
-  background: white;
-}
-
 #mainTable {
   width: 620px;
   /*表全体の横幅*/
@@ -83,21 +79,6 @@
   height: 500px;
 }
 
-.lectureModal-button-parent {
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-
-.lectureModal-button {
-  display: inline-block;
-  text-decoration: none;
-  background: #668ad8;
-  /*ボタン色*/
-  color: #FFF;
-  border-bottom: solid 4px #627295;
-  border-radius: 3px;
-}
 /*=======================*/
 
 /*曜日選択ボタンの親*/
@@ -175,28 +156,55 @@
   border-bottom: none;
 }
 
+/*===設定画面===*/
+
 #settingModal-content {
   border: 2px solid #aaa;
   background: #fff;
   z-index: 2;
   display: none;
-
   /*画面中央に表示して、スクロールに追従する*/
   position: fixed;
   padding: 5px;
-  margin-left: -25%;
+  margin-left: -150px;
   /* 中央配置する要素の縦幅の半分だけ左にずらす */
-  margin-top: -50px;
+  margin-top: -100px;
   /* 中央配置する要素の横幅の半分だけ上にずらす */
   top: 50%;
   /* 要素の上端を中央に */
   left: 50%;
   /* 要素の左端を中央に */
-  width: 50%;
-  height: 100px;
+  width: 300px;
+  height: 200px;
 }
 
-.button-link:hover {
+select {
+  width : 100px;
+  }
+
+#filterSettingsTable {
+  margin-top : 20%;
+  margin-left: 30%;
+}
+
+#filterSettingsRoot {
+  text-align: center;
+}
+
+/*===========*/
+.modal-button-parent {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.modal-button {
   cursor: pointer;
-  color: #f00;
+  display: inline-block;
+  text-decoration: none;
+  background: #668ad8;
+  /*ボタン色*/
+  color: #FFF;
+  border-bottom: solid 4px #627295;
+  border-radius: 3px;
 }
