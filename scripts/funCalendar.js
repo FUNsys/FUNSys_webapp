@@ -1,18 +1,16 @@
 var tableManager = null;
 var currentDay = -1;
-var tableColors = ['#ffff00', '#00ff00', '#0000ff', '#4f4f7a', '#88ff00'];
-var buttonIds = ['#btn0', '#btn1', '#btn2', '#btn3', '#btn4'];
 var colCount = 6; //列の数
-var loaded = false;
 var verticalData = {};
 var fadeTime = 200;
+var selectBoxes = {};
 
 $(function () {
+    var t = window.applicationCache;
     var table = document.getElementById('mainTable');
     tableManager = new TableManager(table);
     setupDayButton();
     setupSetting();
-    setupSettingButton();
     createPopup();
     loadJson(firstJsonLoaded);
 });
@@ -35,71 +33,161 @@ function setupDayButton() {
     pushDayButton(day);
 }
 
-//設定ボタンの初期設定
-function setupSettingButton() {
-    var settingButton = document.getElementById("settingModal-open");
-
-    settingButton.onclick = function () {
-        var settingModalContent = document.getElementById("settingModal-content");
-        settingModalContent.style.display = "block";
-        settingModalContent.classList.remove("fadeOut");
-        settingModalContent.classList.add("fadeIn");
-        setTimeout(() => {
-            settingModalContent.classList.remove("fadeIn");
-        }, fadeTime);
-
-        openModalOverlay(close);
-    }
+//フィルタ設定ウィンドウを開く
+function openFilterSetting() {
+    var settingModalContent = document.getElementById("settingModal-content");
+    settingModalContent.style.display = "block";
+    settingModalContent.classList.remove("fadeOut");
+    settingModalContent.classList.add("fadeIn");
+    setTimeout(() => {
+        settingModalContent.classList.remove("fadeIn");
+    }, fadeTime);
 
     var settingClose = document.getElementById("settingModal-close");
-    settingClose.onclick = function () {
-        close();
-    }
+    openModalOverlay(closeFilterSetting);
+}
 
-    function close() {
-        var settingModalContent = document.getElementById("settingModal-content");
-        settingModalContent.classList.remove("fadeIn");
-        settingModalContent.classList.add("fadeOut");
-        setTimeout(() => {
-            settingModalContent.classList.remove("fadeOut");
-            settingModalContent.style.display = "none";
-        }, fadeTime);
-        closeModalOverlay();
-    }
+//フィルタ設定ウィンドウを閉じる
+function closeFilterSetting() {
+    var settingModalContent = document.getElementById("settingModal-content");
+    settingModalContent.classList.remove("fadeIn");
+    settingModalContent.classList.add("fadeOut");
+    setTimeout(() => {
+        settingModalContent.classList.remove("fadeOut");
+        settingModalContent.style.display = "none";
+    }, fadeTime);
+    closeModalOverlay();
 }
 
 //設定ウィンドウの初期設定
 function setupSetting() {
-    var select = document.getElementById('settings');
-    //IDを参照してselectに格納する
-    select.onchange = updateSetting;
+    var mainSelectBox = document.getElementById('mainSelectBox');
+    var roleSelectBox = document.getElementById('roleSelectBox');
+    var classNumSelectBox = document.getElementById('classNumSelectBox');
+    var gradeSelectBox = document.getElementById('gradeSelectBox');
+    var courseSelectBox = document.getElementById('courseSelectBox');
+
+    appendSelectBoxOptions(mainSelectBox, mainOptions);
+    appendSelectBoxOptions(roleSelectBox, roleOptions);
+    appendSelectBoxOptions(classNumSelectBox, classNumOptions);
+    appendSelectBoxOptions(gradeSelectBox, gradeOptions);
+    appendSelectBoxOptions(courseSelectBox, courseOptions);
+
+    //再利用のためにエレメントを変数に格納しておく
+    selectBoxes = {
+        'mainSelectBox': mainSelectBox,
+        'roleSelectBox': roleSelectBox,
+        'classNumSelectBox': classNumSelectBox,
+        'gradeSelectBox': gradeSelectBox,
+        'courseSelectBox': courseSelectBox
+    }
+    updateDisplaySubSelectBox(mainSelectBox.value);
+
+    //ローカルストレージから前回の値を読み出し、設定に反映させる
+    for (var key in selectBoxes) {
+        if (window.localStorage !== null) {
+            var val = localStorage.getItem(key);
+            if (val && val < selectBoxes[key].length) {
+                selectBoxes[key].selectedIndex = val;
+            }
+        }
+        selectBoxes[key].onchange = updateSetting;
+    }
 }
 
-//verticalDataのが配列にTableData型のオブジェクトとしてそれぞれデータを格納していく
-function updateSetting() {
-    var select = document.getElementById('settings');
-    var tables;
-    verticalData = [];
-    if (select.value == 0) {
-        tables = datas.teachers;
-        var len = tables.length;
-        for (var i = 0; i < len; i++) {
-            verticalData[i] = new TableData(tables[i].disp_teacher, select.value, tables[i].teacher_id);
-        }
-    } else if (select.value == 1) {
-        tables = datas.classes;
-        var len = tables.length;
-        for (var i = 0; i < len; i++) {
-            verticalData[i] = new TableData(tables[i].disp_class, select.value, tables[i].class_id);
-        }
-    } else if (select.value == 2) {
-        tables = datas.rooms;
-        var len = tables.length;
-        for (var i = 0; i < len; i++) {
-            verticalData[i] = new TableData(tables[i].disp_room, select.value, tables[i].room_id);
+//ページを去るときに実行される
+window.addEventListener('beforeunload', function () {
+    //ローカルストレージに設定の値を保存させる
+    if (window.localStorage !== null) {
+        for (var key in selectBoxes) {
+            var val = localStorage.setItem(key, selectBoxes[key].selectedIndex);
         }
     }
+}, false);
+
+
+//連想配列からセレクトボックスのオプションを作成する
+function appendSelectBoxOptions(select, options) {
+    for (var o in options) {
+        var option = document.createElement('option');
+        option.innerHTML = o;
+        option.value = options[o];
+        select.appendChild(option);
+    }
+    return select;
+}
+
+//フィルタ設定の更新
+function updateSetting() {
+    var objects = [];
+    verticalData = [];
+    updateDisplaySubSelectBox(mainSelectBox.value);
+    var type = selectBoxes['mainSelectBox'].value;
+    switch (type) {
+        case '0':
+            objects = getClassByFilter(selectBoxes['courseSelectBox'].value,
+                selectBoxes['gradeSelectBox'].value, selectBoxes['classNumSelectBox'].value);
+            for (var i = 0, len = objects.length; i < len; i++) {
+                verticalData[i] = new TableData(objects[i].disp_class, type, objects[i].class_id);
+            }
+            break;
+        case '1':
+            objects = getAllRooms();
+            for (var i = 0, len = objects.length; i < len; i++) {
+                verticalData[i] = new TableData(objects[i].disp_room, type, objects[i].room_id);
+            }
+            break;
+        case '2':
+            objects = getTeachersByFilter(selectBoxes['roleSelectBox'].value);
+            for (var i = 0, len = objects.length; i < len; i++) {
+                verticalData[i] = new TableData(objects[i].disp_teacher, type, objects[i].teacher_id);
+            }
+            break;
+    }
     updateTable();
+}
+
+
+//サブセレクトボックスの表示、非表示を切り替える
+function updateDisplaySubSelectBox(num) {
+    for (var select in selectBoxRelations) {
+        var elem = selectBoxes[select];
+        if (selectBoxRelations[select] == num) {
+            elem.style.display = 'block';
+        } else {
+            elem.style.display = 'none';
+        }
+    }
+}
+
+//オブジェクトからテーブルデータを作成する
+function makeTableData(object) {
+    var data = null;
+    switch (distinctObjectType(object)) {
+        case 0:
+            data = new TableData(object.disp_class, 1, object.class_id);
+            break;
+        case 1:
+            data = new TableData(object.disp_room, 2, object.room_id);
+            break;
+        case 2:
+            data = new TableData(object.disp_teacher, 0, object.teacher_id);
+            break;
+    }
+    return data;
+}
+
+//引数が、クラス、講師、教室のうちどれであるか判別する
+function distinctObjectType(object) {
+    if (object.class_id != null) {
+        return 0;
+    } else if (object.room_id != null) {
+        return 1;
+    } else if (object.teacher_id != null) {
+        return 2;
+    } else {
+        return -1;
+    }
 }
 
 //ポップアップを作成する
@@ -121,22 +209,17 @@ function pushDayButton(num) {
 
 //テーブル更新関数
 function updateTable() {
-    displayTableDatas(verticalData, getCurrentDayLectureData(datas.lectures));
+    displayTableDatas(verticalData, getCurrentDayLectureData(currentDay));
 }
 
 /*テーブルにデータを渡すときに使用する
-type 0 = 講師, type 1 = クラス, type 2 = 部屋
+type 0 = クラス, type 1 = 教室, type 2 = 講師
 idはそれぞれの名前で与えられているものの数値 ex)teacher_id*/
 TableData = function (name, type, id) {
     this.name = name;
     this.type = type;
     this.id = id;
 };
-
-//現在の曜日の講義データを取得する
-function getCurrentDayLectureData(lectures) {
-    return lectures.filter(x => x.week == currentDay + 1);
-}
 
 //テーブルデータを表示する
 function displayTableDatas(verData, lectures) {
@@ -151,8 +234,9 @@ function displayTableDatas(verData, lectures) {
         //縦列見出しの表示
         var vCell = tableManager.getCell(i + 1, 0);
         vCell.innerHTML = verData[i].name;
+
         //縦列が教員の場合、教員情報を挿入する
-        if (verData[i].type == 0) {
+        if (verData[i].type == 2) {
             vCell.classList.add('link');
             (function (num) {
                 vCell.onclick = function (e) { displayTeacher(verData[num].id, e); }
@@ -164,15 +248,15 @@ function displayTableDatas(verData, lectures) {
             switch (verData[i].type) {
                 case '0':
                 case 0:
-                    findID = x.teachers.indexOf(verData[i].id) >= 0;
+                    findID = x.classes.indexOf(verData[i].id) >= 0;
                     break;
                 case '1':
                 case 1:
-                    findID = x.classes.indexOf(verData[i].id) >= 0;
+                    findID = x.rooms.indexOf(verData[i].id) >= 0;
                     break;
                 case '2':
                 case 2:
-                    findID = x.rooms.indexOf(verData[i].id) >= 0;
+                    findID = x.teachers.indexOf(verData[i].id) >= 0;
                     break;
                 default:
                     break;
@@ -240,6 +324,8 @@ function closeLectureModal() {
 
 //ポップアップウィンドウを表示する
 function displayPopup(html, event) {
+    //TODO
+    //ポップアップの表示位置がずれるバグを確認
     var p = document.getElementById("popup");
     p.innerHTML = html;
     p.style.display = "block";
@@ -352,26 +438,4 @@ function appendLectureContentHTML(lecture, parent) {
 
     //日時を表示
     parent.innerHTML += "日時 : " + getDayAndTimeFromLecture(lecture);
-}
-
-//講義オブジェクトから教師オブジェクトを取得
-function getTeachersFromLecture(lecture) {
-    return datas.teachers.filter(x => lecture.teachers.indexOf(x.teacher_id) >= 0);
-}
-
-//講義オブジェクトから教室オブジェクトを取得
-function getRoomsFromLecture(lecture) {
-    return datas.rooms.filter(x => lecture.rooms.indexOf(x.room_id) >= 0);
-}
-
-//講義オブジェクトからクラスオブジェクトを取得
-function getClassesFromLecture(lecture) {
-    return datas.classes.filter(x => lecture.classes.indexOf(x.class_id) >= 0);
-}
-
-//講義オブジェクトから日時情報を取得
-function getDayAndTimeFromLecture(lecture) {
-    var weeks = ["月曜", "火曜", "水曜", "木曜", "金曜"];
-    var week = weeks[lecture.week - 1];
-    return week + lecture.jigen + "限";
 }
