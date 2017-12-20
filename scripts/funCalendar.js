@@ -6,6 +6,7 @@ var fadeTime = 200;
 var selectBoxes = {};
 
 $(function () {
+    var t = window.applicationCache;
     var table = document.getElementById('mainTable');
     tableManager = new TableManager(table);
     setupDayButton();
@@ -32,6 +33,7 @@ function setupDayButton() {
     pushDayButton(day);
 }
 
+//フィルタ設定ウィンドウを開く
 function openFilterSetting() {
     var settingModalContent = document.getElementById("settingModal-content");
     settingModalContent.style.display = "block";
@@ -43,8 +45,9 @@ function openFilterSetting() {
 
     var settingClose = document.getElementById("settingModal-close");
     openModalOverlay(closeFilterSetting);
-
 }
+
+//フィルタ設定ウィンドウを閉じる
 function closeFilterSetting() {
     var settingModalContent = document.getElementById("settingModal-content");
     settingModalContent.classList.remove("fadeIn");
@@ -79,10 +82,29 @@ function setupSetting() {
         'courseSelectBox': courseSelectBox
     }
     updateDisplaySubSelectBox(mainSelectBox.value);
+
+    //ローカルストレージから前回の値を読み出し、設定に反映させる
     for (var key in selectBoxes) {
+        if (window.localStorage !== null) {
+            var val = localStorage.getItem(key);
+            if (val && val < selectBoxes[key].length) {
+                selectBoxes[key].selectedIndex = val;
+            }
+        }
         selectBoxes[key].onchange = updateSetting;
     }
 }
+
+//ページを去るときに実行される
+window.addEventListener('beforeunload', function () {
+    //ローカルストレージに設定の値を保存させる
+    if (window.localStorage !== null) {
+        for (var key in selectBoxes) {
+            var val = localStorage.setItem(key, selectBoxes[key].selectedIndex);
+        }
+    }
+}, false);
+
 
 //連想配列からセレクトボックスのオプションを作成する
 function appendSelectBoxOptions(select, options) {
@@ -124,6 +146,7 @@ function updateSetting() {
     }
     updateTable();
 }
+
 
 //サブセレクトボックスの表示、非表示を切り替える
 function updateDisplaySubSelectBox(num) {
