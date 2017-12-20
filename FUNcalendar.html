@@ -2,32 +2,35 @@
 
 <head>
     <meta charset="utf-8">
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script type="text/javascript" src="./scripts/tableManager.js"></script>
-    <script type="text/javascript" src="./scripts/jsonread.js"></script>
-    <script type="text/javascript" src="./scripts/funCalendar.js"></script>
-    <script type="text/javascript" src="./scripts/modalManager.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/fade.css">
     <link rel="stylesheet" type="text/css" href="./css/main.css">
     <link rel="stylesheet" type="text/css" href="./css/modal.css">
+    <script type="text/javascript" src="./scripts/jsonread.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="./scripts/tableManager.js"></script>
+    <script type="text/javascript" src="./scripts/funCalendar.js"></script>
+    <script type="text/javascript" src="./scripts/modalManager.js"></script>
+    <script type="text/javascript" src="./scripts/constants.js"></script>
     <title>FUNカレンダー </title>
 </head>
 
 <body>
-
     <h1>FUNカレンダー</h1>
     <p>
-        <button id="settingModal-open" class="button-link">設定</button>
+        <button id="settingModal-open" class="mybutton" onclick="openFilterSetting()">設定</button>
     </p>
     <div id="settingModal-content">
-        <p>
-            <a id="settingModal-close" class="button-link">閉じる</a>
-        </p>
-        <select id='settings'>
-            <option value=0>講師</option>
-            <option value=1>クラス</option>
-            <option value=2>部屋</option>
-        </select>
+        <div class="modal-button-parent">
+            <button id="settingModal-close" class="mybutton" onclick="closeFilterSetting()">閉じる</button>
+        </div>
+
+        <div id="selectBoxesRoot">
+            <select id='mainSelectBox' class="settingSelectBox"></select>
+            <select id="roleSelectBox" class="settingSelectBox"></select>
+            <select id="courseSelectBox" class="settingSelectBox"></select>
+            <select id="gradeSelectBox" class="settingSelectBox"></select>
+            <select id="classNumSelectBox" class="settingSelectBox"></select>
+        </div>
     </div>
     <div class="btnroot">
         <div class="btn" id="btn0" onclick="pushDayButton(0)">
@@ -50,8 +53,8 @@
     <table id="mainTable"></table>
     <!--モーダルウィンドウの要素-->
     <div id="lectureModal">
-        <div class="lectureModal-button-parent">
-            <button onclick="closeLectureModal()" class="lectureModal-button">閉じる</button>
+        <div class="modal-button-parent">
+            <button onclick="closeLectureModal()" class="mybutton">閉じる</button>
         </div>
         <div id="lectureModal-content"></div>
     </div>
