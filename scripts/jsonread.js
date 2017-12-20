@@ -72,39 +72,34 @@ function getAllClasses() {
     return datas.classes;
 }
 
-//学年でクラスオブジェクトを取得
-function getClassesByGrade(grade) {
-    return datas.classes.filter(x => getYearFromClass(x) == grade);
-}
-
-//複数学年のクラスオブジェクトを取得
-function getClassesByGradeList(gradeList) {
+//指定した条件に沿ったクラスオブジェクトを取得
+function getClassByFilter(course, grade, classNum) {
     return datas.classes.filter(x => {
-        for (var i = 0, len = gradeList.length; i < len; i++) {
-            if (getYearFromClass(x) == gradeList[i]) {
-                return true;
-            }
+        if (course != 0 && x.course != course) {
+            return false;
         }
-        return false;
+        if (grade != 0 && getGradeFromClass(x) != grade) {
+            return false;
+        }
+        if (classNum != 0 && getClassNumFromClass(x) != classNum) {
+            return false;
+        }
+        return true;
     });
 }
 
-//コースからクラスオブジェクトを取得
-function getClassesByCourse(course) {
-    return datas.classes.filter(x => x.course == course);
-}
-
 //クラスオブジェクトから学年を取得
-function getYearByClass(target) {
+function getGradeFromClass(target) {
     var str = target.class_id.toString();
-    var year = str.substring(str.length - 3, str.length - 2);
-    return Number(year);
+    var grade = str.substring(str.length - 3, str.length - 2);
+    return Number(grade);
 }
 
 //クラスオブジェクトから組番号を取得
-function getClassNumByClass(target) {
+function getClassNumFromClass(target) {
     var str = target.class_id.toString();
     var classNum = str.substring(str.length - 2, str.length);
+    return Number(classNum);
 }
 
 //すべての講師オブジェクトを取得
@@ -112,20 +107,13 @@ function getAllTeachers() {
     return datas.teachers;
 }
 
-//所属から講師オブジェクトを取得
-function getTeachersByRole(role) {
-    return datas.teachers.filter(x => x.role == role);
-}
-
-//複数の所属から講師オブジェクトを取得
-function getTeachersByRoles(roles) {
+//指定した条件に沿った講師オブジェクトを取得
+function getTeachersByFilter(role) {
     return datas.teachers.filter(x => {
-        for (var i = 0, len = roles.length; i < len; i++) {
-            if (x.role == roles[i]) {
-                return true;
-            }
+        if (role != 0 && x.role != role) {
+            return false;
         }
-        return false;
+        return true;
     });
 }
 

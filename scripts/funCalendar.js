@@ -3,6 +3,7 @@ var currentDay = -1;
 var colCount = 6; //列の数
 var verticalData = {};
 var fadeTime = 200;
+var selectBoxes = {};
 
 $(function () {
     var table = document.getElementById('mainTable');
@@ -69,8 +70,18 @@ function setupSetting() {
     appendSelectBoxOptions(gradeSelectBox, gradeOptions);
     appendSelectBoxOptions(courseSelectBox, courseOptions);
 
+    //再利用のためにエレメントを変数に格納しておく
+    selectBoxes = {
+        'mainSelectBox': mainSelectBox,
+        'roleSelectBox': roleSelectBox,
+        'classNumSelectBox': classNumSelectBox,
+        'gradeSelectBox': gradeSelectBox,
+        'courseSelectBox': courseSelectBox
+    }
     updateDisplaySubSelectBox(mainSelectBox.value);
-    mainSelectBox.onchange = updateSetting;
+    for (var key in selectBoxes) {
+        selectBoxes[key].onchange = updateSetting;
+    }
 }
 
 //連想配列からセレクトボックスのオプションを作成する
@@ -86,30 +97,28 @@ function appendSelectBoxOptions(select, options) {
 
 //フィルタ設定の更新
 function updateSetting() {
-    var root = document.getElementById('selectBoxesRoot');
-    var mainSelectBox = document.getElementById('mainSelectBox');
     var objects = [];
     verticalData = [];
-
     updateDisplaySubSelectBox(mainSelectBox.value);
-
-    switch (mainSelectBox.value) {
+    var type = selectBoxes['mainSelectBox'].value;
+    switch (type) {
         case '0':
-            objects = getAllClasses();
+            objects = getClassByFilter(selectBoxes['courseSelectBox'].value,
+                selectBoxes['gradeSelectBox'].value, selectBoxes['classNumSelectBox'].value);
             for (var i = 0, len = objects.length; i < len; i++) {
-                verticalData[i] = new TableData(objects[i].disp_class, mainSelectBox.value, objects[i].class_id);
+                verticalData[i] = new TableData(objects[i].disp_class, type, objects[i].class_id);
             }
             break;
         case '1':
             objects = getAllRooms();
             for (var i = 0, len = objects.length; i < len; i++) {
-                verticalData[i] = new TableData(objects[i].disp_room, mainSelectBox.value, objects[i].room_id);
+                verticalData[i] = new TableData(objects[i].disp_room, type, objects[i].room_id);
             }
             break;
         case '2':
-            objects = getAllTeachers();
+            objects = getTeachersByFilter(selectBoxes['roleSelectBox'].value);
             for (var i = 0, len = objects.length; i < len; i++) {
-                verticalData[i] = new TableData(objects[i].disp_teacher, mainSelectBox.value, objects[i].teacher_id);
+                verticalData[i] = new TableData(objects[i].disp_teacher, type, objects[i].teacher_id);
             }
             break;
     }
@@ -119,7 +128,7 @@ function updateSetting() {
 //サブセレクトボックスの表示、非表示を切り替える
 function updateDisplaySubSelectBox(num) {
     for (var select in selectBoxRelations) {
-        var elem = document.getElementById(select);
+        var elem = selectBoxes[select];
         if (selectBoxRelations[select] == num) {
             elem.style.display = 'block';
         } else {
