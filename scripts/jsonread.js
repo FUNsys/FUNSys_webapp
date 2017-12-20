@@ -73,15 +73,15 @@ function getAllClasses() {
 }
 
 //学年でクラスオブジェクトを取得
-function getClassesFromYear(year) {
-    return datas.classes.filter(x => getYearFromClass(x) == year);
+function getClassesByGrade(grade) {
+    return datas.classes.filter(x => getYearFromClass(x) == grade);
 }
 
 //複数学年のクラスオブジェクトを取得
-function getClassesFromYears(years) {
+function getClassesByGradeList(gradeList) {
     return datas.classes.filter(x => {
-        for (var i = 0, len = years.length; i < len; i++) {
-            if (getYearFromClass(x) == years[i]) {
+        for (var i = 0, len = gradeList.length; i < len; i++) {
+            if (getYearFromClass(x) == gradeList[i]) {
                 return true;
             }
         }
@@ -90,21 +90,21 @@ function getClassesFromYears(years) {
 }
 
 //コースからクラスオブジェクトを取得
-function getClassesFromCourse(course) {
+function getClassesByCourse(course) {
     return datas.classes.filter(x => x.course == course);
 }
 
 //クラスオブジェクトから学年を取得
-function getYearFromClass(target) {
+function getYearByClass(target) {
     var str = target.class_id.toString();
     var year = str.substring(str.length - 3, str.length - 2);
     return Number(year);
 }
 
 //クラスオブジェクトから組番号を取得
-function getSetNumFromClass(target) {
+function getClassNumByClass(target) {
     var str = target.class_id.toString();
-    var setNum = str.substring(str.length - 2, str.length);
+    var classNum = str.substring(str.length - 2, str.length);
 }
 
 //すべての講師オブジェクトを取得
@@ -113,12 +113,12 @@ function getAllTeachers() {
 }
 
 //所属から講師オブジェクトを取得
-function getTeachersFromRole(role) {
+function getTeachersByRole(role) {
     return datas.teachers.filter(x => x.role == role);
 }
 
 //複数の所属から講師オブジェクトを取得
-function getTeachersFromRoles(roles) {
+function getTeachersByRoles(roles) {
     return datas.teachers.filter(x => {
         for (var i = 0, len = roles.length; i < len; i++) {
             if (x.role == roles[i]) {

@@ -7,6 +7,7 @@
     <script type="text/javascript" src="./scripts/jsonread.js"></script>
     <script type="text/javascript" src="./scripts/funCalendar.js"></script>
     <script type="text/javascript" src="./scripts/modalManager.js"></script>
+    <script type="text/javascript" src="./scripts/constants.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/fade.css">
     <link rel="stylesheet" type="text/css" href="./css/main.css">
     <link rel="stylesheet" type="text/css" href="./css/modal.css">
@@ -17,26 +18,19 @@
 
     <h1>FUNカレンダー</h1>
     <p>
-        <button id="settingModal-open" class="link">設定</button>
+        <button id="settingModal-open" class="link" onclick="openFilterSetting()">設定</button>
     </p>
     <div id="settingModal-content">
         <div class="modal-button-parent">
-            <button id="settingModal-close" class="modal-button">閉じる</button>
+            <button id="settingModal-close" class="modal-button" onclick="closeFilterSetting()">閉じる</button>
         </div>
 
-        <div id="filterSettingsRoot">
-            <table id = "filterSettingsTable">
-                <tr>
-                    <th>
-                        <select id='filterSetting1'>
-                            <option value=0>講師</option>
-                            <option value=1>クラス</option>
-                            <option value=2>部屋</option>
-                            <option value=3>すべて</option>
-                        </select>
-                    </th>
-                </tr>
-            </table>
+        <div id="selectBoxesRoot">
+            <select id='mainSelectBox' class="settingSelectBox"></select>
+            <select id="roleSelectBox" class="settingSelectBox"></select>
+            <select id="gradeSelectBox" class="settingSelectBox"></select>
+            <select id="classNumSelectBox" class="settingSelectBox"></select>
+            <select id="courseSelectBox" class="settingSelectBox"></select>
         </div>
     </div>
     <div class="btnroot">

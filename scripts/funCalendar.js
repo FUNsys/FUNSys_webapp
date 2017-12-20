@@ -1,29 +1,5 @@
 var tableManager = null;
 var currentDay = -1;
-var tableColors = ['#ffff00', '#00ff00', '#0000ff', '#4f4f7a', '#88ff00'];
-var buttonIds = ['#btn0', '#btn1', '#btn2', '#btn3', '#btn4'];
-
-var roleOptions = {
-    '情報アーキテクチャ学科': '情報アーキテクチャ学科',
-    '複雑系知能学科': '複雑系知能学科',
-    '社会連携センター': '社会連携センター',
-    'メタ学習センター': 'メタ学習センター'
-}
-var classSetOptions = {
-    'A': 1,
-    'B': 2,
-    'C': 3,
-    'D': 4,
-    'E': 5,
-    'F': 6,
-    'G': 7,
-    'H': 8,
-    'I': 9,
-    'J': 10,
-    'K': 11,
-    'L': 12
-}
-
 var colCount = 6; //列の数
 var verticalData = {};
 var fadeTime = 200;
@@ -33,7 +9,6 @@ $(function () {
     tableManager = new TableManager(table);
     setupDayButton();
     setupSetting();
-    setupSettingButton();
     createPopup();
     loadJson(firstJsonLoaded);
 });
@@ -56,48 +31,47 @@ function setupDayButton() {
     pushDayButton(day);
 }
 
-//設定ボタンの初期設定
-function setupSettingButton() {
-    var settingButton = document.getElementById("settingModal-open");
-
-    settingButton.onclick = function () {
-        var settingModalContent = document.getElementById("settingModal-content");
-        settingModalContent.style.display = "block";
-        settingModalContent.classList.remove("fadeOut");
-        settingModalContent.classList.add("fadeIn");
-        setTimeout(() => {
-            settingModalContent.classList.remove("fadeIn");
-        }, fadeTime);
-
-        openModalOverlay(close);
-    }
+function openFilterSetting() {
+    var settingModalContent = document.getElementById("settingModal-content");
+    settingModalContent.style.display = "block";
+    settingModalContent.classList.remove("fadeOut");
+    settingModalContent.classList.add("fadeIn");
+    setTimeout(() => {
+        settingModalContent.classList.remove("fadeIn");
+    }, fadeTime);
 
     var settingClose = document.getElementById("settingModal-close");
-    settingClose.onclick = function () {
-        close();
-    }
+    openModalOverlay(closeFilterSetting);
 
-    function close() {
-        var settingModalContent = document.getElementById("settingModal-content");
-        settingModalContent.classList.remove("fadeIn");
-        settingModalContent.classList.add("fadeOut");
-        setTimeout(() => {
-            settingModalContent.classList.remove("fadeOut");
-            settingModalContent.style.display = "none";
-        }, fadeTime);
-        closeModalOverlay();
-    }
+}
+function closeFilterSetting() {
+    var settingModalContent = document.getElementById("settingModal-content");
+    settingModalContent.classList.remove("fadeIn");
+    settingModalContent.classList.add("fadeOut");
+    setTimeout(() => {
+        settingModalContent.classList.remove("fadeOut");
+        settingModalContent.style.display = "none";
+    }, fadeTime);
+    closeModalOverlay();
 }
 
 //設定ウィンドウの初期設定
 function setupSetting() {
-    var select = document.getElementById('filterSetting1');
-    select.onchange = updateSetting;
+    var mainSelectBox = document.getElementById('mainSelectBox');
+    var roleSelectBox = document.getElementById('roleSelectBox');
+    var classNumSelectBox = document.getElementById('classNumSelectBox');
+    var gradeSelectBox = document.getElementById('gradeSelectBox');
+    var courseSelectBox = document.getElementById('courseSelectBox');
+    appendSelectBoxOptions(mainSelectBox, mainOptions);
+    appendSelectBoxOptions(roleSelectBox, roleOptions);
+    appendSelectBoxOptions(classNumSelectBox, classNumOptions);
+    appendSelectBoxOptions(gradeSelectBox, gradeOptions);
+    appendSelectBoxOptions(courseSelectBox, courseOptions);
+    mainSelectBox.onchange = updateSetting;
 }
 
-//連想配列からセレクトボックスを作成する
-function createSelectBox(options) {
-    var select = document.createElement('select');
+//連想配列からセレクトボックスのオプションを作成する
+function appendSelectBoxOptions(select, options) {
     for (var o in options) {
         var option = document.createElement('option');
         option.innerHTML = o;
@@ -109,20 +83,13 @@ function createSelectBox(options) {
 
 //フィルタ設定の更新
 function updateSetting() {
-    var settingsTable = document.getElementById('filterSettingsTable');
-    var select = document.getElementById('filterSetting1');
+    var root = document.getElementById('selectBoxesRoot');
+    var select = document.getElementById('mainSelectBox');
     var objects = [];
     verticalData = [];
+    var roleSelectBox = document.getElementById("roleSelectBox");
     switch (select.value) {
         case '0':
-            settingsTable.insertRow(-1);
-            var roleSelectBox = document.getElementById("roleSelectBox");
-            if (!roleSelectBox) {
-                roleSelectBox = createSelectBox(roleOptions);
-            }
-            roleSelectBox.id = "roleSelectBox";
-            settingsTable.rows[settingsTable.rows.length - 1].appendChild(roleSelectBox);
-
             objects = getAllTeachers();
             for (var i = 0, len = objects.length; i < len; i++) {
                 verticalData[i] = new TableData(objects[i].disp_teacher, select.value, objects[i].teacher_id);
@@ -138,19 +105,6 @@ function updateSetting() {
             objects = getAllRooms();
             for (var i = 0, len = objects.length; i < len; i++) {
                 verticalData[i] = new TableData(objects[i].disp_room, select.value, objects[i].room_id);
-            }
-            break;
-        case '3':
-            objects.push.apply(objects, getAllTeachers());
-            objects.push.apply(objects, getAllClasses());
-            objects.push.apply(objects, getAllRooms());
-
-            objects.push.apply(objects, getAllTeachers());
-            objects.push.apply(objects, getAllClasses());
-            objects.push.apply(objects, getAllRooms());
-
-            for (var i = 0, len = objects.length; i < len; i++) {
-                verticalData[i] = makeTableData(objects[i]);
             }
             break;
     }
