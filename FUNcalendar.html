@@ -2,20 +2,19 @@
 
 <head>
     <meta charset="utf-8">
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script type="text/javascript" src="./scripts/tableManager.js"></script>
-    <script type="text/javascript" src="./scripts/jsonread.js"></script>
-    <script type="text/javascript" src="./scripts/funCalendar.js"></script>
-    <script type="text/javascript" src="./scripts/modalManager.js"></script>
-    <script type="text/javascript" src="./scripts/constants.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/fade.css">
     <link rel="stylesheet" type="text/css" href="./css/main.css">
     <link rel="stylesheet" type="text/css" href="./css/modal.css">
+    <script type="text/javascript" src="./scripts/jsonread.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="./scripts/tableManager.js"></script>
+    <script type="text/javascript" src="./scripts/funCalendar.js"></script>
+    <script type="text/javascript" src="./scripts/modalManager.js"></script>
+    <script type="text/javascript" src="./scripts/constants.js"></script>
     <title>FUNカレンダー </title>
 </head>
 
 <body>
-
     <h1>FUNカレンダー</h1>
     <p>
         <button id="settingModal-open" class="link" onclick="openFilterSetting()">設定</button>
@@ -28,9 +27,9 @@
         <div id="selectBoxesRoot">
             <select id='mainSelectBox' class="settingSelectBox"></select>
             <select id="roleSelectBox" class="settingSelectBox"></select>
+            <select id="courseSelectBox" class="settingSelectBox"></select>
             <select id="gradeSelectBox" class="settingSelectBox"></select>
             <select id="classNumSelectBox" class="settingSelectBox"></select>
-            <select id="courseSelectBox" class="settingSelectBox"></select>
         </div>
     </div>
     <div class="btnroot">

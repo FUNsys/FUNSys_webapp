@@ -182,12 +182,14 @@
 .settingSelectBox {
   width: 100px;
   display: block;
-  margin: 0 auto;
+  border-bottom: solid 5px #ffffff;
+  margin:0 auto;
 }
 
 #selectBoxesRoot {
   position: relative;
   text-align: center;
+  margin: 5px;
 }
 
 #roleSelectBox {

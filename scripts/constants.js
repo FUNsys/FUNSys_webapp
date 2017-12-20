@@ -2,9 +2,9 @@ var tableColors = ['#ffff00', '#00ff00', '#0000ff', '#4f4f7a', '#88ff00'];
 var buttonIds = ['#btn0', '#btn1', '#btn2', '#btn3', '#btn4'];
 
 var mainOptions = {
-    '教員': 0,
-    'クラス': 1,
-    '教室': 2,
+    'クラス': 0,
+    '教室': 1,
+    '講師': 2,
 }
 
 var roleOptions = {
@@ -17,12 +17,12 @@ var roleOptions = {
 
 var courseOptions = {
     '全コース': 0,
-    '未所属': '未所属',
-    '情報システムコース': '情報システムコース',
-    '情報デザインコース': '情報デザインコース',
-    '複雑系コース': '複雑系コース',
-    '知能システムコース': '知能システムコース',
-    '高度ICTコース': '高度ICTコース',
+    '未所属': 'Unassign',
+    '情報システムコース': 'System',
+    '情報デザインコース': 'Design',
+    '複雑系コース': 'Complex',
+    '知能システムコース': 'Intelligent',
+    '高度ICTコース': 'ICT',
 }
 
 var classNumOptions = {
@@ -38,7 +38,8 @@ var classNumOptions = {
     'I': 9,
     'J': 10,
     'K': 11,
-    'L': 12
+    'L': 12,
+    '院生': 13,
 }
 var gradeOptions = {
     '全学年': 0,
@@ -46,6 +47,15 @@ var gradeOptions = {
     '2年': 2,
     '3年': 3,
     '4年': 4,
-    'M1': 5,
-    'M2': 6,
+    '院1年': 5,
+    '院2年': 6,
+}
+
+/*サブセレクトボックスの表示、非表示を切り替えるために、
+idとメインセレクトボックスの値を関連付けている*/
+var selectBoxRelations = {
+    'courseSelectBox': 0,
+    'gradeSelectBox': 0,
+    'classNumSelectBox': 0,
+    'roleSelectBox': 2,
 }

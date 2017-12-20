@@ -62,11 +62,14 @@ function setupSetting() {
     var classNumSelectBox = document.getElementById('classNumSelectBox');
     var gradeSelectBox = document.getElementById('gradeSelectBox');
     var courseSelectBox = document.getElementById('courseSelectBox');
+
     appendSelectBoxOptions(mainSelectBox, mainOptions);
     appendSelectBoxOptions(roleSelectBox, roleOptions);
     appendSelectBoxOptions(classNumSelectBox, classNumOptions);
     appendSelectBoxOptions(gradeSelectBox, gradeOptions);
     appendSelectBoxOptions(courseSelectBox, courseOptions);
+
+    updateDisplaySubSelectBox(mainSelectBox.value);
     mainSelectBox.onchange = updateSetting;
 }
 
@@ -84,31 +87,45 @@ function appendSelectBoxOptions(select, options) {
 //フィルタ設定の更新
 function updateSetting() {
     var root = document.getElementById('selectBoxesRoot');
-    var select = document.getElementById('mainSelectBox');
+    var mainSelectBox = document.getElementById('mainSelectBox');
     var objects = [];
     verticalData = [];
-    var roleSelectBox = document.getElementById("roleSelectBox");
-    switch (select.value) {
+
+    updateDisplaySubSelectBox(mainSelectBox.value);
+
+    switch (mainSelectBox.value) {
         case '0':
-            objects = getAllTeachers();
+            objects = getAllClasses();
             for (var i = 0, len = objects.length; i < len; i++) {
-                verticalData[i] = new TableData(objects[i].disp_teacher, select.value, objects[i].teacher_id);
+                verticalData[i] = new TableData(objects[i].disp_class, mainSelectBox.value, objects[i].class_id);
             }
             break;
         case '1':
-            objects = getAllClasses();
+            objects = getAllRooms();
             for (var i = 0, len = objects.length; i < len; i++) {
-                verticalData[i] = new TableData(objects[i].disp_class, select.value, objects[i].class_id);
+                verticalData[i] = new TableData(objects[i].disp_room, mainSelectBox.value, objects[i].room_id);
             }
             break;
         case '2':
-            objects = getAllRooms();
+            objects = getAllTeachers();
             for (var i = 0, len = objects.length; i < len; i++) {
-                verticalData[i] = new TableData(objects[i].disp_room, select.value, objects[i].room_id);
+                verticalData[i] = new TableData(objects[i].disp_teacher, mainSelectBox.value, objects[i].teacher_id);
             }
             break;
     }
     updateTable();
+}
+
+//サブセレクトボックスの表示、非表示を切り替える
+function updateDisplaySubSelectBox(num) {
+    for (var select in selectBoxRelations) {
+        var elem = document.getElementById(select);
+        if (selectBoxRelations[select] == num) {
+            elem.style.display = 'block';
+        } else {
+            elem.style.display = 'none';
+        }
+    }
 }
 
 //オブジェクトからテーブルデータを作成する
@@ -116,13 +133,13 @@ function makeTableData(object) {
     var data = null;
     switch (distinctObjectType(object)) {
         case 0:
-            data = new TableData(object.disp_teacher, 0, object.teacher_id);
-            break;
-        case 1:
             data = new TableData(object.disp_class, 1, object.class_id);
             break;
-        case 2:
+        case 1:
             data = new TableData(object.disp_room, 2, object.room_id);
+            break;
+        case 2:
+            data = new TableData(object.disp_teacher, 0, object.teacher_id);
             break;
     }
     return data;
@@ -130,11 +147,11 @@ function makeTableData(object) {
 
 //引数が、クラス、講師、教室のうちどれであるか判別する
 function distinctObjectType(object) {
-    if (object.teacher_id != null) {
+    if (object.class_id != null) {
         return 0;
-    } else if (object.class_id != null) {
-        return 1;
     } else if (object.room_id != null) {
+        return 1;
+    } else if (object.teacher_id != null) {
         return 2;
     } else {
         return -1;
@@ -164,7 +181,7 @@ function updateTable() {
 }
 
 /*テーブルにデータを渡すときに使用する
-type 0 = 講師, type 1 = クラス, type 2 = 部屋
+type 0 = クラス, type 1 = 教室, type 2 = 講師
 idはそれぞれの名前で与えられているものの数値 ex)teacher_id*/
 TableData = function (name, type, id) {
     this.name = name;
@@ -187,7 +204,7 @@ function displayTableDatas(verData, lectures) {
         vCell.innerHTML = verData[i].name;
 
         //縦列が教員の場合、教員情報を挿入する
-        if (verData[i].type == 0) {
+        if (verData[i].type == 2) {
             vCell.classList.add('link');
             (function (num) {
                 vCell.onclick = function (e) { displayTeacher(verData[num].id, e); }
@@ -199,15 +216,15 @@ function displayTableDatas(verData, lectures) {
             switch (verData[i].type) {
                 case '0':
                 case 0:
-                    findID = x.teachers.indexOf(verData[i].id) >= 0;
+                    findID = x.classes.indexOf(verData[i].id) >= 0;
                     break;
                 case '1':
                 case 1:
-                    findID = x.classes.indexOf(verData[i].id) >= 0;
+                    findID = x.rooms.indexOf(verData[i].id) >= 0;
                     break;
                 case '2':
                 case 2:
-                    findID = x.rooms.indexOf(verData[i].id) >= 0;
+                    findID = x.teachers.indexOf(verData[i].id) >= 0;
                     break;
                 default:
                     break;
