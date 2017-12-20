@@ -251,7 +251,7 @@ function displayPopup(html, event) {
 //ポップアップウィンドウ外をクリックされたときウィンドウを閉じる
 function closePopup(event) {
     var p = document.getElementById('popup');
-    var point = document.elementFromPoint(event.pageX, event.pageY);
+    var point = document.elementFromPoint(event.clientX, event.clientY);
     if (p != point) {
         p.innerHTML = "";
         p.style.display = "none";
