@@ -1,6 +1,11 @@
 var tableColors = ['#ffff00', '#00ff00', '#0000ff', '#4f4f7a', '#88ff00'];
 var buttonIds = ['#btn0', '#btn1', '#btn2', '#btn3', '#btn4'];
 
+var fabIconNames = {
+    'normal': 'dehaze',
+    'pushed': 'clear'
+}
+
 var mainOptions = {
     'クラス': 0,
     '教室': 1,

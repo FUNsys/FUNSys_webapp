@@ -45,6 +45,10 @@ function openFilterSetting() {
 
     var settingClose = document.getElementById("settingModal-close");
     openModalOverlay(closeFilterSetting);
+
+    //FABボタンのアイコンを変更
+    var fabIcon = document.getElementById("FABIcon");
+    fabIcon.innerHTML = fabIconNames.pushed;
 }
 
 //フィルタ設定ウィンドウを閉じる
@@ -57,6 +61,10 @@ function closeFilterSetting() {
         settingModalContent.style.display = "none";
     }, fadeTime);
     closeModalOverlay();
+
+    //FABボタンのアイコンを変更
+    var fabIcon = document.getElementById("FABIcon");
+    fabIcon.innerHTML = fabIconNames.normal;
 }
 
 //設定ウィンドウの初期設定

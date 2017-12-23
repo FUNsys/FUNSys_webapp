@@ -2,6 +2,14 @@
   font-family: "游ゴシック体", "Yu Gothic";
 }
 
+.titleRoot {
+  position: fixed;
+  width: 100%;
+  height: 100px;
+  background-color: #1111ff;
+  z-index: 3;
+}
+
 #mainTable {
   width: 620px;
   /*表全体の横幅*/
@@ -183,7 +191,7 @@
   width: 100px;
   display: block;
   border-bottom: solid 5px #ffffff;
-  margin:0 auto;
+  margin: 0 auto;
 }
 
 #selectBoxesRoot {
