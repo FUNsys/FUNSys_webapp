@@ -195,6 +195,7 @@
 }
 
 #selectBoxesRoot {
+  display: none;
   position: relative;
   text-align: center;
   margin: 5px;

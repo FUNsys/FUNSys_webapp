@@ -21,10 +21,6 @@
 </head>
 
 <style>
-    .margin-top {
-        margin-top: 130px;
-    }
-
     header {
         position: fixed;
         height: 130px;
@@ -32,6 +28,12 @@
         top: 0;
         z-index: 100;
         background-color: #ffffff;
+        left: 0;
+    }
+
+    body {
+        margin-top: 130px;
+        margin-left: 200px;
     }
 
     .header-top {
@@ -39,42 +41,49 @@
         background-color: skyblue;
     }
 
-    .FAB {
-        position: fixed !important;
-        top: 65px;
-        left: 50px;
-        z-index: 150;
+    #optionRoot {
+        width: 200px;
+        height: 100%;
+        background-color: #ffffff;
+        position: fixed;
+        z-index: 1;
+        left: 0;
     }
 
-    .leftBox {}
+    #FAB {
+        position: fixed !important;
+        top: 65px;
+        left: 10px;
+        z-index: 150;
+    }
 </style>
 
 
 <body>
-    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored FAB" onclick="openFilterSetting()">
+    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored FAB" id="FAB">
         <i class="material-icons" id="FABIcon">dehaze</i>
     </button>
 
-    <header class="mdl-shadow--8dp">
+    <header class="mdl-shadow--2dp">
         <div class="header-top">
             <span style="color:#ffffff">FUN Calendar</span>
         </div>
     </header>
 
-
-    <div class="margin-top"></div>
-
-    <div id="settingModal-content">
-        <div class="modal-button-parent">
-            <button id="settingModal-close" class="mybutton" onclick="closeFilterSetting()">閉じる</button>
-        </div>
-
+    <!--option-->
+    <div id="optionRoot" class="mdl-shadow--4dp">
         <div id="selectBoxesRoot">
             <select id='mainSelectBox' class="settingSelectBox"></select>
             <select id="roleSelectBox" class="settingSelectBox"></select>
             <select id="courseSelectBox" class="settingSelectBox"></select>
             <select id="gradeSelectBox" class="settingSelectBox"></select>
             <select id="classNumSelectBox" class="settingSelectBox"></select>
+        </div>
+    </div>
+
+    <div id="settingModal-content">
+        <div class="modal-button-parent">
+            <button id="settingModal-close" class="mybutton" onclick="closeFilterSetting()">閉じる</button>
         </div>
     </div>
     <div class="btnroot">
@@ -103,33 +112,4 @@
         </div>
         <div id="lectureModal-content"></div>
     </div>
-
-    <!--test-->
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
 </body>

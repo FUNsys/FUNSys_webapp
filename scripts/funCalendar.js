@@ -35,40 +35,36 @@ function setupDayButton() {
 
 //フィルタ設定ウィンドウを開く
 function openFilterSetting() {
-    var settingModalContent = document.getElementById("settingModal-content");
-    settingModalContent.style.display = "block";
-    settingModalContent.classList.remove("fadeOut");
-    settingModalContent.classList.add("fadeIn");
-    setTimeout(() => {
-        settingModalContent.classList.remove("fadeIn");
-    }, fadeTime);
-
-    var settingClose = document.getElementById("settingModal-close");
-    openModalOverlay(closeFilterSetting);
+    var fab = document.getElementById("FAB");
+    fab.onclick = closeFilterSetting;
 
     //FABボタンのアイコンを変更
     var fabIcon = document.getElementById("FABIcon");
     fabIcon.innerHTML = fabIconNames.pushed;
+
+    var root = document.getElementById("selectBoxesRoot");
+    root.style.display = "block";
+
 }
 
 //フィルタ設定ウィンドウを閉じる
 function closeFilterSetting() {
-    var settingModalContent = document.getElementById("settingModal-content");
-    settingModalContent.classList.remove("fadeIn");
-    settingModalContent.classList.add("fadeOut");
-    setTimeout(() => {
-        settingModalContent.classList.remove("fadeOut");
-        settingModalContent.style.display = "none";
-    }, fadeTime);
-    closeModalOverlay();
+    var fab = document.getElementById("FAB");
+    fab.onclick = openFilterSetting;
 
     //FABボタンのアイコンを変更
     var fabIcon = document.getElementById("FABIcon");
     fabIcon.innerHTML = fabIconNames.normal;
+
+    var root = document.getElementById("selectBoxesRoot");
+    root.style.display = "none";
 }
 
 //設定ウィンドウの初期設定
 function setupSetting() {
+    var fab = document.getElementById("FAB");
+    fab.onclick = openFilterSetting;
+
     var mainSelectBox = document.getElementById('mainSelectBox');
     var roleSelectBox = document.getElementById('roleSelectBox');
     var classNumSelectBox = document.getElementById('classNumSelectBox');
