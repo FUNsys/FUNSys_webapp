@@ -2,29 +2,24 @@
   font-family: "游ゴシック体", "Yu Gothic";
 }
 
-.titleRoot {
-  position: fixed;
-  width: 100%;
-  height: 100px;
-  background-color: #1111ff;
-  z-index: 3;
-}
-
 #mainTable {
-  width: 620px;
   /*表全体の横幅*/
-  empty-cells: show;
+  width: 620px;
   /*空白セルを表示する*/
+  empty-cells: show;
   table-layout: fixed;
-  border-collapse: collapse;
   /*隣接する枠線の結合*/
+  border-collapse: collapse;
+  color: blue;
 }
 /*見出し*/
 #mainTable th {
-  text-align: center;
+  text-align: left;
+  vertical-align: bottom;
   padding: 5px;
-  height: 40px;
-  border: 1px solid #000000;
+  height: 30px;
+  overflow: hidden;
+  border: 1px solid skyblue;
 }
 
 /*表要素*/
@@ -37,7 +32,7 @@
   padding: 5px;
   height: 40px;
   /*セルごとの縦幅*/
-  border: 1px solid #000000;
+  border: 1px solid skyblue;
 }
 
 /*リンク文字列の上にマウスが乗ったときのスタイル*/
@@ -46,23 +41,68 @@
   color: #ff0000 !important;
 }
 
-/*ポップアップのスタイル*/
-#popup {
+/*===ポップアップのスタイル===*/
+.popup {
   display: none;
   position: absolute;
-  background-color: #fbfbfb;
-  padding: 5px;
-  border: 5px solid #00000022;
   z-index: 3;
+  border-radius: 4px;
+  width: 200px;
 }
+
+.popup-top {
+  background-color: #f00000;
+  height: 60px;
+  width: 200px;
+  border-radius: 4px 4px 0 0 / 4px 4px 0 0;
+  font-weight: bolder;
+  color: #ffffff;
+  padding-right: 5px;
+  display: inline-block;
+  text-align: right;
+}
+
+.popup-bottom {
+  padding :5px;
+  border-radius:0 0 4px 4px / 0 0 4px 4px;
+  background-color: #ffffff;
+}
+
+@keyframes appeal {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+/*==========================*/
 
 /*表内に表示される講義データ*/
 .lecture {
-  color: #000;
+  color: #fff;
+  width: 80px;
+  height: 20px !important;
+  font-size: 100% !important;
+  line-height: 20px !important;
   /*文字列がオーバーした際は[...]と表示する*/
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  border-radius: 2px;
+  background-color: #ff0000;
+  vertical-align: top !important;
+  padding-left: 5px;
+  margin: 1px !important;
+  top: 0 !important;
+  color: white !important;
+  font-weight: bolder !important;
+}
+
+.lecture:hover {
+  background-color: #cc0000;
+  cursor: pointer;
 }
 
 /*===講義詳細ウィンドウ===*/
@@ -95,7 +135,6 @@
   left: 320px;
   margin: 15px;
   height: 60px;
-
   /*要素を選択不能にする*/
   /* CSS3 */
   user-select: none;

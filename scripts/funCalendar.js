@@ -1,9 +1,9 @@
 var tableManager = null;
 var currentDay = -1;
-var colCount = 6; //列の数
 var verticalData = {};
 var fadeTime = 200;
 var selectBoxes = {};
+var popupList = {};
 
 $(function () {
     var t = window.applicationCache;
@@ -11,7 +11,6 @@ $(function () {
     tableManager = new TableManager(table);
     setupDayButton();
     setupSetting();
-    createPopup();
     loadJson(firstJsonLoaded);
 });
 
@@ -194,12 +193,6 @@ function distinctObjectType(object) {
     }
 }
 
-//ポップアップを作成する
-function createPopup() {
-    var p = document.createElement('div');
-    p.id = "popup";
-    document.body.appendChild(p);
-}
 
 //選択中の曜日ボタンを引数の番号のボタンに変更
 function pushDayButton(num) {
@@ -227,6 +220,7 @@ TableData = function (name, type, id) {
 
 //テーブルデータを表示する
 function displayTableDatas(verData, lectures) {
+    var colCount = 6;
     if (typeof verData.length !== "undefined") {
         tableManager.createTable(verData.length + 1, colCount);
     } else {
@@ -243,7 +237,7 @@ function displayTableDatas(verData, lectures) {
         if (verData[i].type == 2) {
             vCell.classList.add('link');
             (function (num) {
-                vCell.onclick = function (e) { displayTeacher(verData[num].id, e); }
+                vCell.onclick = (e) => { displayTeacher(verData[num].id, e); }
             })(i);
         }
 
@@ -278,7 +272,6 @@ function setDefaultLayoutToTable() {
     for (var i = 0; i < tableManager.getColCount() - 1; i++) {
         var cell = tableManager.getCell(0, i + 1);
         cell.innerHTML = i + 1;
-        cell.style.background = tableColors[currentDay];   //見出し位置の色
     }
 }
 
@@ -286,9 +279,11 @@ function setDefaultLayoutToTable() {
 function makeLectureObject(id, lecture) {
     var idtxt = "lecture-" + id; //講義の表示順に個別のidを振る
     var div = document.createElement('div');
-    div.classList.add("lecture");
-    div.classList.add('link');
     div.id = idtxt;
+    div.classList.add('mdl-js-button');
+    div.classList.add('mdl-ripple-effect');
+    div.classList.add('mdl-button--accent');
+    div.classList.add("lecture");
 
     //講義名をクリックしたときに実行される関数
     div.onclick = () => { openLectureModal(lecture); }
@@ -327,49 +322,80 @@ function closeLectureModal() {
 }
 
 //ポップアップウィンドウを表示する
-function displayPopup(html, event) {
-    //TODO
-    //ポップアップの表示位置がずれるバグを確認
-    var p = document.getElementById("popup");
-    p.innerHTML = html;
-    p.style.display = "block";
-    p.style.left = event.pageX - 10 + "px";
-    p.style.top = event.pageY - 10 + "px";
-    window.addEventListener('click', closePopup);
+function createPopup(title, body, event) {
+    var root = document.createElement('div');
+    root.classList.add('popup');
+    root.classList.add('mdl-shadow--2dp');
+    var top = document.createElement('div');
+    top.classList.add('popup-top');
+    var bottom = document.createElement('div');
+    bottom.classList.add('popup-bottom');
+
+    root.appendChild(top);
+    root.appendChild(bottom);
+
+    document.body.appendChild(root);
+    top.innerHTML = title;
+    bottom.innerHTML = body;
+    root.style.display = "table";
+    root.style.left = event.pageX + 10 + "px";
+    root.style.top = event.pageY + 10 + "px";
+
+
+    /*普通にクリックイベントをつけるとその場で実行されてしまうので、
+    setTimeoutでタイミングをずらしている*/
+    setTimeout(() => {
+        window.addEventListener('click', (() => {
+            return function f(e) {
+                if (closePopup(e, root)) {
+                    window.removeEventListener('click', f, false);
+                }
+            }
+        })(), false);
+    }, 1);
 }
 
 //ポップアップウィンドウ外をクリックされたときウィンドウを閉じる
-function closePopup(event) {
-    var p = document.getElementById('popup');
+function closePopup(event, popup) {
     var point = document.elementFromPoint(event.clientX, event.clientY);
-    if (p != point) {
-        p.innerHTML = "";
-        p.style.display = "none";
-        window.removeEventListener('click', closePopup);
+    var list = popup.children;
+    list['root'] = popup;
+    var isContain = false;
+    for (var e in list) {
+        if (list[e] == point) {
+            isContain = true;
+            break;
+        }
     }
+    if (!isContain) {
+        popup.innerHTML = "";
+        popup.style.display = "none";
+        document.body.removeChild(popup);
+        return true;
+    }
+    return false;
 }
 
 //教師の詳細情報を表示する
 function displayTeacher(id, event) {
     var teacher = datas.teachers.find(x => x.teacher_id == id);
-
-    var html = "";
+    var title = "";
+    var body = "";
     //氏名の表示
-    html += "氏名 : " + teacher.disp_teacher + "(" + teacher.roma_name + ")";
-    html += "<br>";
+    title += "<br>"+teacher.disp_teacher + "<br>(" + teacher.roma_name + ")";
 
     //役職の表示
-    html += "役職 : " + teacher.position;
-    html += "<br>";
+    body += "役職 : " + teacher.position;
+    body += "<br>";
 
     //専門分野の表示
-    html += "専門分野 : " + teacher.research_area;
-    html += "<br>";
+    body += "専門分野 : " + teacher.research_area;
+    body += "<br>";
 
     //所属の表示
-    html += "所属学科 : " + teacher.role;
+    body += "所属学科 : " + teacher.role;
 
-    displayPopup(html, event);
+    createPopup(title, body, event);
 }
 
 //講義の詳細データを付け足す
