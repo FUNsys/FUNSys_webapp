@@ -2,7 +2,7 @@ var mainTable = null;
 var currentDay = -1;
 var verticalData = {};
 var fadeTime = 200;
-var selectBoxes = {};
+var selectOptions = {};
 var currentSetting = "";
 
 window.onload = function () {
@@ -11,6 +11,17 @@ window.onload = function () {
     setupSetting();
     loadJson(firstJsonLoaded);
 };
+
+//子要素から特定のクラスのついたものを検索する
+function getChildByClass(element, targetClass) {
+    for (var c in element.children) {
+        if (typeof element.children[c].classList != 'undefined' &&
+            element.children[c].classList.contains(targetClass)) {
+            return element.children[c];
+        }
+    }
+    return null;
+}
 
 //初めにJsonが読み込まれたとき
 function firstJsonLoaded() {
@@ -64,7 +75,7 @@ function openFilterSetting() {
     var fabIcon = document.getElementById("FABIcon");
     fabIcon.innerHTML = fabIconNames.pushed;
 
-    var root = document.getElementById("selectBoxesRoot");
+    var root = document.getElementById("selectOptionsRoot");
     root.style.display = "block";
 
 }
@@ -78,94 +89,143 @@ function closeFilterSetting() {
     var fabIcon = document.getElementById("FABIcon");
     fabIcon.innerHTML = fabIconNames.normal;
 
-    var root = document.getElementById("selectBoxesRoot");
+    var root = document.getElementById("selectOptionsRoot");
     root.style.display = "none";
 }
+
 
 //設定ウィンドウの初期設定
 function setupSetting() {
     var fab = document.getElementById("FAB");
     fab.onclick = openFilterSetting;
 
-    var mainSelectBox = document.getElementById('mainSelectBox');
-    var roleSelectBox = document.getElementById('roleSelectBox');
-    var classNumSelectBox = document.getElementById('classNumSelectBox');
-    var gradeSelectBox = document.getElementById('gradeSelectBox');
-    var courseSelectBox = document.getElementById('courseSelectBox');
+    var mainSelectOption = document.getElementById('mainSelectOption');
+    var courseSelectOption = document.getElementById('courseSelectOption');
+    var gradeSelectOption = document.getElementById('gradeSelectOption');
+    var classNumSelectOption = document.getElementById('classNumSelectOption');
+    var roleSelectOption = document.getElementById('roleSelectOption');
 
-    appendSelectBoxOptions(mainSelectBox, mainOptions);
-    appendSelectBoxOptions(roleSelectBox, roleOptions);
-    appendSelectBoxOptions(classNumSelectBox, classNumOptions);
-    appendSelectBoxOptions(gradeSelectBox, gradeOptions);
-    appendSelectBoxOptions(courseSelectBox, courseOptions);
+    createSelectOption(mainSelectOption, mainOptions);
+    createSelectOption(courseSelectOption, courseOptions);
+    createSelectOption(gradeSelectOption, gradeOptions);
+    createSelectOption(classNumSelectOption, classNumOptions);
+    createSelectOption(roleSelectOption, roleOptions);
 
     //再利用のためにエレメントを変数に格納しておく
-    selectBoxes = {
-        'mainSelectBox': mainSelectBox,
-        'roleSelectBox': roleSelectBox,
-        'classNumSelectBox': classNumSelectBox,
-        'gradeSelectBox': gradeSelectBox,
-        'courseSelectBox': courseSelectBox
+    selectOptions = {
+        'mainSelectOption': mainSelectOption,
+        'roleSelectOption': roleSelectOption,
+        'classNumSelectOption': classNumSelectOption,
+        'gradeSelectOption': gradeSelectOption,
+        'courseSelectOption': courseSelectOption
     }
-    updateDisplaySubSelectBox(mainSelectBox.value);
 
-    //ローカルストレージから前回の値を読み出し、設定に反映させる
-    for (var key in selectBoxes) {
-        if (window.localStorage !== null) {
-            var val = localStorage.getItem(key);
-            if (val && val < selectBoxes[key].length) {
-                selectBoxes[key].selectedIndex = val;
-            }
-        }
-        selectBoxes[key].onchange = updateSetting;
-    }
+    displaySubSelectOptions(mainOptions[getSelectValue(mainSelectOption)]);
 }
 
 //ページを去るときに実行される
 window.addEventListener('beforeunload', function () {
     //ローカルストレージに設定の値を保存させる
     if (window.localStorage !== null) {
-        for (var key in selectBoxes) {
-            var val = localStorage.setItem(key, selectBoxes[key].selectedIndex);
+        for (var key in selectOptions) {
+            var val = localStorage.setItem(key, getSelectValue(selectOptions[key]));
         }
     }
 }, false);
 
+//オプション内の選択中の値を取得する
+function getSelectValue(select) {
+    return getChildByClass(select, 'mdl-textfield__input').value;
+}
 
-//連想配列からセレクトボックスのオプションを作成する
-function appendSelectBoxOptions(select, options) {
-    for (var o in options) {
-        var option = document.createElement('option');
-        option.innerHTML = o;
-        option.value = options[o];
-        select.appendChild(option);
+//オプションに値をセットする
+function setSelectValue(select, value) {
+    getChildByClass(select, 'mdl-textfield__input').value = value;
+}
+
+//オプションが拡大する方向を更新する
+function calcExtendDirection(ul, event) {
+    var optionHeight = 150; //cssで設定した値によって変える
+    if (window.innerHeight - event.clientY > 150) {
+        ul.classList.add('mdl-menu--bottom-left');
+        ul.classList.remove('mdl-menu--top-left');
+    } else {
+        ul.classList.add('mdl-menu--top-left');
+        ul.classList.remove('mdl-menu--bottom-left');
     }
-    return select;
+}
+
+//選択オプションを作成する
+function createSelectOption(select, options) {
+    var itemRoot = getChildByClass(select, 'mdl-menu');
+    var input = getChildByClass(select, 'mdl-textfield__input');
+    input.onclick = function (e) {
+        calcExtendDirection(itemRoot, e);
+    }
+    var first = true;
+    for (var o in options) {
+        if (first) {
+            if (input.value == "") input.value = o;
+            first = false;
+        }
+        var li = document.createElement('li');
+        li.classList.add('mdl-menu__item');
+        li.innerHTML = o;
+        (function (text) {
+            li.onclick = function () {
+                input.value = text;
+                updateSetting();
+            }
+        })(o);
+        itemRoot.appendChild(li);
+    }
+
+    if (window.localStorage !== null) {
+        var item = localStorage.getItem(select.id);
+        if (item != null && typeof item !== "undefined") {
+            input.value = item;
+        }
+    }
+}
+
+//サブセレクトオプションの表示、非表示を切り替える
+function displaySubSelectOptions(num) {
+    for (var select in selectOptionRelations) {
+        var elem = selectOptions[select];
+        if (selectOptionRelations[select] == num) {
+            elem.style.display = 'block';
+        } else {
+            elem.style.display = 'none';
+        }
+    }
 }
 
 //フィルタ設定の更新
 function updateSetting() {
     var objects = [];
     verticalData = [];
-    updateDisplaySubSelectBox(mainSelectBox.value);
-    var type = selectBoxes['mainSelectBox'].value;
+    displaySubSelectOptions(mainOptions[getSelectValue(selectOptions['mainSelectOption'])]);
+    var type = mainOptions[getSelectValue(selectOptions['mainSelectOption'])];
     switch (type) {
         case '0':
-            objects = getClassByFilter(selectBoxes['courseSelectBox'].value,
-                selectBoxes['gradeSelectBox'].value, selectBoxes['classNumSelectBox'].value);
+        case 0:
+            objects = getClassByFilter(courseOptions[getSelectValue(selectOptions['courseSelectOption'])],
+                gradeOptions[getSelectValue(selectOptions['gradeSelectOption'])], classNumOptions[getSelectValue(selectOptions['classNumSelectOption'])]);
+
             for (var i = 0, len = objects.length; i < len; i++) {
                 verticalData[i] = new TableData(objects[i].disp_class, type, objects[i].class_id);
             }
-
             break;
         case '1':
+        case 1:
             objects = getAllRooms();
             for (var i = 0, len = objects.length; i < len; i++) {
                 verticalData[i] = new TableData(objects[i].disp_room, type, objects[i].room_id);
             }
             break;
         case '2':
-            objects = getTeachersByFilter(selectBoxes['roleSelectBox'].value);
+        case 2:
+            objects = getTeachersByFilter(roleOptions[getSelectValue(selectOptions['roleSelectOption'])]);
             for (var i = 0, len = objects.length; i < len; i++) {
                 verticalData[i] = new TableData(objects[i].disp_teacher, type, objects[i].teacher_id);
             }
@@ -174,18 +234,6 @@ function updateSetting() {
     updateTable();
 }
 
-
-//サブセレクトボックスの表示、非表示を切り替える
-function updateDisplaySubSelectBox(num) {
-    for (var select in selectBoxRelations) {
-        var elem = selectBoxes[select];
-        if (selectBoxRelations[select] == num) {
-            elem.style.display = 'block';
-        } else {
-            elem.style.display = 'none';
-        }
-    }
-}
 
 //オブジェクトからテーブルデータを作成する
 function makeTableData(object) {

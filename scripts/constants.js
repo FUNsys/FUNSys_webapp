@@ -62,9 +62,9 @@ var gradeOptions = {
 
 /*サブセレクトボックスの表示、非表示を切り替えるために、
 idとメインセレクトボックスの値を関連付けている*/
-var selectBoxRelations = {
-    'courseSelectBox': 0,
-    'gradeSelectBox': 0,
-    'classNumSelectBox': 0,
-    'roleSelectBox': 2,
+var selectOptionRelations = {
+    'courseSelectOption': 0,
+    'gradeSelectOption': 0,
+    'classNumSelectOption': 0,
+    'roleSelectOption': 2,
 }

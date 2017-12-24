@@ -1,8 +1,8 @@
 <!DOCTYPE html>
+
 <head>
     <title>FUNカレンダー </title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 
     <link rel="stylesheet" type="text/css" href="./css/fade.css">
     <link rel="stylesheet" type="text/css" href="./css/main.css">
@@ -13,7 +13,6 @@
 
     <script type="text/javascript" src="./scripts/jsonread.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script type="text/javascript" src="./scripts/tableManager.js"></script>
     <script type="text/javascript" src="./scripts/funCalendar.js"></script>
     <script type="text/javascript" src="./scripts/modalManager.js"></script>
     <script type="text/javascript" src="./scripts/constants.js"></script>
@@ -47,12 +46,37 @@
 
     <!--option-->
     <div id="optionRoot" class="mdl-shadow--2dp">
-        <div id="selectBoxesRoot">
-            <select id='mainSelectBox' class="settingSelectBox"></select>
-            <select id="roleSelectBox" class="settingSelectBox"></select>
-            <select id="courseSelectBox" class="settingSelectBox"></select>
-            <select id="gradeSelectBox" class="settingSelectBox"></select>
-            <select id="classNumSelectBox" class="settingSelectBox"></select>
+        <div id="selectOptionsRoot">
+
+            <div id="mainSelectOption" class="mdl-textfield mdl-js-textfield mdl-select selectOption">
+                <input class="mdl-textfield__input" readonly='readonly' type="text" id="mainSelect-section" />
+                <label class="mdl-textfield__label"></label>
+                <ul class="mdl-menu mdl-menu--top-left mdl-js-menu mdl-js-ripple-effect" for="mainSelect-section"></ul>
+            </div>
+
+            <div id="courseSelectOption" class="mdl-textfield mdl-js-textfield mdl-select selectOption">
+                <input class="mdl-textfield__input" readonly='readonly' type="text" id="courseSelect-section" />
+                <label class="mdl-textfield__label"></label>
+                <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="courseSelect-section"></ul>
+            </div>
+
+            <div id="gradeSelectOption" class="mdl-textfield mdl-js-textfield mdl-select selectOption">
+                <input class="mdl-textfield__input" readonly='readonly' type="text" id="gradeSelect-section" />
+                <label class="mdl-textfield__label"></label>
+                <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="gradeSelect-section"></ul>
+            </div>
+
+            <div id="classNumSelectOption" class="mdl-textfield mdl-js-textfield mdl-select selectOption">
+                <input class="mdl-textfield__input" readonly='readonly' type="text" id="classNumSelect-section" />
+                <label class="mdl-textfield__label"></label>
+                <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="classNumSelect-section"></ul>
+            </div>
+
+            <div id="roleSelectOption" class="mdl-textfield mdl-js-textfield mdl-select selectOption">
+                <input class="mdl-textfield__input" readonly='readonly' type="text" id="roleSelect-section" />
+                <label class="mdl-textfield__label"></label>
+                <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="roleSelect-section"></ul>
+            </div>
         </div>
     </div>
 

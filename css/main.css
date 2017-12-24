@@ -65,6 +65,7 @@ header {
 
 /*====================*/
 
+/*===フィルタ設定===*/
 #optionRoot {
   width: 200px;
   height: 100%;
@@ -74,6 +75,27 @@ header {
   left: 0;
   top: 150px;
 }
+
+#selectOptionsRoot {
+  display: none;
+  position: absolute;
+  margin-left: 20px;
+}
+
+.selectOption {
+  width: 170px !important;
+}
+
+.selectOption input {
+  font-size: 90%;
+}
+
+.selectOption ul {
+  z-index: 100;
+  max-height: 150px;
+  overflow: auto;
+}
+/*===================*/
 
 /*===テーブルのスタイル===*/
 #mainTable {
@@ -158,7 +180,6 @@ header {
   height: 20px !important;
   font-size: 100% !important;
   line-height: 20px !important;
-  /*文字列がオーバーした際は[...]と表示する*/
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -179,41 +200,12 @@ header {
 
 .lectureContent {
   text-align: right;
-  font-size: 80%;
+  font-size: 85%;
+  font-weight: bolder;
 }
 
 .teacherContent {
   text-align: right;
-  font-size: 80%;
-}
-
-/*===設定画面===*/
-.settingSelectBox {
-  width: 100px;
-  display: block;
-  border-bottom: solid 5px #ffffff;
-  margin: 0 auto;
-}
-
-#selectBoxesRoot {
-  display: none;
-  position: relative;
-  text-align: center;
-  margin: 5px;
-}
-
-#roleSelectBox {
-  display: none;
-}
-
-#classNumSelectBox {
-  display: none;
-}
-
-#gradeSelectBox {
-  display: none;
-}
-
-#courseSelectBox {
-  display: none;
+  font-size: 85%;
+  font-weight: bolder;
 }
