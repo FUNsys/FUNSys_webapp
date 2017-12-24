@@ -320,9 +320,12 @@ function displayLecture(e, lecture) {
             content.appendChild(kanma);
         }
     }
-    content.appendChild(document.createElement('br'));
 
-    var link = document.createElement('p');
+    var moreContent = document.createElement('div');
+    var hiddenText = document.createElement('div');
+    hiddenText.innerHTML = makeLectureContentHTML(lecture);
+    hiddenText.style.display = 'none';
+    var link = document.createElement('div');
     link.classList.add('mdl-button');
     link.classList.add('mdl-js-button');
     link.classList.add('mdl-button--icon');
@@ -330,26 +333,24 @@ function displayLecture(e, lecture) {
     icon.classList.add('material-icons');
     icon.innerHTML = 'link';
     link.appendChild(icon);
-    content.appendChild(link);
-    link.onclick = function () {
+    moreContent.appendChild(link);
+    moreContent.appendChild(hiddenText);
+    content.appendChild(moreContent);
 
+    link.onclick = displayMore;
+    function displayMore() {
+        hiddenText.style.display = 'block';
+        icon.innerHTML = 'clear';
+        link.onclick = hideContent;
+    }
+
+    function hideContent() {
+        hiddenText.style.display = 'none';
+        icon.innerHTML = 'link';
+        link.onclick = displayMore;
     }
 
     createPopup(lecture.disp_lecture, content, e);
-}
-
-//講義のモーダルウィンドウを閉じる
-function closeLectureModal() {
-    var modal = document.getElementById("lectureModal");
-    var modalContent = document.getElementById("lectureModal-content");
-    closeModalOverlay();
-    modal.classList.remove("fadeIn");
-    modal.classList.add("fadeOut");
-    setTimeout(() => {
-        modal.classList.remove("fadeOut");
-        modalContent.innerHTML = "";
-        modal.style.display = 'none';
-    }, fadeTime);
 }
 
 //ポップアップウィンドウを表示する
@@ -461,46 +462,17 @@ function displayTeacher(teacher, event, parent) {
     createPopup(title, content, event, parent);
 }
 
-//講義の詳細データを付け足す
-function appendLectureContentHTML(lecture, parent) {
-    //講義名を表示
-    parent.innerHTML += "<h3>" + lecture.disp_lecture + "</h3>";
-    parent.innerHTML += '<br>';
-
-    //担当を表示
-    parent.innerHTML += "担当 : ";
-    var teachers = getTeachersFromLecture(lecture);
-    for (var i = 0, len = teachers.length; i < len; i++) {
-        //担当教師の情報を埋め込む
-        var teacherLink = document.createElement('span');
-        teacherLink.id = "teacherLink" + i;
-        teacherLink.classList.add('link');
-        teacherLink.innerHTML += teachers[i].disp_teacher;
-
-        /*onclickイベントに直接関数を与えても動作しないようなので、
-        親の要素のクリックイベントからidで探索している*/
-        (function (num) {
-            parent.addEventListener('click', function (event) {
-                var point = document.elementFromPoint(event.pageX, event.pageY);
-                if (point.id == "teacherLink" + num) {
-                    displayTeacher(teachers[num].teacher_id, event);
-                }
-            });
-        })(i);
-
-        parent.appendChild(teacherLink);
-        if (i < len - 1) parent.innerHTML += ", ";
-    }
-    parent.innerHTML += '<br>';
-
+//講義の詳細データを作成する
+function makeLectureContentHTML(lecture) {
+    var html = "";
     //クラスを表示
-    parent.innerHTML += "対象 : ";
+    html += "対象 : ";
     var classes = getClassesFromLecture(lecture);
     for (var i = 0, len = classes.length; i < len; i++) {
-        parent.innerHTML += classes[i].disp_class;
-        if (i < len - 1) parent.innerHTML += ", ";
+        html += classes[i].disp_class;
+        if (i < len - 1) html += ", ";
     }
-    parent.innerHTML += '<br>';
+    html += '<br>';
 
     //必修,選択情報を表示
     var must = "";
@@ -515,20 +487,22 @@ function appendLectureContentHTML(lecture, parent) {
                 break;
         }
     }
-    parent.innerHTML += "必修 : " + must;
-    parent.innerHTML += "<br>";
-    parent.innerHTML += "選択 : " + select;
-    parent.innerHTML += "<br>";
+    html += "必修 : " + must;
+    html += "<br>";
+    html += "選択 : " + select;
+    html += "<br>";
 
     //教室を表示
-    parent.innerHTML += "教室 : ";
+    html += "教室 : ";
     var rooms = getRoomsFromLecture(lecture);
     for (var i = 0, len = rooms.length; i < len; i++) {
-        parent.innerHTML += rooms[i].disp_room;
-        if (i < len - 1) parent.innerHTML += ", ";
+        html += rooms[i].disp_room;
+        if (i < len - 1) html += ", ";
     }
-    parent.innerHTML += '<br>';
+    html += '<br>';
 
     //日時を表示
-    parent.innerHTML += "日時 : " + getDayAndTimeFromLecture(lecture);
+    html += "日時 : " + getDayAndTimeFromLecture(lecture);
+
+    return html;
 }
