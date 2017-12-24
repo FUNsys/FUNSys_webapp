@@ -1,4 +1,4 @@
-var tableManager = null;
+var mainTable = null;
 var currentDay = -1;
 var verticalData = {};
 var fadeTime = 200;
@@ -6,8 +6,7 @@ var selectBoxes = {};
 var currentSetting = "";
 
 window.onload = function () {
-    var table = document.getElementById('mainTable');
-    tableManager = new TableManager(table);
+    mainTable = document.getElementById('mainTable');
     setupDayButton();
     setupSetting();
     loadJson(firstJsonLoaded);
@@ -205,7 +204,7 @@ function makeTableData(object) {
     return data;
 }
 
-//引数が、クラス、講師、教室のうちどれであるか判別する
+//引数が、クラス、教員、教室のうちどれであるか判別する
 function distinctObjectType(object) {
     if (object.class_id != null) {
         return 0;
@@ -224,7 +223,7 @@ function updateTable() {
 }
 
 /*テーブルにデータを渡すときに使用する
-type 0 = クラス, type 1 = 教室, type 2 = 講師
+type 0 = クラス, type 1 = 教室, type 2 = 教員
 idはそれぞれの名前で与えられているものの数値 ex)teacher_id*/
 TableData = function (name, type, id) {
     this.name = name;
@@ -232,19 +231,43 @@ TableData = function (name, type, id) {
     this.id = id;
 };
 
+// 現在の表を削除して空の表を作成する
+function createTable(rowCount, colCount) {
+    var child;
+    while (child = mainTable.lastChild) mainTable.removeChild(child);
+
+    var thead = document.createElement('thead');
+    thead.insertRow(-1);
+    for (var i = 0; i < colCount; i++) {
+        var val = "";
+        if (i > 0) { val = i; }
+        thead.firstChild.innerHTML += '<th>' + val + '</th>';
+    }
+    mainTable.appendChild(thead);
+
+    var tbody = document.createElement('tbody');
+    for (var i = 1; i < rowCount; i++) {
+        tbody.insertRow(-1);
+        for (var j = 0; j < colCount; j++) {
+            if (j == 0) tbody.lastChild.innerHTML += '<th></th>';
+            else tbody.lastChild.innerHTML += '<td></td>';
+        }
+    }
+    mainTable.appendChild(tbody);
+}
+
 //テーブルデータを表示する
 function displayTableDatas(verData, lectures) {
     var colCount = 6;
     if (typeof verData.length !== "undefined") {
-        tableManager.createTable(verData.length + 1, colCount);
+        createTable(verData.length + 1, colCount);
     } else {
-        tableManager.createTable(1, colCount);
+        createTable(1, colCount);
     }
-    setDefaultLayoutToTable();
     var count = 0; //データの表示順にidを割り振るためのカウンタ
     for (var i = 0; i < verData.length; i++) {
         //縦列見出しの表示
-        var vCell = tableManager.getCell(i + 1, 0);
+        var vCell = mainTable.rows[i + 1].cells[0];
         vCell.innerHTML = verData[i].name;
 
         //縦列が教員の場合、教員情報を挿入する
@@ -276,18 +299,10 @@ function displayTableDatas(verData, lectures) {
                     break;
             }
             if (findID) {
-                var cell = tableManager.getCell(i + 1, x.jigen);
+                var cell = mainTable.rows[i + 1].cells[x.jigen];
                 cell.appendChild(makeLectureObject(count++, x));
             }
         });
-    }
-}
-
-//テーブルにデフォルトのレイアウトを適用する
-function setDefaultLayoutToTable() {
-    for (var i = 0; i < tableManager.getColCount() - 1; i++) {
-        var cell = tableManager.getCell(0, i + 1);
-        cell.innerHTML = i + 1;
     }
 }
 

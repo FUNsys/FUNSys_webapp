@@ -1,4 +1,3 @@
-var buttonIds = ['#btn0', '#btn1', '#btn2', '#btn3', '#btn4'];
 var days = ['Mon','Tue','Wed','Thu','Fri']
 
 var fabIconNames = {
@@ -14,7 +13,7 @@ var linkIconNames ={
 var mainOptions = {
     'クラス': 0,
     '教室': 1,
-    '講師': 2,
+    '教員': 2,
 }
 
 var roleOptions = {
