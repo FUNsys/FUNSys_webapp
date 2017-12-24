@@ -22,13 +22,27 @@
 </head>
 
 <body>
-    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored FAB" id="FAB">
+    <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored FAB"
+        id="FAB">
         <i class="material-icons" id="FABIcon">dehaze</i>
     </button>
 
     <header class="mdl-shadow--2dp">
         <div class="header-top">
-            <span style="color:#ffffff">FUN Calendar</span>
+            <div class="titleRoot">
+                <span id="title">FUN Calendar</span>
+                <span id="copyWrite">©FUNSys All Right Reserved</span>
+                <div id="daySelectArrows">
+                    <button class="mdl-button mdl-js-button mdl-button--icon" onclick="movePrevDay()">
+                        <i class="material-icons">keyboard_arrow_up</i>
+                    </button>
+                    <br>
+                    <button class="mdl-button mdl-js-button mdl-button--icon" onclick="moveNextDay()">
+                        <i class="material-icons">keyboard_arrow_down</i>
+                    </button>
+                </div>
+                <div id="daySelector"></div>
+            </div>
         </div>
     </header>
 
@@ -42,24 +56,6 @@
             <select id="classNumSelectBox" class="settingSelectBox"></select>
         </div>
     </div>
-
-    <div class="btnroot">
-        <div class="btn" id="btn0" onclick="pushDayButton(0)">
-            Mon
-        </div>
-        <div class="btn" id="btn1" onclick="pushDayButton(1)">
-            Tue
-        </div>
-        <div class="btn" id="btn2" onclick="pushDayButton(2)">
-            Wed
-        </div>
-        <div class="btn" id="btn3" onclick="pushDayButton(3)">
-            Thu
-        </div>
-        <div class="btn" id="btn4" onclick="pushDayButton(4)">
-            Fri
-        </div>
-    </div>
-
+    
     <table id="mainTable"></table>
 </body>

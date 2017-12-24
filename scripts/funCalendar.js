@@ -3,10 +3,9 @@ var currentDay = -1;
 var verticalData = {};
 var fadeTime = 200;
 var selectBoxes = {};
-var popupList = {};
+var currentSetting = "";
 
 window.onload = function () {
-    var t = window.applicationCache;
     var table = document.getElementById('mainTable');
     tableManager = new TableManager(table);
     setupDayButton();
@@ -29,7 +28,32 @@ function setupDayButton() {
     if (day == -1 || day == 5) {
         day = 0; //土、日曜日の場合は月曜日を選択された状態にする
     }
-    pushDayButton(day);
+    setCurrentDay(day);
+}
+
+//曜日を一つ進める
+function moveNextDay() {
+    if (currentDay < 4) {
+        setCurrentDay(currentDay + 1);
+    } else {
+        setCurrentDay(0);
+    }
+}
+//曜日を一つ戻す
+function movePrevDay() {
+    if (currentDay > 0) {
+        setCurrentDay(currentDay - 1);
+    } else {
+        setCurrentDay(4);
+    }
+}
+
+//曜日を更新する
+function setCurrentDay(num) {
+    var daySelector = document.getElementById('daySelector');
+    currentDay = num;
+    daySelector.innerHTML = days[currentDay];
+    if (jsonLoaded) updateTable();
 }
 
 //フィルタ設定ウィンドウを開く
@@ -133,6 +157,7 @@ function updateSetting() {
             for (var i = 0, len = objects.length; i < len; i++) {
                 verticalData[i] = new TableData(objects[i].disp_class, type, objects[i].class_id);
             }
+
             break;
         case '1':
             objects = getAllRooms();
@@ -190,17 +215,6 @@ function distinctObjectType(object) {
         return 2;
     } else {
         return -1;
-    }
-}
-
-
-//選択中の曜日ボタンを引数の番号のボタンに変更
-function pushDayButton(num) {
-    if (currentDay != num) {
-        $(buttonIds[currentDay]).removeClass('btn_selected');
-        $(buttonIds[num]).addClass('btn_selected');
-        currentDay = num;
-        if (jsonLoaded) updateTable();
     }
 }
 
@@ -340,13 +354,13 @@ function displayLecture(e, lecture) {
     link.onclick = displayMore;
     function displayMore() {
         hiddenText.style.display = 'block';
-        icon.innerHTML = 'clear';
+        icon.innerHTML = linkIconNames.pushed;
         link.onclick = hideContent;
     }
 
     function hideContent() {
         hiddenText.style.display = 'none';
-        icon.innerHTML = 'link';
+        icon.innerHTML = linkIconNames.normal;
         link.onclick = displayMore;
     }
 

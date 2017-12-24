@@ -3,14 +3,15 @@
 }
 
 body {
-  margin-top: 130px !important;
-  margin-left: 200px !important;
+  margin-top: 165px !important;
+  margin-left: 215px !important;
   -webkit-text-size-adjust: 100% !important;
 }
 
+/*===ヘッダー内の要素===*/
 header {
   position: fixed;
-  height: 130px;
+  height: 150px;
   width: 100%;
   top: 0;
   z-index: 100;
@@ -20,8 +21,49 @@ header {
 
 .header-top {
   height: 70%;
-  background-color: skyblue;
+  background-color: #5050ff;
 }
+
+.titleRoot {
+  padding-top: 10px;
+  padding-left: 20px;
+}
+
+#title {
+  color: #f0f0f0;
+  font-size: 90%;
+}
+
+#copyWrite {
+  position: absolute;
+  color: #f0f0f0;
+  font-size: 80%;
+  right: 20px;
+}
+
+#daySelector {
+  font-size: 200%;
+  font-weight: bolder;
+  padding-top: 20px;
+  padding-left: 10px;
+  color: #ffffff;
+}
+
+#daySelectArrows {
+  position: fixed;
+  top: 30px;
+  left: 100px;
+  color: white;
+}
+
+#FAB {
+  position: fixed !important;
+  top: 85px;
+  left: 20px;
+  z-index: 150;
+}
+
+/*====================*/
 
 #optionRoot {
   width: 200px;
@@ -30,13 +72,7 @@ header {
   position: fixed;
   z-index: 50;
   left: 0;
-}
-
-#FAB {
-  position: fixed !important;
-  top: 65px;
-  left: 10px;
-  z-index: 150;
+  top: 150px;
 }
 
 #mainTable {
@@ -111,15 +147,6 @@ header {
   border-radius: 0 0 4px 4px / 0 0 4px 4px;
   background-color: #ffffff;
 }
-@keyframes appeal {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
 /*==========================*/
 
 /*表内に表示される講義データ*/
@@ -148,131 +175,17 @@ header {
   cursor: pointer;
 }
 
-/*===講義詳細ウィンドウ===*/
 .lectureContent {
   text-align: right;
   font-size: 80%;
 }
 
-.lecture-moreContentLink {
-  width: 100px;
-}
-
-.lecture-moreContentLink:hover {
-  cursor: pointer;
-}
-
-.lecture-moreContentLink-icon {
-      
-} 
-
-.lecture-moreContentLink-icon:hover {
-    cursor: pointer;
-}
-
-/*=======================*/
 .teacherContent {
   text-align: right;
   font-size: 80%;
 }
 
-/*曜日選択ボタンの親*/
-.btnroot {
-  position: relative;
-  left: 320px;
-  margin: 15px;
-  height: 60px;
-  /*要素を選択不能にする*/
-  /* CSS3 */
-  user-select: none;
-  /* Firefox */
-  -moz-user-select: none;
-  /* Safari、Chromeなど */
-  -webkit-user-select: none;
-  /* IE10から*/
-  -ms-user-select: none;
-}
-
-/*曜日選択ボタン*/
-.btn {
-  display: inline-block;
-  text-decoration: none;
-  color: #FFF;
-  width: 50px;
-  height: 50px;
-  line-height: 50px;
-  border-radius: 50%;
-  text-align: center;
-  font-weight: bold;
-  vertical-align: middle;
-  overflow: hidden;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.29);
-  border-bottom: solid 3px #bd6565;
-  transition: .4s;
-  cursor: pointer;
-}
-
-/*ボタンの色を指定する
- 0 = 月曜日 ... 4 = 金曜日 */
-#btn0 {
-  background-color: rgb(255, 255, 0);
-}
-
-#btn1 {
-  background-color: rgb(0, 255, 0);
-}
-
-#btn2 {
-  background-color: rgb(0, 0, 255);
-}
-
-#btn3 {
-  background-color: rgb(79, 79, 122);
-}
-
-#btn4 {
-  background-color: rgb(136, 255, 0);
-}
-
-/*選択されたボタンを大きく表示する*/
-.btn_selected {
-  width: 60px;
-  height: 60px;
-  line-height: 60px;
-}
-
-/*ボタンを押したときにアニメーションする*/
-.btn:active {
-  -ms-transform: translateY(2px);
-  -webkit-transform: translateY(2px);
-  transform: translateY(2px);
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
-  border-bottom: none;
-}
-
 /*===設定画面===*/
-#settingModal-content {
-  border: 2px solid #aaa;
-  background: #fff;
-  z-index: 2;
-  display: none;
-  /*画面中央に表示して、スクロールに追従する*/
-  position: fixed;
-  margin-left: -150px;
-  /* 中央配置する要素の縦幅の半分だけ左にずらす */
-  margin-top: -100px;
-  /* 中央配置する要素の横幅の半分だけ上にずらす */
-  top: 50%;
-  /* 要素の上端を中央に */
-  left: 50%;
-  /* 要素の左端を中央に */
-  width: 300px;
-  height: 200px;
-
-  padding: 5px;
-  text-align: center;
-}
-
 .settingSelectBox {
   width: 100px;
   display: block;
@@ -301,21 +214,4 @@ header {
 
 #courseSelectBox {
   display: none;
-}
-
-/*===========*/
-.modal-button-parent {
-  position: relative;
-  text-align: right;
-}
-
-.mybutton {
-  cursor: pointer;
-  display: inline-block;
-  text-decoration: none;
-  background: #668ad8;
-  /*ボタン色*/
-  color: #FFF;
-  border-bottom: solid 4px #627295;
-  border-radius: 3px;
 }
