@@ -5,16 +5,16 @@ var fadeTime = 200;
 var selectBoxes = {};
 var popupList = {};
 
-$(function () {
+window.onload = function () {
     var t = window.applicationCache;
     var table = document.getElementById('mainTable');
     tableManager = new TableManager(table);
     setupDayButton();
     setupSetting();
     loadJson(firstJsonLoaded);
-});
+};
 
-//初めにJsonが呼ばれたとき
+//初めにJsonが読み込まれたとき
 function firstJsonLoaded() {
     updateSetting();
     updateTable();
@@ -237,7 +237,9 @@ function displayTableDatas(verData, lectures) {
         if (verData[i].type == 2) {
             vCell.classList.add('link');
             (function (num) {
-                vCell.onclick = (e) => { displayTeacher(verData[num].id, e); }
+                vCell.onclick = function (e) {
+                    displayTeacher(getAllTeachers().find(x => x.teacher_id == verData[num].id), e);
+                }
             })(i);
         }
 
@@ -286,25 +288,54 @@ function makeLectureObject(id, lecture) {
     div.classList.add("lecture");
 
     //講義名をクリックしたときに実行される関数
-    div.onclick = () => { openLectureModal(lecture); }
+    div.onclick = (e) => { displayLecture(e, lecture); }
 
     //講義名でボタンを作成する
     div.innerHTML += lecture.disp_lecture;
     return div;
 }
 
-//講義のモーダルウィンドウを開く
-function openLectureModal(lecture) {
-    var modal = document.getElementById("lectureModal");
-    var modalContent = document.getElementById("lectureModal-content");
-    appendLectureContentHTML(lecture, modalContent);
-    openModalOverlay(closeLectureModal);
-    modal.style.display = 'block';
-    modal.classList.remove("fadeOut");
-    modal.classList.add("fadeIn");
-    setTimeout(() => {
-        modal.classList.remove("fadeIn");
-    }, fadeTime);
+//講義の詳細を表示する
+function displayLecture(e, lecture) {
+    var content = document.createElement('div');
+    content.classList.add('lectureContent');
+    content.innerHTML += '担当教員 : ';
+
+    var teachers = getTeachersFromLecture(lecture);
+    for (var i = 0, len = teachers.length; i < len; i++) {
+        //担当教師の情報を埋め込む
+        var teacherLink = document.createElement('span');
+        teacherLink.classList.add('link');
+        teacherLink.innerHTML += teachers[i].disp_teacher;
+        (function (t) {
+            teacherLink.onclick = function (e) {
+                displayTeacher(t, e, content.parentNode.parentNode);
+            }
+        })(teachers[i]);
+
+        content.appendChild(teacherLink);
+        if (i < len - 1) {
+            var kanma = document.createElement('span');
+            kanma.innerHTML = ', ';
+            content.appendChild(kanma);
+        }
+    }
+    content.appendChild(document.createElement('br'));
+
+    var link = document.createElement('p');
+    link.classList.add('mdl-button');
+    link.classList.add('mdl-js-button');
+    link.classList.add('mdl-button--icon');
+    var icon = document.createElement('i');
+    icon.classList.add('material-icons');
+    icon.innerHTML = 'link';
+    link.appendChild(icon);
+    content.appendChild(link);
+    link.onclick = function () {
+
+    }
+
+    createPopup(lecture.disp_lecture, content, e);
 }
 
 //講義のモーダルウィンドウを閉じる
@@ -322,28 +353,50 @@ function closeLectureModal() {
 }
 
 //ポップアップウィンドウを表示する
-function createPopup(title, body, event) {
+/*
+ポップアップは画面内に複数表示される場合あり。
+ポップアップ上にあるリンクから別のポップアップを開いた場合、
+新たに開かれるポップアップは元のポップアップの子要素になる。
+ポップアップは自身の子孫オブジェクト以外がクリックされたときに閉じる。
+*/
+function createPopup(title, content, event, parent) {
     var root = document.createElement('div');
     root.classList.add('popup');
     root.classList.add('mdl-shadow--2dp');
     var top = document.createElement('div');
     top.classList.add('popup-top');
+    var topInnner = document.createElement('div');
+    topInnner.classList.add('popup-top-text');
     var bottom = document.createElement('div');
     bottom.classList.add('popup-bottom');
 
+    var x = event.pageX + 10;
+    var y = event.pageY + 10;
+    if (parent) {
+        var pPos = parent.getBoundingClientRect();
+        pPos.x += window.pageXOffset;
+        pPos.y += window.pageYOffset;
+        x -= pPos.x;
+        y -= pPos.y;
+    }
+    root.style.left = x + "px";
+    root.style.top = y + "px";
+    root.style.display = "block";
+
+    topInnner.innerHTML = title;
+    top.appendChild(topInnner);
+    bottom.appendChild(content);
     root.appendChild(top);
     root.appendChild(bottom);
-
-    document.body.appendChild(root);
-    top.innerHTML = title;
-    bottom.innerHTML = body;
-    root.style.display = "table";
-    root.style.left = event.pageX + 10 + "px";
-    root.style.top = event.pageY + 10 + "px";
-
+    if (parent) {
+        parent.appendChild(root);
+    } else {
+        document.body.appendChild(root);
+    }
 
     /*普通にクリックイベントをつけるとその場で実行されてしまうので、
     setTimeoutでタイミングをずらしている*/
+    var cantCloseTime = 1;
     setTimeout(() => {
         window.addEventListener('click', (() => {
             return function f(e) {
@@ -352,50 +405,60 @@ function createPopup(title, body, event) {
                 }
             }
         })(), false);
-    }, 1);
+    }, cantCloseTime);
 }
 
 //ポップアップウィンドウ外をクリックされたときウィンドウを閉じる
 function closePopup(event, popup) {
     var point = document.elementFromPoint(event.clientX, event.clientY);
-    var list = popup.children;
-    list['root'] = popup;
-    var isContain = false;
-    for (var e in list) {
-        if (list[e] == point) {
-            isContain = true;
-            break;
-        }
-    }
-    if (!isContain) {
+    var list = getAllChilden(popup);
+    list.push(popup);
+
+    if (list.indexOf(point) < 0) {
         popup.innerHTML = "";
         popup.style.display = "none";
-        document.body.removeChild(popup);
+        popup.parentNode.removeChild(popup);
         return true;
     }
     return false;
 }
 
+//全ての子要素を取得する
+function getAllChilden(element) {
+    var children = [];
+    var stack = [];
+    stack.push(element);
+    var node;
+    while ((node = stack.pop()) != null) {
+        var list = node.children;
+        for (var c in list) {
+            stack.push(list[c]);
+            children.push(list[c]);
+        }
+    }
+    return children;
+}
+
 //教師の詳細情報を表示する
-function displayTeacher(id, event) {
-    var teacher = datas.teachers.find(x => x.teacher_id == id);
+function displayTeacher(teacher, event, parent) {
     var title = "";
-    var body = "";
+    var content = document.createElement('div');
+    content.classList.add('teacherContent');
     //氏名の表示
-    title += "<br>"+teacher.disp_teacher + "<br>(" + teacher.roma_name + ")";
+    title += teacher.disp_teacher + "<br>(" + teacher.roma_name + ")";
 
     //役職の表示
-    body += "役職 : " + teacher.position;
-    body += "<br>";
+    content.innerHTML += "役職 : " + teacher.position;
+    content.innerHTML += "<br>";
 
     //専門分野の表示
-    body += "専門分野 : " + teacher.research_area;
-    body += "<br>";
+    content.innerHTML += "専門分野 : " + teacher.research_area;
+    content.innerHTML += "<br>";
 
     //所属の表示
-    body += "所属学科 : " + teacher.role;
+    content.innerHTML += "所属学科 : " + teacher.role;
 
-    createPopup(title, body, event);
+    createPopup(title, content, event, parent);
 }
 
 //講義の詳細データを付け足す

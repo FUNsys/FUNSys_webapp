@@ -2,6 +2,43 @@
   font-family: "游ゴシック体", "Yu Gothic";
 }
 
+body {
+  margin-top: 130px !important;
+  margin-left: 200px !important;
+  -webkit-text-size-adjust: 100% !important;
+}
+
+header {
+  position: fixed;
+  height: 130px;
+  width: 100%;
+  top: 0;
+  z-index: 100;
+  background-color: #ffffff;
+  left: 0;
+}
+
+.header-top {
+  height: 70%;
+  background-color: skyblue;
+}
+
+#optionRoot {
+  width: 200px;
+  height: 100%;
+  background-color: #ffffff;
+  position: fixed;
+  z-index: 50;
+  left: 0;
+}
+
+#FAB {
+  position: fixed !important;
+  top: 65px;
+  left: 10px;
+  z-index: 150;
+}
+
 #mainTable {
   /*表全体の横幅*/
   width: 620px;
@@ -12,7 +49,7 @@
   border-collapse: collapse;
   color: blue;
 }
-/*見出し*/
+
 #mainTable th {
   text-align: left;
   vertical-align: bottom;
@@ -22,7 +59,6 @@
   border: 1px solid skyblue;
 }
 
-/*表要素*/
 #mainTable td {
   text-align: left;
   /*左寄せ*/
@@ -51,23 +87,30 @@
 }
 
 .popup-top {
+  position: relative;
   background-color: #f00000;
   height: 60px;
   width: 200px;
   border-radius: 4px 4px 0 0 / 4px 4px 0 0;
-  font-weight: bolder;
+  display: block;
+}
+
+.popup-top-text {
   color: #ffffff;
+  font-weight: bolder;
   padding-right: 5px;
-  display: inline-block;
+  position: absolute;
+  display: inline;
+  bottom: 5px;
+  right: 0;
   text-align: right;
 }
 
 .popup-bottom {
-  padding :5px;
-  border-radius:0 0 4px 4px / 0 0 4px 4px;
+  padding: 5px;
+  border-radius: 0 0 4px 4px / 0 0 4px 4px;
   background-color: #ffffff;
 }
-
 @keyframes appeal {
   from {
     opacity: 0;
@@ -106,28 +149,32 @@
 }
 
 /*===講義詳細ウィンドウ===*/
-#lectureModal {
-  display: none;
-  background-color: #ffffff;
-  z-index: 2;
-  overflow: auto;
-  border: 1px solid #000000;
-  /*画面中央に表示して、スクロールに追従する*/
-  position: fixed;
-  padding: 5px;
-  margin-left: -225px;
-  /* 中央配置する要素の縦幅の半分だけ左にずらす */
-  margin-top: -250px;
-  /* 中央配置する要素の横幅の半分だけ上にずらす */
-  top: 50%;
-  /* 要素の上端を中央に */
-  left: 50%;
-  /* 要素の左端を中央に */
-  width: 450px;
-  height: 500px;
+.lectureContent {
+  text-align: right;
+  font-size: 80%;
+}
+
+.lecture-moreContentLink {
+  width: 100px;
+}
+
+.lecture-moreContentLink:hover {
+  cursor: pointer;
+}
+
+.lecture-moreContentLink-icon {
+      
+} 
+
+.lecture-moreContentLink-icon:hover {
+    cursor: pointer;
 }
 
 /*=======================*/
+.teacherContent {
+  text-align: right;
+  font-size: 80%;
+}
 
 /*曜日選択ボタンの親*/
 .btnroot {
