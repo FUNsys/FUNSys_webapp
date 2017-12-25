@@ -65,8 +65,7 @@ header {
 
 /*====================*/
 
-/*===フィルタ設定===*/
-#optionRoot {
+#sideBarRoot {
   width: 200px;
   height: 100%;
   background-color: #ffffff;
@@ -76,21 +75,28 @@ header {
   top: 150px;
 }
 
+/*===フィルタ設定===*/
 #selectOptionsRoot {
-  display: none;
+  display: block;
   position: absolute;
   margin-left: 20px;
 }
 
 .selectOption {
   width: 170px !important;
+  margin-bottom: -20px !important;
 }
 
 .selectOption input {
   font-size: 90%;
 }
 
+.selectOption li {
+  height: 40px !important;
+}
+
 .selectOption ul {
+  margin: 0;
   z-index: 100;
   max-height: 150px;
   overflow: auto;
@@ -144,6 +150,19 @@ header {
   z-index: 3;
   border-radius: 4px;
   width: 200px;
+  animation: popupOpen .15s;
+  animation-fill-mode: both;
+  animation-timing-function: ease-out;
+  transform-origin: left top;
+}
+@keyframes popupOpen {
+  0% {
+    transform: scale(0,0);
+  }
+
+  100% {
+    transform: scale(1,1);
+  }
 }
 
 .popup-top {
@@ -168,8 +187,39 @@ header {
 
 .popup-bottom {
   padding: 5px;
+  min-height: 50px;
+  overflow: hidden;
   border-radius: 0 0 4px 4px / 0 0 4px 4px;
   background-color: #ffffff;
+}
+
+.lectureContent {
+  text-align: right;
+  font-size: 85%;
+  font-weight: bolder;
+}
+
+.lectureContent-more {
+  animation: expandContent .13s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+  transform-origin: top;
+}
+
+@keyframes expandContent {
+  0% {
+    transform: scaleY(0);
+  }
+
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+.teacherContent {
+  text-align: right;
+  font-size: 85%;
+  font-weight: bolder;
 }
 /*==========================*/
 
@@ -196,16 +246,4 @@ header {
 .lecture:hover {
   background-color: #cc0000;
   cursor: pointer;
-}
-
-.lectureContent {
-  text-align: right;
-  font-size: 85%;
-  font-weight: bolder;
-}
-
-.teacherContent {
-  text-align: right;
-  font-size: 85%;
-  font-weight: bolder;
 }

@@ -76,7 +76,7 @@ function openFilterSetting() {
     fabIcon.innerHTML = fabIconNames.pushed;
 
     var root = document.getElementById("selectOptionsRoot");
-    root.style.display = "block";
+    // root.style.display = "block";
 
 }
 
@@ -90,7 +90,7 @@ function closeFilterSetting() {
     fabIcon.innerHTML = fabIconNames.normal;
 
     var root = document.getElementById("selectOptionsRoot");
-    root.style.display = "none";
+    // root.style.display = "none";
 }
 
 
@@ -416,17 +416,18 @@ function displayLecture(e, lecture) {
 
     link.onclick = displayMore;
     function displayMore() {
+        hiddenText.classList.add('lectureContent-more');
         hiddenText.style.display = 'block';
         icon.innerHTML = linkIconNames.pushed;
         link.onclick = hideContent;
     }
 
     function hideContent() {
+        hiddenText.classList.remove('lectureContent-more');
         hiddenText.style.display = 'none';
         icon.innerHTML = linkIconNames.normal;
         link.onclick = displayMore;
     }
-
     createPopup(lecture.disp_lecture, content, e);
 }
 
@@ -448,6 +449,7 @@ function createPopup(title, content, event, parent) {
     var bottom = document.createElement('div');
     bottom.classList.add('popup-bottom');
 
+    //ポップアップをクリック位置の右下に表示させるように座標を計算
     var x = event.pageX + 10;
     var y = event.pageY + 10;
     if (parent) {
