@@ -115,12 +115,15 @@ header {
   color: blue;
 }
 
+
 #mainTable th {
+  overflow: hidden !important;
+  white-space: nowrap;
+  
   text-align: left;
   vertical-align: bottom;
   padding: 5px;
   height: 30px;
-  overflow: hidden;
   border: 1px solid skyblue;
 }
 
@@ -205,7 +208,6 @@ header {
   animation-timing-function: ease-out;
   transform-origin: top;
 }
-
 @keyframes expandContent {
   0% {
     transform: scaleY(0);
@@ -223,9 +225,18 @@ header {
 }
 /*==========================*/
 
+#tableTitle {
+  font-size: 90%;
+  border-radius: 2px;
+  display: inline;
+  background-color: #0000ff;
+  padding: 3px;
+  color: white;
+  font-weight: bolder;
+}
+
 /*表内に表示される講義データ*/
 .lecture {
-  color: #fff;
   width: 80px;
   height: 20px !important;
   font-size: 100% !important;
@@ -235,7 +246,6 @@ header {
   white-space: nowrap;
   border-radius: 2px;
   background-color: #ff0000;
-  vertical-align: top !important;
   padding-left: 5px;
   margin: 1px !important;
   top: 0 !important;

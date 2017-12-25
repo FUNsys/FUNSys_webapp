@@ -1,14 +1,13 @@
 var mainTable = null;
 var currentDay = -1;
 var verticalData = {};
-var fadeTime = 200;
 var selectOptions = {};
-var currentSetting = "";
+var currentFilter = "";
 
 window.onload = function () {
     mainTable = document.getElementById('mainTable');
     setupDayButton();
-    setupSetting();
+    setupFilter();
     loadJson(firstJsonLoaded);
 };
 
@@ -25,7 +24,7 @@ function getChildByClass(element, targetClass) {
 
 //初めにJsonが読み込まれたとき
 function firstJsonLoaded() {
-    updateSetting();
+    updateFilter();
     updateTable();
 }
 
@@ -95,7 +94,7 @@ function closeFilterSetting() {
 
 
 //設定ウィンドウの初期設定
-function setupSetting() {
+function setupFilter() {
     var fab = document.getElementById("FAB");
     fab.onclick = openFilterSetting;
 
@@ -143,10 +142,10 @@ function setSelectValue(select, value) {
     getChildByClass(select, 'mdl-textfield__input').value = value;
 }
 
-//オプションが拡大する方向を更新する
+//オプションが拡大する方向を計算を決める
 function calcExtendDirection(ul, event) {
     var optionHeight = 150; //cssで設定した値によって変える
-    if (window.innerHeight - event.clientY > 150) {
+    if (window.innerHeight - event.clientY > optionHeight) {
         ul.classList.add('mdl-menu--bottom-left');
         ul.classList.remove('mdl-menu--top-left');
     } else {
@@ -174,7 +173,7 @@ function createSelectOption(select, options) {
         (function (text) {
             li.onclick = function () {
                 input.value = text;
-                updateSetting();
+                updateFilter();
             }
         })(o);
         itemRoot.appendChild(li);
@@ -201,34 +200,40 @@ function displaySubSelectOptions(num) {
 }
 
 //フィルタ設定の更新
-function updateSetting() {
-    var objects = [];
+function updateFilter() {
     verticalData = [];
-    displaySubSelectOptions(mainOptions[getSelectValue(selectOptions['mainSelectOption'])]);
-    var type = mainOptions[getSelectValue(selectOptions['mainSelectOption'])];
+    currentFilter = getSelectValue(selectOptions.mainSelectOption);
+
+    var type = mainOptions[getSelectValue(selectOptions.mainSelectOption)];
+    displaySubSelectOptions(type);
     switch (type) {
         case '0':
         case 0:
-            objects = getClassByFilter(courseOptions[getSelectValue(selectOptions['courseSelectOption'])],
-                gradeOptions[getSelectValue(selectOptions['gradeSelectOption'])], classNumOptions[getSelectValue(selectOptions['classNumSelectOption'])]);
+            var courseFilter = courseOptions[getSelectValue(selectOptions.courseSelectOption)];
+            var gradeFilter = gradeOptions[getSelectValue(selectOptions.gradeSelectOption)];
+            var classNumFilter = classNumOptions[getSelectValue(selectOptions.classNumSelectOption)];
 
+            var objects = getClassByFilter(courseFilter, gradeFilter, classNumFilter);
             for (var i = 0, len = objects.length; i < len; i++) {
                 verticalData[i] = new TableData(objects[i].disp_class, type, objects[i].class_id);
             }
             break;
         case '1':
         case 1:
-            objects = getAllRooms();
+            var objects = getAllRooms();
             for (var i = 0, len = objects.length; i < len; i++) {
                 verticalData[i] = new TableData(objects[i].disp_room, type, objects[i].room_id);
             }
             break;
         case '2':
         case 2:
-            objects = getTeachersByFilter(roleOptions[getSelectValue(selectOptions['roleSelectOption'])]);
+            var roleFilter = roleOptions[getSelectValue(selectOptions.roleSelectOption)];
+            var objects = getTeachersByFilter(roleFilter);
             for (var i = 0, len = objects.length; i < len; i++) {
                 verticalData[i] = new TableData(objects[i].disp_teacher, type, objects[i].teacher_id);
             }
+            break;
+        default:
             break;
     }
     updateTable();
@@ -312,6 +317,12 @@ function displayTableDatas(verData, lectures) {
     } else {
         createTable(1, colCount);
     }
+
+    var tableTitle = document.createElement('div');
+    tableTitle.id = 'tableTitle';
+    tableTitle.innerHTML = currentFilter;
+    mainTable.rows[0].cells[0].appendChild(tableTitle);
+
     var count = 0; //データの表示順にidを割り振るためのカウンタ
     for (var i = 0; i < verData.length; i++) {
         //縦列見出しの表示
@@ -356,9 +367,7 @@ function displayTableDatas(verData, lectures) {
 
 //表内に挿入する講義データを作成する
 function makeLectureObject(id, lecture) {
-    var idtxt = "lecture-" + id; //講義の表示順に個別のidを振る
     var div = document.createElement('div');
-    div.id = idtxt;
     div.classList.add('mdl-js-button');
     div.classList.add('mdl-ripple-effect');
     div.classList.add('mdl-button--accent');
@@ -522,7 +531,7 @@ function getAllChilden(element) {
     return children;
 }
 
-//教師の詳細情報を表示する
+//教員の詳細情報を表示する
 function displayTeacher(teacher, event, parent) {
     var title = "";
     var content = document.createElement('div');
