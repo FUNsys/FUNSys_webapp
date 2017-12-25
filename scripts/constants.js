@@ -1,4 +1,8 @@
 var days = ['Mon','Tue','Wed','Thu','Fri']
+var popupColors ={
+    'teacher':'#0000fa',
+    'lecture':'#fa0000',
+}
 
 var fabIconNames = {
     'normal': 'dehaze',

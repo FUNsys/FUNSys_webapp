@@ -437,7 +437,7 @@ function displayLecture(e, lecture) {
         icon.innerHTML = linkIconNames.normal;
         link.onclick = displayMore;
     }
-    createPopup(lecture.disp_lecture, content, e);
+    createPopup(lecture.disp_lecture, content, e, popupColors.lecture);
 }
 
 //ポップアップウィンドウを表示する
@@ -447,12 +447,15 @@ function displayLecture(e, lecture) {
 新たに開かれるポップアップは元のポップアップの子要素になる。
 ポップアップは自身の子孫オブジェクト以外がクリックされたときに閉じる。
 */
-function createPopup(title, content, event, parent) {
+function createPopup(title, content, event, color, parent) {
     var root = document.createElement('div');
     root.classList.add('popup');
     root.classList.add('mdl-shadow--2dp');
     var top = document.createElement('div');
     top.classList.add('popup-top');
+    if (color != null) {
+        top.style.backgroundColor = color;
+    }
     var topInnner = document.createElement('div');
     topInnner.classList.add('popup-top-text');
     var bottom = document.createElement('div');
@@ -550,7 +553,7 @@ function displayTeacher(teacher, event, parent) {
     //所属の表示
     content.innerHTML += "所属学科 : " + teacher.role;
 
-    createPopup(title, content, event, parent);
+    createPopup(title, content, event, popupColors.teacher, parent);
 }
 
 //講義の詳細データを作成する
