@@ -490,6 +490,9 @@ function createPopup(title, content, event, parent) {
 
 //ポップアップウィンドウ外をクリックされたときウィンドウを閉じる
 function closePopup(event, popup) {
+    if (popup.parentNode == null) {
+        return true;
+    }
     var point = document.elementFromPoint(event.clientX, event.clientY);
     var list = getAllChilden(popup);
     list.push(popup);
