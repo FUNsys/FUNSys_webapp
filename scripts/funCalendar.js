@@ -65,39 +65,8 @@ function setCurrentDay(num) {
     if (jsonLoaded) updateTable();
 }
 
-//フィルタ設定ウィンドウを開く
-function openFilterSetting() {
-    var fab = document.getElementById("FAB");
-    fab.onclick = closeFilterSetting;
-
-    //FABボタンのアイコンを変更
-    var fabIcon = document.getElementById("FABIcon");
-    fabIcon.innerHTML = fabIconNames.pushed;
-
-    var root = document.getElementById("selectOptionsRoot");
-    // root.style.display = "block";
-
-}
-
-//フィルタ設定ウィンドウを閉じる
-function closeFilterSetting() {
-    var fab = document.getElementById("FAB");
-    fab.onclick = openFilterSetting;
-
-    //FABボタンのアイコンを変更
-    var fabIcon = document.getElementById("FABIcon");
-    fabIcon.innerHTML = fabIconNames.normal;
-
-    var root = document.getElementById("selectOptionsRoot");
-    // root.style.display = "none";
-}
-
-
 //設定ウィンドウの初期設定
 function setupFilter() {
-    var fab = document.getElementById("FAB");
-    fab.onclick = openFilterSetting;
-
     var mainSelectOption = document.getElementById('mainSelectOption');
     var courseSelectOption = document.getElementById('courseSelectOption');
     var gradeSelectOption = document.getElementById('gradeSelectOption');
