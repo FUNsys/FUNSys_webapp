@@ -292,7 +292,6 @@ function displayTableDatas(verData, lectures) {
     tableTitle.innerHTML = currentFilter;
     mainTable.rows[0].cells[0].appendChild(tableTitle);
 
-    var count = 0; //データの表示順にidを割り振るためのカウンタ
     for (var i = 0; i < verData.length; i++) {
         //縦列見出しの表示
         var vCell = mainTable.rows[i + 1].cells[0];
@@ -328,14 +327,14 @@ function displayTableDatas(verData, lectures) {
             }
             if (findID) {
                 var cell = mainTable.rows[i + 1].cells[x.jigen];
-                cell.appendChild(makeLectureObject(count++, x));
+                cell.appendChild(makeLectureObject(x));
             }
         });
     }
 }
 
 //表内に挿入する講義データを作成する
-function makeLectureObject(id, lecture) {
+function makeLectureObject(lecture) {
     var div = document.createElement('div');
     div.classList.add('mdl-js-button');
     div.classList.add('mdl-ripple-effect');
