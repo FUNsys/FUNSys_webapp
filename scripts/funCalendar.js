@@ -1,23 +1,30 @@
-var tableManager = null;
+var mainTable = null;
 var currentDay = -1;
-var colCount = 6; //列の数
 var verticalData = {};
-var fadeTime = 200;
-var selectBoxes = {};
+var selectOptions = {};
+var currentFilter = "";
 
-$(function () {
-    var t = window.applicationCache;
-    var table = document.getElementById('mainTable');
-    tableManager = new TableManager(table);
+window.onload = function () {
+    mainTable = document.getElementById('mainTable');
     setupDayButton();
-    setupSetting();
-    createPopup();
+    setupFilter();
     loadJson(firstJsonLoaded);
-});
+};
 
-//初めにJsonが呼ばれたとき
+//子要素から特定のクラスのついたものを検索する
+function getChildByClass(element, targetClass) {
+    for (var c in element.children) {
+        if (typeof element.children[c].classList != 'undefined' &&
+            element.children[c].classList.contains(targetClass)) {
+            return element.children[c];
+        }
+    }
+    return null;
+}
+
+//初めにJsonが読み込まれたとき
 function firstJsonLoaded() {
-    updateSetting();
+    updateFilter();
     updateTable();
 }
 
@@ -30,135 +37,177 @@ function setupDayButton() {
     if (day == -1 || day == 5) {
         day = 0; //土、日曜日の場合は月曜日を選択された状態にする
     }
-    pushDayButton(day);
+    setCurrentDay(day);
 }
 
-//フィルタ設定ウィンドウを開く
-function openFilterSetting() {
-    var settingModalContent = document.getElementById("settingModal-content");
-    settingModalContent.style.display = "block";
-    settingModalContent.classList.remove("fadeOut");
-    settingModalContent.classList.add("fadeIn");
-    setTimeout(() => {
-        settingModalContent.classList.remove("fadeIn");
-    }, fadeTime);
-
-    var settingClose = document.getElementById("settingModal-close");
-    openModalOverlay(closeFilterSetting);
+//曜日を一つ進める
+function moveNextDay() {
+    if (currentDay < 4) {
+        setCurrentDay(currentDay + 1);
+    } else {
+        setCurrentDay(0);
+    }
+}
+//曜日を一つ戻す
+function movePrevDay() {
+    if (currentDay > 0) {
+        setCurrentDay(currentDay - 1);
+    } else {
+        setCurrentDay(4);
+    }
 }
 
-//フィルタ設定ウィンドウを閉じる
-function closeFilterSetting() {
-    var settingModalContent = document.getElementById("settingModal-content");
-    settingModalContent.classList.remove("fadeIn");
-    settingModalContent.classList.add("fadeOut");
-    setTimeout(() => {
-        settingModalContent.classList.remove("fadeOut");
-        settingModalContent.style.display = "none";
-    }, fadeTime);
-    closeModalOverlay();
+//曜日を更新する
+function setCurrentDay(num) {
+    var daySelector = document.getElementById('daySelector');
+    currentDay = num;
+    daySelector.innerHTML = days[currentDay];
+    if (jsonLoaded) updateTable();
 }
 
 //設定ウィンドウの初期設定
-function setupSetting() {
-    var mainSelectBox = document.getElementById('mainSelectBox');
-    var roleSelectBox = document.getElementById('roleSelectBox');
-    var classNumSelectBox = document.getElementById('classNumSelectBox');
-    var gradeSelectBox = document.getElementById('gradeSelectBox');
-    var courseSelectBox = document.getElementById('courseSelectBox');
+function setupFilter() {
+    var mainSelectOption = document.getElementById('mainSelectOption');
+    var courseSelectOption = document.getElementById('courseSelectOption');
+    var gradeSelectOption = document.getElementById('gradeSelectOption');
+    var classNumSelectOption = document.getElementById('classNumSelectOption');
+    var roleSelectOption = document.getElementById('roleSelectOption');
 
-    appendSelectBoxOptions(mainSelectBox, mainOptions);
-    appendSelectBoxOptions(roleSelectBox, roleOptions);
-    appendSelectBoxOptions(classNumSelectBox, classNumOptions);
-    appendSelectBoxOptions(gradeSelectBox, gradeOptions);
-    appendSelectBoxOptions(courseSelectBox, courseOptions);
+    createSelectOption(mainSelectOption, mainOptions);
+    createSelectOption(courseSelectOption, courseOptions);
+    createSelectOption(gradeSelectOption, gradeOptions);
+    createSelectOption(classNumSelectOption, classNumOptions);
+    createSelectOption(roleSelectOption, roleOptions);
 
     //再利用のためにエレメントを変数に格納しておく
-    selectBoxes = {
-        'mainSelectBox': mainSelectBox,
-        'roleSelectBox': roleSelectBox,
-        'classNumSelectBox': classNumSelectBox,
-        'gradeSelectBox': gradeSelectBox,
-        'courseSelectBox': courseSelectBox
+    selectOptions = {
+        'mainSelectOption': mainSelectOption,
+        'roleSelectOption': roleSelectOption,
+        'classNumSelectOption': classNumSelectOption,
+        'gradeSelectOption': gradeSelectOption,
+        'courseSelectOption': courseSelectOption
     }
-    updateDisplaySubSelectBox(mainSelectBox.value);
 
-    //ローカルストレージから前回の値を読み出し、設定に反映させる
-    for (var key in selectBoxes) {
-        if (window.localStorage !== null) {
-            var val = localStorage.getItem(key);
-            if (val && val < selectBoxes[key].length) {
-                selectBoxes[key].selectedIndex = val;
-            }
-        }
-        selectBoxes[key].onchange = updateSetting;
-    }
+    displaySubSelectOptions(mainOptions[getSelectValue(mainSelectOption)]);
 }
 
 //ページを去るときに実行される
 window.addEventListener('beforeunload', function () {
     //ローカルストレージに設定の値を保存させる
     if (window.localStorage !== null) {
-        for (var key in selectBoxes) {
-            var val = localStorage.setItem(key, selectBoxes[key].selectedIndex);
+        for (var key in selectOptions) {
+            var val = localStorage.setItem(key, getSelectValue(selectOptions[key]));
         }
     }
 }, false);
 
+//オプション内の選択中の値を取得する
+function getSelectValue(select) {
+    return getChildByClass(select, 'mdl-textfield__input').value;
+}
 
-//連想配列からセレクトボックスのオプションを作成する
-function appendSelectBoxOptions(select, options) {
+//オプションに値をセットする
+function setSelectValue(select, value) {
+    getChildByClass(select, 'mdl-textfield__input').value = value;
+}
+
+//オプションが拡大する方向を計算を決める
+function calcExtendDirection(ul, event) {
+    var optionHeight = 150; //cssで設定した値によって変える
+    if (window.innerHeight - event.clientY > optionHeight) {
+        ul.classList.add('mdl-menu--bottom-left');
+        ul.classList.remove('mdl-menu--top-left');
+    } else {
+        ul.classList.add('mdl-menu--top-left');
+        ul.classList.remove('mdl-menu--bottom-left');
+    }
+}
+
+//選択オプションを作成する
+function createSelectOption(select, options) {
+    var itemRoot = getChildByClass(select, 'mdl-menu');
+    var input = getChildByClass(select, 'mdl-textfield__input');
+    input.onclick = function (e) {
+        calcExtendDirection(itemRoot, e);
+    }
+    var first = true;
     for (var o in options) {
-        var option = document.createElement('option');
-        option.innerHTML = o;
-        option.value = options[o];
-        select.appendChild(option);
+        if (first) {
+            if (input.value == "") input.value = o;
+            first = false;
+        }
+        var li = document.createElement('li');
+        li.classList.add('mdl-menu__item');
+        li.innerHTML = o;
+        (function (text) {
+            li.onclick = function () {
+                input.value = text;
+                updateFilter();
+            }
+        })(o);
+        itemRoot.appendChild(li);
     }
-    return select;
+
+    if (window.localStorage !== null) {
+        var item = localStorage.getItem(select.id);
+        if (item != null && typeof item !== "undefined") {
+            input.value = item;
+        }
+    }
 }
 
-//フィルタ設定の更新
-function updateSetting() {
-    var objects = [];
-    verticalData = [];
-    updateDisplaySubSelectBox(mainSelectBox.value);
-    var type = selectBoxes['mainSelectBox'].value;
-    switch (type) {
-        case '0':
-            objects = getClassByFilter(selectBoxes['courseSelectBox'].value,
-                selectBoxes['gradeSelectBox'].value, selectBoxes['classNumSelectBox'].value);
-            for (var i = 0, len = objects.length; i < len; i++) {
-                verticalData[i] = new TableData(objects[i].disp_class, type, objects[i].class_id);
-            }
-            break;
-        case '1':
-            objects = getAllRooms();
-            for (var i = 0, len = objects.length; i < len; i++) {
-                verticalData[i] = new TableData(objects[i].disp_room, type, objects[i].room_id);
-            }
-            break;
-        case '2':
-            objects = getTeachersByFilter(selectBoxes['roleSelectBox'].value);
-            for (var i = 0, len = objects.length; i < len; i++) {
-                verticalData[i] = new TableData(objects[i].disp_teacher, type, objects[i].teacher_id);
-            }
-            break;
-    }
-    updateTable();
-}
-
-
-//サブセレクトボックスの表示、非表示を切り替える
-function updateDisplaySubSelectBox(num) {
-    for (var select in selectBoxRelations) {
-        var elem = selectBoxes[select];
-        if (selectBoxRelations[select] == num) {
+//サブセレクトオプションの表示、非表示を切り替える
+function displaySubSelectOptions(num) {
+    for (var select in selectOptionRelations) {
+        var elem = selectOptions[select];
+        if (selectOptionRelations[select] == num) {
             elem.style.display = 'block';
         } else {
             elem.style.display = 'none';
         }
     }
 }
+
+//フィルタ設定の更新
+function updateFilter() {
+    verticalData = [];
+    currentFilter = getSelectValue(selectOptions.mainSelectOption);
+
+    var type = mainOptions[getSelectValue(selectOptions.mainSelectOption)];
+    displaySubSelectOptions(type);
+    switch (type) {
+        case '0':
+        case 0:
+            var courseFilter = courseOptions[getSelectValue(selectOptions.courseSelectOption)];
+            var gradeFilter = gradeOptions[getSelectValue(selectOptions.gradeSelectOption)];
+            var classNumFilter = classNumOptions[getSelectValue(selectOptions.classNumSelectOption)];
+
+            var objects = getClassByFilter(courseFilter, gradeFilter, classNumFilter);
+            for (var i = 0, len = objects.length; i < len; i++) {
+                verticalData[i] = new TableData(objects[i].disp_class, type, objects[i].class_id);
+            }
+            break;
+        case '1':
+        case 1:
+            var objects = getAllRooms();
+            for (var i = 0, len = objects.length; i < len; i++) {
+                verticalData[i] = new TableData(objects[i].disp_room, type, objects[i].room_id);
+            }
+            break;
+        case '2':
+        case 2:
+            var roleFilter = roleOptions[getSelectValue(selectOptions.roleSelectOption)];
+            var objects = getTeachersByFilter(roleFilter);
+            for (var i = 0, len = objects.length; i < len; i++) {
+                verticalData[i] = new TableData(objects[i].disp_teacher, type, objects[i].teacher_id);
+            }
+            break;
+        default:
+            break;
+    }
+    updateTable();
+}
+
 
 //オブジェクトからテーブルデータを作成する
 function makeTableData(object) {
@@ -177,7 +226,7 @@ function makeTableData(object) {
     return data;
 }
 
-//引数が、クラス、講師、教室のうちどれであるか判別する
+//引数が、クラス、教員、教室のうちどれであるか判別する
 function distinctObjectType(object) {
     if (object.class_id != null) {
         return 0;
@@ -190,30 +239,13 @@ function distinctObjectType(object) {
     }
 }
 
-//ポップアップを作成する
-function createPopup() {
-    var p = document.createElement('div');
-    p.id = "popup";
-    document.body.appendChild(p);
-}
-
-//選択中の曜日ボタンを引数の番号のボタンに変更
-function pushDayButton(num) {
-    if (currentDay != num) {
-        $(buttonIds[currentDay]).removeClass('btn_selected');
-        $(buttonIds[num]).addClass('btn_selected');
-        currentDay = num;
-        if (jsonLoaded) updateTable();
-    }
-}
-
 //テーブル更新関数
 function updateTable() {
     displayTableDatas(verticalData, getCurrentDayLectureData(currentDay));
 }
 
 /*テーブルにデータを渡すときに使用する
-type 0 = クラス, type 1 = 教室, type 2 = 講師
+type 0 = クラス, type 1 = 教室, type 2 = 教員
 idはそれぞれの名前で与えられているものの数値 ex)teacher_id*/
 TableData = function (name, type, id) {
     this.name = name;
@@ -221,25 +253,57 @@ TableData = function (name, type, id) {
     this.id = id;
 };
 
+// 現在の表を削除して空の表を作成する
+function createTable(rowCount, colCount) {
+    var child;
+    while (child = mainTable.lastChild) mainTable.removeChild(child);
+
+    var thead = document.createElement('thead');
+    thead.insertRow(-1);
+    for (var i = 0; i < colCount; i++) {
+        var val = "";
+        if (i > 0) { val = i; }
+        thead.firstChild.innerHTML += '<th>' + val + '</th>';
+    }
+    mainTable.appendChild(thead);
+
+    var tbody = document.createElement('tbody');
+    for (var i = 1; i < rowCount; i++) {
+        tbody.insertRow(-1);
+        for (var j = 0; j < colCount; j++) {
+            if (j == 0) tbody.lastChild.innerHTML += '<th></th>';
+            else tbody.lastChild.innerHTML += '<td></td>';
+        }
+    }
+    mainTable.appendChild(tbody);
+}
+
 //テーブルデータを表示する
 function displayTableDatas(verData, lectures) {
+    var colCount = 6;
     if (typeof verData.length !== "undefined") {
-        tableManager.createTable(verData.length + 1, colCount);
+        createTable(verData.length + 1, colCount);
     } else {
-        tableManager.createTable(1, colCount);
+        createTable(1, colCount);
     }
-    setDefaultLayoutToTable();
-    var count = 0; //データの表示順にidを割り振るためのカウンタ
+
+    var tableTitle = document.createElement('div');
+    tableTitle.id = 'tableTitle';
+    tableTitle.innerHTML = currentFilter;
+    mainTable.rows[0].cells[0].appendChild(tableTitle);
+
     for (var i = 0; i < verData.length; i++) {
         //縦列見出しの表示
-        var vCell = tableManager.getCell(i + 1, 0);
+        var vCell = mainTable.rows[i + 1].cells[0];
         vCell.innerHTML = verData[i].name;
 
         //縦列が教員の場合、教員情報を挿入する
         if (verData[i].type == 2) {
             vCell.classList.add('link');
             (function (num) {
-                vCell.onclick = function (e) { displayTeacher(verData[num].id, e); }
+                vCell.onclick = function (e) {
+                    displayTeacher(getAllTeachers().find(x => x.teacher_id == verData[num].id), e);
+                }
             })(i);
         }
 
@@ -262,152 +326,215 @@ function displayTableDatas(verData, lectures) {
                     break;
             }
             if (findID) {
-                var cell = tableManager.getCell(i + 1, x.jigen);
-                cell.appendChild(makeLectureObject(count++, x));
+                var cell = mainTable.rows[i + 1].cells[x.jigen];
+                cell.appendChild(makeLectureObject(x));
             }
         });
     }
 }
 
-//テーブルにデフォルトのレイアウトを適用する
-function setDefaultLayoutToTable() {
-    for (var i = 0; i < tableManager.getColCount() - 1; i++) {
-        var cell = tableManager.getCell(0, i + 1);
-        cell.innerHTML = i + 1;
-        cell.style.background = tableColors[currentDay];   //見出し位置の色
-    }
-}
-
 //表内に挿入する講義データを作成する
-function makeLectureObject(id, lecture) {
-    var idtxt = "lecture-" + id; //講義の表示順に個別のidを振る
+function makeLectureObject(lecture) {
     var div = document.createElement('div');
+    div.classList.add('mdl-js-button');
+    div.classList.add('mdl-ripple-effect');
+    div.classList.add('mdl-button--accent');
     div.classList.add("lecture");
-    div.classList.add('link');
-    div.id = idtxt;
 
     //講義名をクリックしたときに実行される関数
-    div.onclick = () => { openLectureModal(lecture); }
+    div.onclick = (e) => { displayLecture(e, lecture); }
 
     //講義名でボタンを作成する
     div.innerHTML += lecture.disp_lecture;
     return div;
 }
 
-//講義のモーダルウィンドウを開く
-function openLectureModal(lecture) {
-    var modal = document.getElementById("lectureModal");
-    var modalContent = document.getElementById("lectureModal-content");
-    appendLectureContentHTML(lecture, modalContent);
-    openModalOverlay(closeLectureModal);
-    modal.style.display = 'block';
-    modal.classList.remove("fadeOut");
-    modal.classList.add("fadeIn");
-    setTimeout(() => {
-        modal.classList.remove("fadeIn");
-    }, fadeTime);
-}
+//講義の詳細を表示する
+function displayLecture(e, lecture) {
+    var content = document.createElement('div');
+    content.classList.add('lectureContent');
+    content.innerHTML += '担当教員 : ';
 
-//講義のモーダルウィンドウを閉じる
-function closeLectureModal() {
-    var modal = document.getElementById("lectureModal");
-    var modalContent = document.getElementById("lectureModal-content");
-    closeModalOverlay();
-    modal.classList.remove("fadeIn");
-    modal.classList.add("fadeOut");
-    setTimeout(() => {
-        modal.classList.remove("fadeOut");
-        modalContent.innerHTML = "";
-        modal.style.display = 'none';
-    }, fadeTime);
-}
-
-//ポップアップウィンドウを表示する
-function displayPopup(html, event) {
-    //TODO
-    //ポップアップの表示位置がずれるバグを確認
-    var p = document.getElementById("popup");
-    p.innerHTML = html;
-    p.style.display = "block";
-    p.style.left = event.pageX - 10 + "px";
-    p.style.top = event.pageY - 10 + "px";
-    window.addEventListener('click', closePopup);
-}
-
-//ポップアップウィンドウ外をクリックされたときウィンドウを閉じる
-function closePopup(event) {
-    var p = document.getElementById('popup');
-    var point = document.elementFromPoint(event.pageX, event.pageY);
-    if (p != point) {
-        p.innerHTML = "";
-        p.style.display = "none";
-        window.removeEventListener('click', closePopup);
-    }
-}
-
-//教師の詳細情報を表示する
-function displayTeacher(id, event) {
-    var teacher = datas.teachers.find(x => x.teacher_id == id);
-
-    var html = "";
-    //氏名の表示
-    html += "氏名 : " + teacher.disp_teacher + "(" + teacher.roma_name + ")";
-    html += "<br>";
-
-    //役職の表示
-    html += "役職 : " + teacher.position;
-    html += "<br>";
-
-    //専門分野の表示
-    html += "専門分野 : " + teacher.research_area;
-    html += "<br>";
-
-    //所属の表示
-    html += "所属学科 : " + teacher.role;
-
-    displayPopup(html, event);
-}
-
-//講義の詳細データを付け足す
-function appendLectureContentHTML(lecture, parent) {
-    //講義名を表示
-    parent.innerHTML += "<h3>" + lecture.disp_lecture + "</h3>";
-    parent.innerHTML += '<br>';
-
-    //担当を表示
-    parent.innerHTML += "担当 : ";
     var teachers = getTeachersFromLecture(lecture);
     for (var i = 0, len = teachers.length; i < len; i++) {
         //担当教師の情報を埋め込む
         var teacherLink = document.createElement('span');
-        teacherLink.id = "teacherLink" + i;
         teacherLink.classList.add('link');
         teacherLink.innerHTML += teachers[i].disp_teacher;
+        (function (t) {
+            teacherLink.onclick = function (e) {
+                displayTeacher(t, e, content.parentNode.parentNode);
+            }
+        })(teachers[i]);
 
-        /*onclickイベントに直接関数を与えても動作しないようなので、
-        親の要素のクリックイベントからidで探索している*/
-        (function (num) {
-            parent.addEventListener('click', function (event) {
-                var point = document.elementFromPoint(event.pageX, event.pageY);
-                if (point.id == "teacherLink" + num) {
-                    displayTeacher(teachers[num].teacher_id, event);
-                }
-            });
-        })(i);
-
-        parent.appendChild(teacherLink);
-        if (i < len - 1) parent.innerHTML += ", ";
+        content.appendChild(teacherLink);
+        if (i < len - 1) {
+            var kanma = document.createElement('span');
+            kanma.innerHTML = ', ';
+            content.appendChild(kanma);
+        }
     }
-    parent.innerHTML += '<br>';
 
+    var moreContent = document.createElement('div');
+    var hiddenText = document.createElement('div');
+    hiddenText.innerHTML = makeLectureContentHTML(lecture);
+    hiddenText.style.display = 'none';
+    var link = document.createElement('div');
+    link.classList.add('mdl-button');
+    link.classList.add('mdl-js-button');
+    link.classList.add('mdl-button--icon');
+    var icon = document.createElement('i');
+    icon.classList.add('material-icons');
+    icon.innerHTML = 'link';
+    link.appendChild(icon);
+    moreContent.appendChild(link);
+    moreContent.appendChild(hiddenText);
+    content.appendChild(moreContent);
+
+    link.onclick = displayMore;
+    function displayMore() {
+        hiddenText.classList.add('lectureContent-more');
+        hiddenText.style.display = 'block';
+        icon.innerHTML = linkIconNames.pushed;
+        link.onclick = hideContent;
+    }
+
+    function hideContent() {
+        hiddenText.classList.remove('lectureContent-more');
+        hiddenText.style.display = 'none';
+        icon.innerHTML = linkIconNames.normal;
+        link.onclick = displayMore;
+    }
+    createPopup(lecture.disp_lecture, content, e, popupColors.lecture);
+}
+
+//ポップアップウィンドウを表示する
+/*
+ポップアップは画面内に複数表示される場合あり。
+ポップアップ上にあるリンクから別のポップアップを開いた場合、
+新たに開かれるポップアップは元のポップアップの子要素になる。
+ポップアップは自身の子孫オブジェクト以外がクリックされたときに閉じる。
+*/
+function createPopup(title, content, event, color, parent) {
+    var root = document.createElement('div');
+    root.classList.add('popup');
+    root.classList.add('mdl-shadow--2dp');
+    var top = document.createElement('div');
+    top.classList.add('popup-top');
+    if (color != null) {
+        top.style.backgroundColor = color;
+    }
+    var topInnner = document.createElement('div');
+    topInnner.classList.add('popup-top-text');
+    var bottom = document.createElement('div');
+    bottom.classList.add('popup-bottom');
+
+    //ポップアップをクリック位置の右下に表示させるように座標を計算
+    var x = event.pageX + 10;
+    var y = event.pageY + 10;
+    if (parent) {
+        var pPos = parent.getBoundingClientRect();
+        pPos.x += window.pageXOffset;
+        pPos.y += window.pageYOffset;
+        x -= pPos.x;
+        y -= pPos.y;
+    }
+    root.style.left = x + "px";
+    root.style.top = y + "px";
+    root.style.display = "block";
+
+    topInnner.innerHTML = title;
+    top.appendChild(topInnner);
+    bottom.appendChild(content);
+    root.appendChild(top);
+    root.appendChild(bottom);
+    if (parent) {
+        parent.appendChild(root);
+    } else {
+        document.body.appendChild(root);
+    }
+
+    /*普通にクリックイベントをつけるとその場で実行されてしまうので、
+    setTimeoutでタイミングをずらしている*/
+    var cantCloseTime = 1;
+    setTimeout(() => {
+        window.addEventListener('click', (() => {
+            return function f(e) {
+                if (closePopup(e, root)) {
+                    window.removeEventListener('click', f, false);
+                }
+            }
+        })(), false);
+    }, cantCloseTime);
+}
+
+//ポップアップウィンドウ外をクリックされたときウィンドウを閉じる
+function closePopup(event, popup) {
+    if (popup.parentNode == null) {
+        return true;
+    }
+    var point = document.elementFromPoint(event.clientX, event.clientY);
+    var list = getAllChilden(popup);
+    list.push(popup);
+
+    if (list.indexOf(point) < 0) {
+        popup.innerHTML = "";
+        popup.style.display = "none";
+        popup.parentNode.removeChild(popup);
+        return true;
+    }
+    return false;
+}
+
+//全ての子要素を取得する
+function getAllChilden(element) {
+    var children = [];
+    var stack = [];
+    stack.push(element);
+    var node;
+    while ((node = stack.pop()) != null) {
+        var list = node.children;
+        for (var c in list) {
+            stack.push(list[c]);
+            children.push(list[c]);
+        }
+    }
+    return children;
+}
+
+//教員の詳細情報を表示する
+function displayTeacher(teacher, event, parent) {
+    var title = "";
+    var content = document.createElement('div');
+    content.classList.add('teacherContent');
+    //氏名の表示
+    title += teacher.disp_teacher + "<br>(" + teacher.roma_name + ")";
+
+    //役職の表示
+    content.innerHTML += "役職 : " + teacher.position;
+    content.innerHTML += "<br>";
+
+    //専門分野の表示
+    content.innerHTML += "専門分野 : " + teacher.research_area;
+    content.innerHTML += "<br>";
+
+    //所属の表示
+    content.innerHTML += "所属学科 : " + teacher.role;
+
+    createPopup(title, content, event, popupColors.teacher, parent);
+}
+
+//講義の詳細データを作成する
+function makeLectureContentHTML(lecture) {
+    var html = "";
     //クラスを表示
-    parent.innerHTML += "対象 : ";
+    html += "対象 : ";
     var classes = getClassesFromLecture(lecture);
     for (var i = 0, len = classes.length; i < len; i++) {
-        parent.innerHTML += classes[i].disp_class;
-        if (i < len - 1) parent.innerHTML += ", ";
+        html += classes[i].disp_class;
+        if (i < len - 1) html += ", ";
     }
-    parent.innerHTML += '<br>';
+    html += '<br>';
 
     //必修,選択情報を表示
     var must = "";
@@ -422,20 +549,22 @@ function appendLectureContentHTML(lecture, parent) {
                 break;
         }
     }
-    parent.innerHTML += "必修 : " + must;
-    parent.innerHTML += "<br>";
-    parent.innerHTML += "選択 : " + select;
-    parent.innerHTML += "<br>";
+    html += "必修 : " + must;
+    html += "<br>";
+    html += "選択 : " + select;
+    html += "<br>";
 
     //教室を表示
-    parent.innerHTML += "教室 : ";
+    html += "教室 : ";
     var rooms = getRoomsFromLecture(lecture);
     for (var i = 0, len = rooms.length; i < len; i++) {
-        parent.innerHTML += rooms[i].disp_room;
-        if (i < len - 1) parent.innerHTML += ", ";
+        html += rooms[i].disp_room;
+        if (i < len - 1) html += ", ";
     }
-    parent.innerHTML += '<br>';
+    html += '<br>';
 
     //日時を表示
-    parent.innerHTML += "日時 : " + getDayAndTimeFromLecture(lecture);
+    html += "日時 : " + getDayAndTimeFromLecture(lecture);
+
+    return html;
 }

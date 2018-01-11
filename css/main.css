@@ -2,24 +2,131 @@
   font-family: "游ゴシック体", "Yu Gothic";
 }
 
-#mainTable {
-  width: 620px;
-  /*表全体の横幅*/
-  empty-cells: show;
-  /*空白セルを表示する*/
-  table-layout: fixed;
-  border-collapse: collapse;
-  /*隣接する枠線の結合*/
-}
-/*見出し*/
-#mainTable th {
-  text-align: center;
-  padding: 5px;
-  height: 40px;
-  border: 1px solid #000000;
+body {
+  margin-top: 165px !important;
+  margin-left: 215px !important;
+  -webkit-text-size-adjust: 100% !important;
 }
 
-/*表要素*/
+/*===ヘッダー内の要素===*/
+header {
+  position: fixed;
+  height: 150px;
+  width: 100%;
+  top: 0;
+  z-index: 100;
+  background-color: #ffffff;
+  left: 0;
+}
+
+.header-top {
+  height: 70%;
+  background-color: #5050ff;
+}
+
+.titleRoot {
+  padding-top: 10px;
+  padding-left: 20px;
+}
+
+#title {
+  color: #f0f0f0;
+  font-size: 90%;
+}
+
+#copyWrite {
+  position: absolute;
+  color: #f0f0f0;
+  font-size: 80%;
+  right: 20px;
+}
+
+#daySelector {
+  font-size: 200%;
+  font-weight: bolder;
+  padding-top: 20px;
+  padding-left: 10px;
+  color: #ffffff;
+}
+
+#daySelectArrows {
+  position: fixed;
+  top: 30px;
+  left: 100px;
+  color: white;
+}
+
+#FAB {
+  position: fixed !important;
+  top: 85px;
+  left: 20px;
+  z-index: 150;
+}
+
+/*====================*/
+
+#sideBarRoot {
+  width: 200px;
+  height: 100%;
+  background-color: #ffffff;
+  position: fixed;
+  z-index: 50;
+  left: 0;
+  top: 150px;
+}
+
+/*===フィルタ設定===*/
+#selectOptionsRoot {
+  display: block;
+  position: absolute;
+  margin-left: 20px;
+}
+
+.selectOption {
+  width: 170px !important;
+  margin-bottom: -20px !important;
+}
+
+.selectOption input {
+  font-size: 90%;
+}
+
+.selectOption li {
+  height: 40px !important;
+}
+
+.selectOption ul {
+  margin: 0;
+  z-index: 100;
+  max-height: 150px;
+  overflow: auto;
+}
+/*===================*/
+
+/*===テーブルのスタイル===*/
+#mainTable {
+  /*表全体の横幅*/
+  width: 620px;
+  /*空白セルを表示する*/
+  empty-cells: show;
+  table-layout: fixed;
+  /*隣接する枠線の結合*/
+  border-collapse: collapse;
+  color: blue;
+}
+
+
+#mainTable th {
+  overflow: hidden !important;
+  white-space: nowrap;
+  
+  text-align: left;
+  vertical-align: bottom;
+  padding: 5px;
+  height: 30px;
+  border: 1px solid skyblue;
+}
+
 #mainTable td {
   text-align: left;
   /*左寄せ*/
@@ -29,8 +136,9 @@
   padding: 5px;
   height: 40px;
   /*セルごとの縦幅*/
-  border: 1px solid #000000;
+  border: 1px solid skyblue;
 }
+/*=======================*/
 
 /*リンク文字列の上にマウスが乗ったときのスタイル*/
 .link:hover {
@@ -38,189 +146,114 @@
   color: #ff0000 !important;
 }
 
-/*ポップアップのスタイル*/
-#popup {
+/*===ポップアップのスタイル===*/
+.popup {
   display: none;
-  position: fixed;
-  background-color: #fbfbfb;
-  padding: 5px;
-  border: 5px solid #00000022;
+  position: absolute;
   z-index: 3;
+  border-radius: 4px;
+  width: 200px;
+  animation: popupOpen .15s;
+  animation-fill-mode: both;
+  animation-timing-function: ease-out;
+  transform-origin: left top;
+}
+@keyframes popupOpen {
+  0% {
+    transform: scale(0,0);
+  }
+
+  100% {
+    transform: scale(1,1);
+  }
+}
+
+.popup-top {
+  position: relative;
+  background-color: #f00000;
+  height: 60px;
+  width: 200px;
+  border-radius: 4px 4px 0 0 / 4px 4px 0 0;
+  display: block;
+}
+
+.popup-top-text {
+  color: #ffffff;
+  font-weight: bolder;
+  padding-right: 5px;
+  position: absolute;
+  display: inline;
+  bottom: 5px;
+  right: 0;
+  text-align: right;
+}
+
+.popup-bottom {
+  padding: 5px;
+  min-height: 50px;
+  overflow: hidden;
+  border-radius: 0 0 4px 4px / 0 0 4px 4px;
+  background-color: #ffffff;
+}
+
+.lectureContent {
+  text-align: right;
+  font-size: 85%;
+  font-weight: bolder;
+}
+
+.lectureContent-more {
+  animation: expandContent .13s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+  transform-origin: top;
+}
+@keyframes expandContent {
+  0% {
+    transform: scaleY(0);
+  }
+
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+.teacherContent {
+  text-align: right;
+  font-size: 85%;
+  font-weight: bolder;
+}
+/*==========================*/
+
+#tableTitle {
+  font-size: 90%;
+  border-radius: 2px;
+  display: inline;
+  background-color: #0000ff;
+  padding: 3px;
+  color: white;
+  font-weight: bolder;
 }
 
 /*表内に表示される講義データ*/
 .lecture {
-  color: #000;
-  /*文字列がオーバーした際は[...]と表示する*/
+  width: 80px;
+  height: 20px !important;
+  font-size: 100% !important;
+  line-height: 20px !important;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  border-radius: 2px;
+  background-color: #ff0000;
+  padding-left: 5px;
+  margin: 1px !important;
+  top: 0 !important;
+  color: white !important;
+  font-weight: bolder !important;
 }
 
-/*===講義詳細ウィンドウ===*/
-#lectureModal {
-  display: none;
-  background-color: #ffffff;
-  z-index: 2;
-  overflow: auto;
-  border: 1px solid #000000;
-  /*画面中央に表示して、スクロールに追従する*/
-  position: fixed;
-  padding: 5px;
-  margin-left: -225px;
-  /* 中央配置する要素の縦幅の半分だけ左にずらす */
-  margin-top: -250px;
-  /* 中央配置する要素の横幅の半分だけ上にずらす */
-  top: 50%;
-  /* 要素の上端を中央に */
-  left: 50%;
-  /* 要素の左端を中央に */
-  width: 450px;
-  height: 500px;
-}
-
-/*=======================*/
-
-/*曜日選択ボタンの親*/
-.btnroot {
-  position: relative;
-  left: 320px;
-  margin: 15px;
-  height: 60px;
-
-  /*要素を選択不能にする*/
-  /* CSS3 */
-  user-select: none;
-  /* Firefox */
-  -moz-user-select: none;
-  /* Safari、Chromeなど */
-  -webkit-user-select: none;
-  /* IE10から*/
-  -ms-user-select: none;
-}
-
-/*曜日選択ボタン*/
-.btn {
-  display: inline-block;
-  text-decoration: none;
-  color: #FFF;
-  width: 50px;
-  height: 50px;
-  line-height: 50px;
-  border-radius: 50%;
-  text-align: center;
-  font-weight: bold;
-  vertical-align: middle;
-  overflow: hidden;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.29);
-  border-bottom: solid 3px #bd6565;
-  transition: .4s;
+.lecture:hover {
+  background-color: #cc0000;
   cursor: pointer;
-}
-
-/*ボタンの色を指定する
- 0 = 月曜日 ... 4 = 金曜日 */
-#btn0 {
-  background-color: rgb(255, 255, 0);
-}
-
-#btn1 {
-  background-color: rgb(0, 255, 0);
-}
-
-#btn2 {
-  background-color: rgb(0, 0, 255);
-}
-
-#btn3 {
-  background-color: rgb(79, 79, 122);
-}
-
-#btn4 {
-  background-color: rgb(136, 255, 0);
-}
-
-/*選択されたボタンを大きく表示する*/
-.btn_selected {
-  width: 60px;
-  height: 60px;
-  line-height: 60px;
-}
-
-/*ボタンを押したときにアニメーションする*/
-.btn:active {
-  -ms-transform: translateY(2px);
-  -webkit-transform: translateY(2px);
-  transform: translateY(2px);
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
-  border-bottom: none;
-}
-
-/*===設定画面===*/
-#settingModal-content {
-  border: 2px solid #aaa;
-  background: #fff;
-  z-index: 2;
-  display: none;
-  /*画面中央に表示して、スクロールに追従する*/
-  position: fixed;
-  margin-left: -150px;
-  /* 中央配置する要素の縦幅の半分だけ左にずらす */
-  margin-top: -100px;
-  /* 中央配置する要素の横幅の半分だけ上にずらす */
-  top: 50%;
-  /* 要素の上端を中央に */
-  left: 50%;
-  /* 要素の左端を中央に */
-  width: 300px;
-  height: 200px;
-
-  padding: 5px;
-  text-align: center;
-}
-
-.settingSelectBox {
-  width: 100px;
-  display: block;
-  border-bottom: solid 5px #ffffff;
-  margin:0 auto;
-}
-
-#selectBoxesRoot {
-  position: relative;
-  text-align: center;
-  margin: 5px;
-}
-
-#roleSelectBox {
-  display: none;
-}
-
-#classNumSelectBox {
-  display: none;
-}
-
-#gradeSelectBox {
-  display: none;
-}
-
-#courseSelectBox {
-  display: none;
-}
-
-/*===========*/
-.modal-button-parent {
-  position: relative;
-  text-align: right;
-}
-
-.mybutton {
-  cursor: pointer;
-  display: inline-block;
-  text-decoration: none;
-  background: #668ad8;
-  /*ボタン色*/
-  color: #FFF;
-  border-bottom: solid 4px #627295;
-  border-radius: 3px;
 }

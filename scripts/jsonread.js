@@ -6,7 +6,7 @@ var request = [
 ]
 var datas = {
     lectures: null, //講義
-    teachers: null, //講師
+    teachers: null, //教員
     classes: null,  //クラス
     rooms: null,    //部屋
 };
@@ -102,12 +102,12 @@ function getClassNumFromClass(target) {
     return Number(classNum);
 }
 
-//すべての講師オブジェクトを取得
+//すべての教員オブジェクトを取得
 function getAllTeachers() {
     return datas.teachers;
 }
 
-//指定した条件に沿った講師オブジェクトを取得
+//指定した条件に沿った教員オブジェクトを取得
 function getTeachersByFilter(role) {
     return datas.teachers.filter(x => {
         if (role != 0 && x.role != role) {

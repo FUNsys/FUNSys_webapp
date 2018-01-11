@@ -1,10 +1,23 @@
-var tableColors = ['#ffff00', '#00ff00', '#0000ff', '#4f4f7a', '#88ff00'];
-var buttonIds = ['#btn0', '#btn1', '#btn2', '#btn3', '#btn4'];
+var days = ['Mon','Tue','Wed','Thu','Fri']
+var popupColors ={
+    'teacher':'#0000fa',
+    'lecture':'#fa0000',
+}
+
+var fabIconNames = {
+    'normal': 'dehaze',
+    'pushed': 'clear'
+}
+
+var linkIconNames ={
+    'normal': 'link',
+    'pushed': 'clear'
+}
 
 var mainOptions = {
     'クラス': 0,
     '教室': 1,
-    '講師': 2,
+    '教員': 2,
 }
 
 var roleOptions = {
@@ -53,9 +66,9 @@ var gradeOptions = {
 
 /*サブセレクトボックスの表示、非表示を切り替えるために、
 idとメインセレクトボックスの値を関連付けている*/
-var selectBoxRelations = {
-    'courseSelectBox': 0,
-    'gradeSelectBox': 0,
-    'classNumSelectBox': 0,
-    'roleSelectBox': 2,
+var selectOptionRelations = {
+    'courseSelectOption': 0,
+    'gradeSelectOption': 0,
+    'classNumSelectOption': 0,
+    'roleSelectOption': 2,
 }
