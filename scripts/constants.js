@@ -4,11 +4,6 @@ var popupColors ={
     'lecture':'#fa0000',
 }
 
-var fabIconNames = {
-    'normal': 'dehaze',
-    'pushed': 'clear'
-}
-
 var linkIconNames ={
     'normal': 'link',
     'pushed': 'clear'
@@ -29,13 +24,13 @@ var roleOptions = {
 }
 
 var courseOptions = {
-    '全コース': 0,
-    '未所属': 'Unassign',
-    '情報システムコース': 'System',
-    '情報デザインコース': 'Design',
-    '複雑系コース': 'Complex',
-    '知能システムコース': 'Intelligent',
-    '高度ICTコース': 'ICT',
+    '全コース': -1,
+    '未所属': 0,
+    '情報システム・ICTコース': 1,
+    '情報デザインコース': 2,
+    '複雑系コース': 3,
+    '知能システムコース': 4,
+    '修士': 5,
 }
 
 var classNumOptions = {
@@ -52,7 +47,6 @@ var classNumOptions = {
     'J': 10,
     'K': 11,
     'L': 12,
-    '院生': 13,
 }
 var gradeOptions = {
     '全学年': 0,

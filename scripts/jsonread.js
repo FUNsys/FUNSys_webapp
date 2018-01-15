@@ -1,8 +1,8 @@
 var request = [
-    { url: "https://private-anon-7a79af6424-funsys.apiary-mock.com/lectures" },
-    { url: "https://private-anon-7a79af6424-funsys.apiary-mock.com/teachers" },
-    { url: "https://private-anon-7a79af6424-funsys.apiary-mock.com/classes" },
-    { url: "https://private-anon-7a79af6424-funsys.apiary-mock.com/rooms" },
+    { url: "https://private-anon-b852a7480c-funsys.apiary-mock.com/lectures" },
+    { url: "https://private-anon-b852a7480c-funsys.apiary-mock.com/teachers" },
+    { url: "https://private-anon-b852a7480c-funsys.apiary-mock.com/classes" },
+    { url: "https://private-anon-b852a7480c-funsys.apiary-mock.com/rooms" },
 ]
 var datas = {
     lectures: null, //講義
@@ -24,6 +24,7 @@ function loadJson(callback) {
             dataType: 'json',
         }));
     }
+
     $.when.apply($, jqXHRList).done(function () {
         datas.lectures = arguments[0][0];
         datas.teachers = arguments[1][0];
@@ -64,7 +65,7 @@ function getDayAndTimeFromLecture(lecture) {
 
 //現在の曜日の講義データを取得
 function getCurrentDayLectureData(day) {
-    return datas.lectures.filter(x => x.week == day + 1);
+    return datas.lectures.filter(x => x.week == day);
 }
 
 //すべてのクラスオブジェクトを取得
@@ -75,13 +76,22 @@ function getAllClasses() {
 //指定した条件に沿ったクラスオブジェクトを取得
 function getClassByFilter(course, grade, classNum) {
     return datas.classes.filter(x => {
-        if (course != 0 && x.course != course) {
+        var targetGrade = getGradeFromClass(x);
+        var targetClassNum = getClassNumFromClass(x);
+
+        if (course != -1 && x.course != course) {
             return false;
         }
-        if (grade != 0 && getGradeFromClass(x) != grade) {
+
+        if (grade != 0 && targetGrade != grade) {
             return false;
         }
-        if (classNum != 0 && getClassNumFromClass(x) != classNum) {
+
+        if (classNum != 0 && targetClassNum != classNum) {
+            return false;
+        }
+        //院生の例外処理
+        if (classNum == 1 && targetGrade >= 5) {
             return false;
         }
         return true;
