@@ -4,17 +4,14 @@
     <title>FUNカレンダー </title>
     <meta charset="utf-8">
 
-    <link rel="stylesheet" type="text/css" href="./css/fade.css">
     <link rel="stylesheet" type="text/css" href="./css/main.css">
-    <link rel="stylesheet" type="text/css" href="./css/modal.css">
     <link rel="stylesheet" type="text/css" href="./mdl/material.css">
     <link rel="stylesheet" type="text/css" href="./mdl/material.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-    <script type="text/javascript" src="./scripts/jsonread.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="./scripts/jsonread.js"></script>
     <script type="text/javascript" src="./scripts/funCalendar.js"></script>
-    <script type="text/javascript" src="./scripts/modalManager.js"></script>
     <script type="text/javascript" src="./scripts/constants.js"></script>
     <script type="text/javascript" src="./mdl/material.min.js"></script>
 </head>
@@ -22,10 +19,10 @@
 <body>
     
     <header class="mdl-shadow--2dp">
-        <div class="header-top">
-            <div class="titleRoot">
-                <span id="title">FUN Calendar</span>
-                <span id="copyWrite">©FUNSys All Right Reserved</span>
+        <div id="header-top">
+            <div id="titleRoot">
+                <span id="title">FUN カレンダー</span>
+                <span id="copyWrite">©FUNsys All Right Reserved</span>
                 <div id="daySelectArrows">
                     <button class="mdl-button mdl-js-button mdl-button--icon" onclick="movePrevDay()">
                         <i class="material-icons">keyboard_arrow_up</i>

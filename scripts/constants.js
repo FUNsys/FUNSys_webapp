@@ -1,4 +1,6 @@
-var days = ['Mon','Tue','Wed','Thu','Fri']
+var days = ['月','火','水','木','金']
+var dayColors =['#673AB7','#FF5252','#00BCD4','#4CAF50','#ead007']
+
 var popupColors ={
     'teacher':'#0000fa',
     'lecture':'#fa0000',
@@ -34,7 +36,7 @@ var courseOptions = {
 }
 
 var classNumOptions = {
-    '全クラス': 0,
+    '全クラス名': 0,
     'A': 1,
     'B': 2,
     'C': 3,

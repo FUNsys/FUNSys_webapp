@@ -19,12 +19,12 @@ header {
   left: 0;
 }
 
-.header-top {
+#header-top {
   height: 70%;
   background-color: #5050ff;
 }
 
-.titleRoot {
+#titleRoot {
   padding-top: 10px;
   padding-left: 20px;
 }
@@ -45,7 +45,7 @@ header {
   font-size: 200%;
   font-weight: bolder;
   padding-top: 20px;
-  padding-left: 10px;
+  padding-left: 25px;
   color: #ffffff;
 }
 
@@ -188,7 +188,15 @@ header {
   font-weight: bolder;
 
 }
+
 .popupContent-inline{
+  position: relative;
+  display: inline-block;
+  line-height: 15px;
+  width :100%;
+}
+
+.popupContent-inline-overflow{
   position: relative;
   display: inline-block;
   overflow: auto;

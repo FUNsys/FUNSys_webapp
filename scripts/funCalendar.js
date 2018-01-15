@@ -62,6 +62,9 @@ function setCurrentDay(num) {
     var daySelector = document.getElementById('daySelector');
     currentDay = num;
     daySelector.innerHTML = days[currentDay];
+    var header = document.getElementById('header-top');
+    header.style.background = dayColors[currentDay];
+    
     if (jsonLoaded) updateTable();
 }
 
@@ -354,10 +357,9 @@ function displayLecture(e, lecture) {
     var content = document.createElement('div');
     content.classList.add('popupContent');
     content.innerHTML += '担当教員 : ';
-
     var teachers = getTeachersFromLecture(lecture);
     for (var i = 0, len = teachers.length; i < len; i++) {
-        //担当教師の情報を埋め込む
+        //担当教員の情報を埋め込む
         var teacherLink = document.createElement('span');
         teacherLink.classList.add('link');
         teacherLink.innerHTML += teachers[i].disp_teacher;
@@ -375,36 +377,7 @@ function displayLecture(e, lecture) {
         }
     }
 
-    var moreContent = document.createElement('div');
-    var hiddenText = document.createElement('div');
-    hiddenText.appendChild(makeLectureContent(lecture));
-    hiddenText.style.display = 'none';
-    var link = document.createElement('div');
-    link.classList.add('mdl-button');
-    link.classList.add('mdl-js-button');
-    link.classList.add('mdl-button--icon');
-    var icon = document.createElement('i');
-    icon.classList.add('material-icons');
-    icon.innerHTML = 'link';
-    link.appendChild(icon);
-    moreContent.appendChild(link);
-    moreContent.appendChild(hiddenText);
-    content.appendChild(moreContent);
-
-    link.onclick = displayMore;
-    function displayMore() {
-        hiddenText.classList.add('lectureContent-more');
-        hiddenText.style.display = 'block';
-        icon.innerHTML = linkIconNames.pushed;
-        link.onclick = hideContent;
-    }
-
-    function hideContent() {
-        hiddenText.classList.remove('lectureContent-more');
-        hiddenText.style.display = 'none';
-        icon.innerHTML = linkIconNames.normal;
-        link.onclick = displayMore;
-    }
+    content.appendChild(makeLectureContent(lecture));
     createPopup(lecture.disp_lecture, content, e, popupColors.lecture);
 }
 
@@ -540,11 +513,12 @@ function displayTeacher(teacher, event, parent) {
 }
 
 //講義の詳細データを作成する
-function makeLectureContent(lecture) {
+function makeLectureContent(lecture, parentNode) {
     var content = document.createElement('div');
+
     //クラスを表示
     var targetElem = document.createElement('span');
-    targetElem.classList.add('popupContent-inline');
+    targetElem.classList.add('popupContent-inline-overflow');
     targetElem.innerHTML += "対象 : ";
     var classes = getClassesFromLecture(lecture);
     for (var i = 0, len = classes.length; i < len; i++) {
@@ -557,8 +531,8 @@ function makeLectureContent(lecture) {
     //必修,選択情報を表示
     var mustElem = document.createElement('span');
     var selectElem = document.createElement('span');
-    mustElem.classList.add('popupContent-inline');
-    selectElem.classList.add('popupContent-inline');
+    mustElem.classList.add('popupContent-inline-overflow');
+    selectElem.classList.add('popupContent-inline-overflow');
     var must = "";
     var select = "";
     for (var t in lecture.must) {
@@ -579,7 +553,7 @@ function makeLectureContent(lecture) {
 
     //教室を表示
     var roomElem = document.createElement('span');
-    mustElem.classList.add('popupContent-inline');
+    mustElem.classList.add('popupContent-inline-overflow');
     var rooms = getRoomsFromLecture(lecture);
     if (rooms.length > 0) {
         roomElem.innerHTML = "教室 : ";
@@ -593,7 +567,7 @@ function makeLectureContent(lecture) {
 
     //日時を表示
     var dtElem = document.createElement('span');
-    dtElem.classList.add('popupContent-inline');
+    dtElem.classList.add('popupContent-inline-overflow');
     dtElem.innerHTML += "日時 : " + getDayAndTimeFromLecture(lecture);
     content.appendChild(dtElem);
     return content;
