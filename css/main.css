@@ -55,14 +55,6 @@ header {
   left: 100px;
   color: white;
 }
-
-#FAB {
-  position: fixed !important;
-  top: 85px;
-  left: 20px;
-  z-index: 150;
-}
-
 /*====================*/
 
 #sideBarRoot {
@@ -117,9 +109,6 @@ header {
 
 
 #mainTable th {
-  overflow: hidden !important;
-  white-space: nowrap;
-  
   text-align: left;
   vertical-align: bottom;
   padding: 5px;
@@ -152,7 +141,7 @@ header {
   position: absolute;
   z-index: 3;
   border-radius: 4px;
-  width: 200px;
+  width: 210px;
   animation: popupOpen .15s;
   animation-fill-mode: both;
   animation-timing-function: ease-out;
@@ -172,7 +161,6 @@ header {
   position: relative;
   background-color: #f00000;
   height: 60px;
-  width: 200px;
   border-radius: 4px 4px 0 0 / 4px 4px 0 0;
   display: block;
 }
@@ -183,7 +171,7 @@ header {
   padding-right: 5px;
   position: absolute;
   display: inline;
-  bottom: 5px;
+  bottom: 3px;
   right: 0;
   text-align: right;
 }
@@ -191,16 +179,24 @@ header {
 .popup-bottom {
   padding: 5px;
   min-height: 50px;
-  overflow: hidden;
   border-radius: 0 0 4px 4px / 0 0 4px 4px;
   background-color: #ffffff;
 }
-
-.lectureContent {
+.popupContent{
   text-align: right;
   font-size: 85%;
   font-weight: bolder;
+
 }
+.popupContent-inline{
+  position: relative;
+  display: inline-block;
+  overflow: auto;
+  line-height: 15px;
+  white-space: nowrap;
+  width :100%;
+}
+
 
 .lectureContent-more {
   animation: expandContent .13s;
@@ -216,12 +212,6 @@ header {
   100% {
     transform: scaleY(1);
   }
-}
-
-.teacherContent {
-  text-align: right;
-  font-size: 85%;
-  font-weight: bolder;
 }
 /*==========================*/
 

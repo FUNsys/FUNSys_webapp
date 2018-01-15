@@ -352,7 +352,7 @@ function makeLectureObject(lecture) {
 //講義の詳細を表示する
 function displayLecture(e, lecture) {
     var content = document.createElement('div');
-    content.classList.add('lectureContent');
+    content.classList.add('popupContent');
     content.innerHTML += '担当教員 : ';
 
     var teachers = getTeachersFromLecture(lecture);
@@ -377,7 +377,7 @@ function displayLecture(e, lecture) {
 
     var moreContent = document.createElement('div');
     var hiddenText = document.createElement('div');
-    hiddenText.innerHTML = makeLectureContentHTML(lecture);
+    hiddenText.appendChild(makeLectureContent(lecture));
     hiddenText.style.display = 'none';
     var link = document.createElement('div');
     link.classList.add('mdl-button');
@@ -506,37 +506,59 @@ function getAllChilden(element) {
 function displayTeacher(teacher, event, parent) {
     var title = "";
     var content = document.createElement('div');
-    content.classList.add('teacherContent');
+    content.classList.add('popupContent');
+
     //氏名の表示
-    title += teacher.disp_teacher + "<br>(" + teacher.roma_name + ")";
+    title += teacher.disp_teacher + "<br>(" + teacher.romaji + ")";
 
     //役職の表示
-    content.innerHTML += "役職 : " + teacher.position;
-    content.innerHTML += "<br>";
-
+    if (teacher.position) {
+        var positionElem = document.createElement('span');
+        positionElem.classList.add('popupContent-inline');
+        positionElem.innerHTML = "役職 : " + teacher.position;
+        content.appendChild(positionElem);
+        content.innerHTML += '<br>';
+    }
     //専門分野の表示
-    content.innerHTML += "専門分野 : " + teacher.research_area;
-    content.innerHTML += "<br>";
+    if (teacher.research_area) {
+        var reserchElem = document.createElement('span');
+        reserchElem.classList.add('popupContent-inline');
+        reserchElem.innerHTML = "専門分野 : " + teacher.research_area;
+        content.appendChild(reserchElem);
+        content.innerHTML += '<br>';
+    }
 
     //所属の表示
-    content.innerHTML += "所属学科 : " + teacher.role;
+    if (teacher.role) {
+        var roleElem = document.createElement('span');
+        roleElem.classList.add('popupContent-inline');
+        roleElem.innerHTML = "所属学科 : " + teacher.role;
+        content.appendChild(roleElem);
+    }
 
     createPopup(title, content, event, popupColors.teacher, parent);
 }
 
 //講義の詳細データを作成する
-function makeLectureContentHTML(lecture) {
-    var html = "";
+function makeLectureContent(lecture) {
+    var content = document.createElement('div');
     //クラスを表示
-    html += "対象 : ";
+    var targetElem = document.createElement('span');
+    targetElem.classList.add('popupContent-inline');
+    targetElem.innerHTML += "対象 : ";
     var classes = getClassesFromLecture(lecture);
     for (var i = 0, len = classes.length; i < len; i++) {
-        html += classes[i].disp_class;
-        if (i < len - 1) html += ", ";
+        targetElem.innerHTML += classes[i].disp_class;
+        if (i < len - 1) targetElem.innerHTML += ", ";
     }
-    html += '<br>';
+    content.appendChild(targetElem);
+    content.innerHTML += '<br>';
 
     //必修,選択情報を表示
+    var mustElem = document.createElement('span');
+    var selectElem = document.createElement('span');
+    mustElem.classList.add('popupContent-inline');
+    selectElem.classList.add('popupContent-inline');
     var must = "";
     var select = "";
     for (var t in lecture.must) {
@@ -549,22 +571,30 @@ function makeLectureContentHTML(lecture) {
                 break;
         }
     }
-    html += "必修 : " + must;
-    html += "<br>";
-    html += "選択 : " + select;
-    html += "<br>";
+    mustElem.innerHTML = "必修 : " + must;
+    selectElem.innerHTML = "選択 : " + select;
+    content.appendChild(mustElem);
+    content.innerHTML += "<br>";
+    content.appendChild(selectElem);
 
     //教室を表示
-    html += "教室 : ";
+    var roomElem = document.createElement('span');
+    mustElem.classList.add('popupContent-inline');
     var rooms = getRoomsFromLecture(lecture);
-    for (var i = 0, len = rooms.length; i < len; i++) {
-        html += rooms[i].disp_room;
-        if (i < len - 1) html += ", ";
+    if (rooms.length > 0) {
+        roomElem.innerHTML = "教室 : ";
+        for (var i = 0, len = rooms.length; i < len; i++) {
+            roomElem.innerHTML += rooms[i].disp_room;
+            if (i < len - 1) roomElem.innerHTML += ", ";
+        }
+        content.appendChild(roomElem);
+        content.innerHTML += '<br>';
     }
-    html += '<br>';
 
     //日時を表示
-    html += "日時 : " + getDayAndTimeFromLecture(lecture);
-
-    return html;
+    var dtElem = document.createElement('span');
+    dtElem.classList.add('popupContent-inline');
+    dtElem.innerHTML += "日時 : " + getDayAndTimeFromLecture(lecture);
+    content.appendChild(dtElem);
+    return content;
 }
