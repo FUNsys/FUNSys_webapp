@@ -160,7 +160,7 @@ header {
 .popup-top {
   position: relative;
   background-color: #f00000;
-  height: 60px;
+  min-height: 62px;
   border-radius: 4px 4px 0 0 / 4px 4px 0 0;
   display: block;
 }
@@ -171,7 +171,7 @@ header {
   padding-right: 5px;
   position: absolute;
   display: inline;
-  bottom: 3px;
+  bottom: 2px;
   right: 0;
   text-align: right;
 }
