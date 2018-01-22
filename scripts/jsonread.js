@@ -59,7 +59,7 @@ function getClassesFromLecture(lecture) {
 //講義オブジェクトから日時情報を取得
 function getDayAndTimeFromLecture(lecture) {
     var weeks = ["月曜", "火曜", "水曜", "木曜", "金曜"];
-    var week = weeks[lecture.week - 1];
+    var week = weeks[lecture.week];
     return week + lecture.jigen + "限";
 }
 
